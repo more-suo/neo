@@ -111,6 +111,7 @@ interface
                 end;
                 
             function sum(): real;
+            // Summe aller Elemente der Matrize
                 begin
                  var s := 0.0;
                  for var i:= 0 to row_number - 1 do
@@ -122,11 +123,13 @@ interface
                 end;
                 
             function shapes(): array of integer;
+            // Dimensionen der Matrize
                 begin
                  Result := Arr(row_number, column_number);
                 end;
               
             function get_value(): array[,] of real;
+            // das Werte der Matrize
                 begin
                  Result := value;
                 end;
@@ -218,17 +221,29 @@ implementation
         
     function reshape(a:field; size:array of integer): field;
         begin
+         var rows := 0;
+         var columns := 0;
          var elements_needed := 1;
-         var length := 0; 
          if size.Length < 1 then
-             raise new Exception('Size must contain at least 1 argument')
-         else
-             length := size.Length;
+             raise new Exception('Size must contain at least 1 argument');
          foreach x: integer in size do
               elements_needed *= x;
+         if size.Length = 1 then
+            (rows, columns) := (size[0], 1)
+         else if size.Length = 2 then
+            (rows, columns) := (size[0], size[1]);
          var elements_given := a.column_number * a.row_number;
          if elements_given <> elements_needed then
              raise new Exception('Wrong size');
-                      
+         var return_array := new Real[rows, columns];
+         var tmp := reshape(a, elements_given).value;
+         var counter := 0;
+         for var i:= 0 to rows-1 do
+            for var j:= 0 to columns-1 do
+                begin
+                 return_array[i,j] := tmp[0, counter];
+                 counter += 1;
+                end;
+         Result := new field(return_array);
         end;
 end.
