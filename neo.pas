@@ -12,19 +12,24 @@ interface
         private
             row_number: integer;
             column_number: integer;
-            value: array[,] of real;
+            values: array[,] of real;
 
-        public      
+        public
+            property element[row, column: integer]: real
+                read values[row, column]
+                write values[row, column] := value;
+                default;
+                
             constructor (existing_arr:array[,] of real);
             // Deklaration einer Matrize durch Massiv:  
             // m := new Matrix(arr[,]);
                 begin
                  (row_number, column_number) := 
                   (existing_arr.RowCount, existing_arr.ColCount);
-                 value := new Real[row_number, column_number];
+                 values := new Real[row_number, column_number];
                  for var i:= 0 to row_number - 1 do
                      for var j:= 0 to column_number - 1 do 
-                         value[i, j] := existing_arr[i, j];
+                         values[i, j] := existing_arr[i, j];
                 end;
                       
             constructor (existing_arr:array of real);
@@ -32,9 +37,9 @@ interface
             // m := new Matrix(arr[]);
                 begin
                  (row_number, column_number) := (1, existing_arr.Length);
-                 value := new Real[row_number, column_number];
+                 values := new Real[row_number, column_number];
                  for var i:= 0 to column_number - 1 do
-                         value[0, i] := existing_arr[i];
+                         values[0, i] := existing_arr[i];
                 end;
               
             constructor (rows, columns:integer);
@@ -42,7 +47,7 @@ interface
             // m := new Matrix(7, 31);
                 begin
                  (row_number, column_number) := (rows, columns);
-                 value := new Real[row_number, column_number];
+                 values := new Real[row_number, column_number];
                 end;  
             
             class function operator + (field_a, field_b:field): field;
@@ -54,7 +59,7 @@ interface
                  var return_field := new Real[field_a.row_number, field_a.column_number];
                  for var i:= 0 to return_field.RowCount-1 do
                      for var j:= 0 to return_field.ColCount-1 do
-                         return_field[i, j] := field_a.value[i, j] + field_b.value[i, j];
+                         return_field[i, j] := field_a.values[i, j] + field_b.values[i, j];
                  Result := new field(return_field);    
                 end;
             
@@ -67,7 +72,7 @@ interface
                  var return_field := new Real[field_a.row_number, field_a.column_number];
                  for var i:= 0 to return_field.RowCount-1 do
                      for var j:= 0 to return_field.ColCount-1 do
-                         return_field[i, j] := field_a.value[i, j] - field_b.value[i, j];
+                         return_field[i, j] := field_a.values[i, j] - field_b.values[i, j];
                  Result := new field(return_field);
                 end;       
             
@@ -76,9 +81,9 @@ interface
             // field_mult := field_a * b;
                 begin
                  var return_field := new Real[field_a.row_number, field_a.column_number];
-                 for var i:= 0 to field_a.value.RowCount - 1 do
-                     for var j:= 0 to field_a.value.ColCount - 1 do
-                         return_field[i, j] :=  field_a.value[i, j] * b;
+                 for var i:= 0 to field_a.values.RowCount - 1 do
+                     for var j:= 0 to field_a.values.ColCount - 1 do
+                         return_field[i, j] :=  field_a.values[i, j] * b;
                  Result := new field(return_field);
                 end;
             
@@ -106,7 +111,7 @@ interface
                  for var i:= 0 to return_field.row_number - 1 do
                      for var j:= 0 to return_field.column_number - 1 do
                          for var k:= 0 to field_a.column_number - 1 do
-                             return_field.value[i,j]+= field_a.value[i, k] * field_b.value[k, j];
+                             return_field.values[i,j]+= field_a.values[i, k] * field_b.values[k, j];
                  Result := return_field;
                 end;
                 
@@ -117,7 +122,7 @@ interface
                  for var i:= 0 to row_number - 1 do
                     for var j:= 0 to column_number - 1 do
                         begin
-                         s += value[i,j];
+                         s += values[i,j];
                         end;
                  Result := s;
                 end;
@@ -131,7 +136,7 @@ interface
             function get_value(): array[,] of real;
             // das Werte der Matrize
                 begin
-                 Result := value;
+                 Result := values;
                 end;
     end;
     
@@ -180,7 +185,7 @@ implementation
          var return_array := new Real[field_a.row_number, field_a.column_number];
          for var i:= 0 to field_a.row_number - 1 do
             for var j:= 0 to field_a.column_number - 1 do
-                return_array[i,j] := func(field_a.value[i,j]);
+                return_array[i,j] := func(field_a.values[i,j]);
          Result := new field(return_array);
         end;
     
@@ -189,7 +194,7 @@ implementation
          var return_array := new Real[field_a.row_number, field_a.column_number];
          for var i:= 0 to field_a.row_number - 1 do
             for var j:= 0 to field_a.column_number - 1 do
-                return_array[i,j] := func(field_a.value[i,j]);
+                return_array[i,j] := func(field_a.values[i,j]);
          Result := new field(return_array);
         end;
         
@@ -256,7 +261,7 @@ implementation
          if elements_given <> elements_needed then
              raise new Exception('Wrong size');
          var return_array := new Real[rows, columns];
-         var tmp := reshape(a, elements_given).value;
+         var tmp := reshape(a, elements_given).values;
          var counter := 0;
          for var i:= 0 to rows-1 do
             for var j:= 0 to columns-1 do
@@ -277,9 +282,9 @@ implementation
          for var column:= 0 to a.column_number-1 do
              begin
               for var row:= 0 to a.row_number-1 do
-                  return_array[row,column] := a.value[row,column];
+                  return_array[row,column] := a.values[row,column];
               for var row:= 0 to b.row_number-1 do
-                  return_array[row+a.row_number,column] := b.value[row, column];
+                  return_array[row+a.row_number,column] := b.values[row, column];
              end;
          Result := new field(return_array); 
         end;
@@ -297,9 +302,9 @@ implementation
               for var row:= 0 to a.row_number-1 do
                   begin
                    for var column:= 0 to a.column_number-1 do
-                       return_array[row,column] := a.value[row,column];
+                       return_array[row,column] := a.values[row,column];
                    for var column:= 0 to b.column_number-1 do
-                       return_array[row,column+a.column_number] := b.value[row, column];
+                       return_array[row,column+a.column_number] := b.values[row, column];
                   end;
               Result := new field(return_array);
              end;
@@ -322,38 +327,57 @@ implementation
          Result := a * b;
         end;
 
-    function multiply(a,b:field): field;
-        begin
-         if a.shapes = b.shapes then
-            begin
-             var return_array := new Real[a.row_number, a.column_number];
-             for var i:= 0 to a.row_number-1 do
-                 for var j:= 0 to a.column_number-1 do
-                    return_array[i,j] := a.value[i,j] * b.value[i,j];
-             Result := new field(return_array);
-            end
-         else if a.row_number = b.row_number then
-            begin
-             var tmp := new field(1,1);
-             var counter := 0;
-             if a.column_number mod b.column_number = 0 then
-                (tmp, counter) := (a, a.column_number div b.column_number)
-             else if b.column_number mod a.column_number = 0 then
-                (tmp, counter) := (b, b.column_number div a.column_number)
-             else
-                raise new Exception('Fields couldn not be broadcast together');
-             var return_array := new Real[tmp.row_number, tmp.column_number];
-             println(tmp, counter);
-             for var i:= 1 to counter do
-                begin
-                 
-                end;
-            end
-         else if a.column_number = b.column_number then
-            begin
-            
-            end
-         else
-            raise new Exception('Fields couldn not be broadcast together');
+//    function multiply(a,b:field): field;
+//        begin
+//         if a.shapes = b.shapes then
+//            begin
+//             var return_array := new Real[a.row_number, a.column_number];
+//             for var i:= 0 to a.row_number-1 do
+//                 for var j:= 0 to a.column_number-1 do
+//                    return_array[i,j] := a.values[i,j] * b.values[i,j];
+//             Result := new field(return_array);
+//            end
+//         else if a.row_number = b.row_number then
+//            begin
+//             var tmp := new field(1,1);
+//             var counter := 0;
+//             if a.column_number mod b.column_number = 0 then
+//                (tmp, counter) := (a, a.column_number div b.column_number)
+//             else if b.column_number mod a.column_number = 0 then
+//                (tmp, counter) := (b, b.column_number div a.column_number)
+//             else
+//                raise new Exception('Fields couldn not be broadcast together');
+//             var return_array := new Real[tmp.row_number, tmp.column_number];
+//             println(tmp.values, counter);
+//             for var i:= 1 to counter do
+//                begin
+//                 
+//                end;
+//            end
+//         else if a.column_number = b.column_number then
+//            begin
+//            
+//            end
+//         else
+//            raise new Exception('Fields couldn not be broadcast together');
+//        end;
+//    function multiply(a,b:field): field;
+//        begin
+//         var (big_field, small_field) := a.shapes.Product > b.shapes.Product?
+//                                            (a, b) : (b, a);
+//         var row_mod := big_field.row_number mod small_field.row_number;
+//         var column_mod := big_field.column_number mod small_field.column_number;
+//         if (row_mod <> 0) or (column_mod <> 0) then
+//             raise new Exception('Fields could not be broadcast together');
+//         var row_div := big_field.row_number div small_field.row_number;
+//         var column_div := big_field.column_number div small_field.column_number;
+//         for var row_block:= 0 to row_div-1 do
+//             for var column_block:= 0 to column_div-1 do
+//                 for var row:= 0 to small_field.row_number-1 do
+//                    for var column:= 0 to small_field.column_number-1 do
+////                        big_field[
+//                        begin end;
+//                    
+//         Result := big_field;
         end;
 end.
