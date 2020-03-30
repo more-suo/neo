@@ -1,4 +1,4 @@
-﻿unit Neo;
+﻿unit neo;
 
 interface
         
@@ -156,8 +156,25 @@ interface
     // Umformung der Matrize in eine andere Matrize mit Groeße size
     
     
+    function concatenate(a,b:field): field;
+    // Erweiterung der Matrize a mit b, zeilenweise
+    function concatenate(a,b:field; axis:integer): field;
+    // Erweiterung der Matrize a mit b, axis == 0 - zeilenweise, axis == 1 - spaltenweise
+    
+    
+    function multiply(a,b:real): real;
+    // Multiplikation von zwei Skalaren
+    function multiply(a:real; b:field): field;
+    // Multiplikation von Skalar und Matrize
+    function multiply(a:field; b:real): field;
+    // Multiplikation von Matrize Skalar
+    function multiply(a,b:field): field;
+    // Multiplikation von zwei Matrizen
+    
+    
 implementation
-
+    
+    // map() - Implementierung
     function map(func: float_func; field_a: field): field;
         begin
          var return_array := new Real[field_a.row_number, field_a.column_number];
@@ -177,6 +194,7 @@ implementation
         end;
         
         
+    // random_field() - Implementierung
     function random_field(rows, columns:integer): field;
         begin
          var return_array := new Real[rows, columns];
@@ -185,7 +203,7 @@ implementation
                 return_array[i,j] := Random;
          Result := new field(return_array);   
         end;
-    
+ 
     function random_field(rows, columns, max:integer): field;
         begin
          var return_array := new Real[rows, columns];
@@ -204,7 +222,9 @@ implementation
          Result := new field(return_array);
         end;    
     
-        
+    
+    
+    // reshape() - Implementierung
     function reshape(a:field; size:integer): field;
         begin
          if a.column_number * a.row_number <> size then
@@ -245,5 +265,95 @@ implementation
                  counter += 1;
                 end;
          Result := new field(return_array);
+        end;
+    
+    // concatenate() - Implementierung
+    function concatenate(a,b:field): field;
+        begin
+         if a.column_number <> b.column_number then
+            raise new Exception('Fields couldn not be broadcast together');
+         var return_array := new Real[1,1];
+         SetLength(return_array, a.row_number+b.row_number, a.column_number);
+         for var column:= 0 to a.column_number-1 do
+             begin
+              for var row:= 0 to a.row_number-1 do
+                  return_array[row,column] := a.value[row,column];
+              for var row:= 0 to b.row_number-1 do
+                  return_array[row+a.row_number,column] := b.value[row, column];
+             end;
+         Result := new field(return_array); 
+        end;
+    
+    function concatenate(a,b:field; axis:integer): field;
+        begin
+         if axis = 0 then
+             Result:= concatenate(a,b)
+         else if axis = 1 then
+             begin
+              if a.row_number <> b.row_number then
+                  raise new Exception('Fields couldn not be broadcast together');
+              var return_array := new Real[1,1];
+              SetLength(return_array, a.column_number+b.column_number, a.row_number);
+              for var row:= 0 to a.row_number-1 do
+                  begin
+                   for var column:= 0 to a.column_number-1 do
+                       return_array[row,column] := a.value[row,column];
+                   for var column:= 0 to b.column_number-1 do
+                       return_array[row,column+a.column_number] := b.value[row, column];
+                  end;
+              Result := new field(return_array);
+             end;
+        end;
+        
+        
+    // multiply() - Implementierung
+    function multiply(a,b:real): real;
+        begin
+         Result := a * b;
+        end;
+    
+    function multiply(a:real; b:field): field;
+        begin
+         Result := a * b;
+        end;
+        
+    function multiply(a:field; b:real): field;
+        begin
+         Result := a * b;
+        end;
+
+    function multiply(a,b:field): field;
+        begin
+         if a.shapes = b.shapes then
+            begin
+             var return_array := new Real[a.row_number, a.column_number];
+             for var i:= 0 to a.row_number-1 do
+                 for var j:= 0 to a.column_number-1 do
+                    return_array[i,j] := a.value[i,j] * b.value[i,j];
+             Result := new field(return_array);
+            end
+         else if a.row_number = b.row_number then
+            begin
+             var tmp := new field(1,1);
+             var counter := 0;
+             if a.column_number mod b.column_number = 0 then
+                (tmp, counter) := (a, a.column_number div b.column_number)
+             else if b.column_number mod a.column_number = 0 then
+                (tmp, counter) := (b, b.column_number div a.column_number)
+             else
+                raise new Exception('Fields couldn not be broadcast together');
+             var return_array := new Real[tmp.row_number, tmp.column_number];
+             println(tmp, counter);
+             for var i:= 1 to counter do
+                begin
+                 
+                end;
+            end
+         else if a.column_number = b.column_number then
+            begin
+            
+            end
+         else
+            raise new Exception('Fields couldn not be broadcast together');
         end;
 end.
