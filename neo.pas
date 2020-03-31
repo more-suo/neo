@@ -1,11 +1,15 @@
 ﻿unit neo;
 
 interface
+    
+    /// Vergleich von zwei arrays of integer
+    function compare(a,b:array of integer): boolean;
+
         
     type
         float_func = System.Func<real, real>;
         int_func = System.Func<real, integer>;
-  
+        
     type
         field = class
       
@@ -15,14 +19,16 @@ interface
             values: array[,] of real;
 
         public
+        
+            /// Zugriff auf Elemente einer Matrize
             property element[row, column: integer]: real
                 read values[row, column]
                 write values[row, column] := value;
                 default;
-                
+            
+            /// Deklaration einer Matrize durch Massiv:  
+            /// m := new Matrix(arr[,]);    
             constructor (existing_arr:array[,] of real);
-            // Deklaration einer Matrize durch Massiv:  
-            // m := new Matrix(arr[,]);
                 begin
                  (row_number, column_number) := 
                   (existing_arr.RowCount, existing_arr.ColCount);
@@ -31,31 +37,31 @@ interface
                      for var j:= 0 to column_number - 1 do 
                          values[i, j] := existing_arr[i, j];
                 end;
-                      
+            
+            /// Deklaration einer Matrize durch Massiv:  
+            /// m := new Matrix(arr[]);          
             constructor (existing_arr:array of real);
-            // Deklaration einer Matrize durch Massiv:  
-            // m := new Matrix(arr[]);
                 begin
                  (row_number, column_number) := (1, existing_arr.Length);
                  values := new Real[row_number, column_number];
                  for var i:= 0 to column_number - 1 do
                          values[0, i] := existing_arr[i];
                 end;
-              
+            
+            /// Deklaration einer Nullmatrize durch Zeilen- & Spaltenanzahl:  
+            /// m := new Matrix(7, 31);  
             constructor (rows, columns:integer);
-            // Deklaration einer Nullmatrize durch Zeilen- & Spaltenanzahl:  
-            // m := new Matrix(7, 31);
                 begin
                  (row_number, column_number) := (rows, columns);
                  values := new Real[row_number, column_number];
                 end;  
             
+            /// Matrizenaddition:
+            /// field_sum := field_a + field_b;
             class function operator + (field_a, field_b:field): field;
-            // Matrizenaddition:
-            // field_sum := field_a + field_b;
                 begin
-                 if (field_a.row_number, field_a.column_number) <> (field_b.row_number, field_b.column_number) then
-                        raise new Exception('Wrong array sizes');
+                 if not compare(field_a.shape, field_b.shape) then
+                        raise new System.ArithmeticException('Wrong array sizes');
                  var return_field := new Real[field_a.row_number, field_a.column_number];
                  for var i:= 0 to return_field.RowCount-1 do
                      for var j:= 0 to return_field.ColCount-1 do
@@ -63,22 +69,36 @@ interface
                  Result := new field(return_field);    
                 end;
             
-            class function operator - (field_a, field_b:field): field;
-            // Matrizensubtraktion:
-            // field_difference := field_a - field_b;
+            class procedure operator += (var field_a:field; const field_b:field);
                 begin
-                 if (field_a.row_number, field_a.column_number) <> (field_b.row_number, field_b.column_number) then
+                 if not compare(field_a.shape, field_b.shape) then
                         raise new Exception('Wrong array sizes');
+                 field_a := field_a + field_b;
+                end;
+            
+            /// Matrizensubtraktion:
+            /// field_difference := field_a - field_b;
+            class function operator - (field_a, field_b:field): field;
+                begin
+                 if not compare(field_a.shape, field_b.shape) then
+                        raise new System.ArithmeticException('Wrong array sizes');
                  var return_field := new Real[field_a.row_number, field_a.column_number];
                  for var i:= 0 to return_field.RowCount-1 do
                      for var j:= 0 to return_field.ColCount-1 do
                          return_field[i, j] := field_a.values[i, j] - field_b.values[i, j];
                  Result := new field(return_field);
                 end;       
+                
+             class procedure operator -= (var field_a:field; const field_b:field);
+                begin
+                 if not compare(field_a.shape, field_b.shape) then
+                        raise new Exception('Wrong array sizes');
+                 field_a := field_a - field_b;
+                end;
             
+            /// Matrizenmultiplikation mit Zahlen:
+            /// field_mult := field_a * b;
             class function operator * (field_a:field; b:Real): field;
-            // Matrizenmultiplikation mit Zahlen:
-            // field_mult := field_a * b;
                 begin
                  var return_field := new Real[field_a.row_number, field_a.column_number];
                  for var i:= 0 to field_a.values.RowCount - 1 do
@@ -87,23 +107,23 @@ interface
                  Result := new field(return_field);
                 end;
             
+            /// Matrizenmultiplikation mit Zahlen:
+            /// field_mult := a * field_b;
             class function operator * (a:Real; field_b:field): field;
-            // Matrizenmultiplikation mit Zahlen:
-            // field_mult := a * field_b;
                 begin
                  Result := field_b * a;
                 end;
             
+            /// Matrizendivision mit Zahlen:
+            /// field_mult := field_a / b;
             class function operator / (field_a:field; b:Real): field;
-            // Matrizendivision mit Zahlen:
-            // field_mult := field_a / b;
                 begin
                  Result := field_a * (1/b);
                 end;
-                  
+                
+            /// Matrizenmultiplikation:
+            /// field_mult := field_a * field_b;                  
             class function operator * (field_a, field_b:field): field;
-            // Matrizenmultiplikation:
-            // field_mult := field_a * field_b;
                 begin
                  if field_a.column_number = field_b.row_number then
                         raise new Exception('Wrong array sizes');
@@ -115,8 +135,19 @@ interface
                  Result := return_field;
                 end;
                 
+            /// Exponentiation vom jeden Matrizenelements:
+            /// field_exp := field_a ** b
+            class function operator ** (field_a:field; b:real): field;
+                begin
+                 var return_field := new Real[field_a.row_number, field_a.column_number];
+                 for var i:= 0 to field_a.row_number - 1 do
+                     for var j:= 0 to field_a.column_number - 1 do
+                         return_field[i, j] :=  field_a.values[i, j] ** b;
+                 Result := new field(return_field);
+                end;
+                 
+            /// Summe aller Elemente der Matrize
             function sum(): real;
-            // Summe aller Elemente der Matrize
                 begin
                  var s := 0.0;
                  for var i:= 0 to row_number - 1 do
@@ -127,58 +158,77 @@ interface
                  Result := s;
                 end;
                 
-            function shapes(): array of integer;
-            // Dimensionen der Matrize
+            /// Dimensionen der Matrize
+            function shape(): array of integer;
                 begin
                  Result := Arr(row_number, column_number);
                 end;
               
+            /// das Werte der Matrize
             function get_value(): array[,] of real;
-            // das Werte der Matrize
                 begin
                  Result := values;
                 end;
     end;
     
     
+    /// Anwendung einer Funktion an alle Elemente einer Neo
     function map(func: float_func; field_a: field): field;
-    // Anwendung einer Funktion an alle Elemente einer Neo
+    /// Anwendung einer Funktion an alle Elemente einer Neo
     function map(func: int_func; field_a: field): field;
-    // Anwendung einer Funktion an alle Elemente einer Neo
     
         
+    /// Matrizengenerator mit rows*colums, (0, 1)
     function random_field(rows, columns:integer): field;
-    // Matrizengenerator mit rows*colums, (0, 1)
+    /// Matrizengenerator mit rows*colums, (0, max)
     function random_field(rows, columns, max:integer): field;
-    // Matrizengenerator mit rows*colums, (0, max)
+    /// Matrizengenerator mit rows*colums, (min, max)
     function random_field(rows, columns, min, max:integer): field;
-    // Matrizengenerator mit rows*colums, (min, max)
 
     
+    /// Umformung der Matrize in einen eindemensionalen Vektor mit Laenge size
     function reshape(a:field; size:integer): field;
-    // Umformung der Matrize in einen eindemensionalen Vektor mit Laenge size
+    /// Umformung der Matrize in eine andere Matrize mit Groeße size
     function reshape(a:field; size:array of integer): field;
-    // Umformung der Matrize in eine andere Matrize mit Groeße size
     
     
+    /// Erweiterung der Matrize a mit b, zeilenweise
     function concatenate(a,b:field): field;
-    // Erweiterung der Matrize a mit b, zeilenweise
+    /// Erweiterung der Matrize a mit b, axis == 0 - zeilenweise, axis == 1 - spaltenweise
     function concatenate(a,b:field; axis:integer): field;
-    // Erweiterung der Matrize a mit b, axis == 0 - zeilenweise, axis == 1 - spaltenweise
     
     
+    /// Multiplikation von zwei Skalaren
     function multiply(a,b:real): real;
-    // Multiplikation von zwei Skalaren
+    /// Multiplikation von Skalar und Matrize
     function multiply(a:real; b:field): field;
-    // Multiplikation von Skalar und Matrize
+    /// Multiplikation von Matrize und Skalar
     function multiply(a:field; b:real): field;
-    // Multiplikation von Matrize Skalar
+    /// Multiplikation von zwei Matrizen
     function multiply(a,b:field): field;
-    // Multiplikation von zwei Matrizen
+    
+    
+    /// Transponierung der Matrize
+    function transpose(field_a:field): field;
     
     
 implementation
-    
+
+    // compare() - Implementierung
+    function compare(a, b:array of integer): boolean;
+        begin
+         if a.Length <> b.Length then
+             raise new System.ArithmeticException('Different array sizes');
+         for var i:= 0 to a.Length-1 do
+             if a[i] <> b[i] then
+                 begin
+                  Result := False;
+                  exit;
+                 end;
+         Result := True;
+        end;
+        
+        
     // map() - Implementierung
     function map(func: float_func; field_a: field): field;
         begin
@@ -228,7 +278,6 @@ implementation
         end;    
     
     
-    
     // reshape() - Implementierung
     function reshape(a:field; size:integer): field;
         begin
@@ -271,6 +320,7 @@ implementation
                 end;
          Result := new field(return_array);
         end;
+    
     
     // concatenate() - Implementierung
     function concatenate(a,b:field): field;
@@ -327,43 +377,9 @@ implementation
          Result := a * b;
         end;
 
-//    function multiply(a,b:field): field;
-//        begin
-//         if a.shapes = b.shapes then
-//            begin
-//             var return_array := new Real[a.row_number, a.column_number];
-//             for var i:= 0 to a.row_number-1 do
-//                 for var j:= 0 to a.column_number-1 do
-//                    return_array[i,j] := a.values[i,j] * b.values[i,j];
-//             Result := new field(return_array);
-//            end
-//         else if a.row_number = b.row_number then
-//            begin
-//             var tmp := new field(1,1);
-//             var counter := 0;
-//             if a.column_number mod b.column_number = 0 then
-//                (tmp, counter) := (a, a.column_number div b.column_number)
-//             else if b.column_number mod a.column_number = 0 then
-//                (tmp, counter) := (b, b.column_number div a.column_number)
-//             else
-//                raise new Exception('Fields couldn not be broadcast together');
-//             var return_array := new Real[tmp.row_number, tmp.column_number];
-//             println(tmp.values, counter);
-//             for var i:= 1 to counter do
-//                begin
-//                 
-//                end;
-//            end
-//         else if a.column_number = b.column_number then
-//            begin
-//            
-//            end
-//         else
-//            raise new Exception('Fields couldn not be broadcast together');
-//        end;
     function multiply(a,b:field): field;
         begin
-         var (big_field, small_field) := a.shapes.Product > b.shapes.Product?
+         var (big_field, small_field) := a.shape.Product > b.shape.Product?
                                             (a, b) : (b, a);
          var row_mod := big_field.row_number mod small_field.row_number;
          var column_mod := big_field.column_number mod small_field.column_number;
@@ -379,4 +395,15 @@ implementation
                             small_field[row,column];
          Result := big_field;
         end;
+        
+        
+    function transpose(field_a:field): field;
+        begin
+         var return_array := new Real[field_a.column_number, field_a.row_number];
+         for var i:= 0 to field_a.row_number-1 do
+             for var j:= 0 to field_a.column_number-1 do
+                 return_array[j,i] := field_a[i,j];
+         Result := new field(return_array);
+        end;
+    
 end.
