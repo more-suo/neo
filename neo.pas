@@ -361,23 +361,22 @@ implementation
 //         else
 //            raise new Exception('Fields couldn not be broadcast together');
 //        end;
-//    function multiply(a,b:field): field;
-//        begin
-//         var (big_field, small_field) := a.shapes.Product > b.shapes.Product?
-//                                            (a, b) : (b, a);
-//         var row_mod := big_field.row_number mod small_field.row_number;
-//         var column_mod := big_field.column_number mod small_field.column_number;
-//         if (row_mod <> 0) or (column_mod <> 0) then
-//             raise new Exception('Fields could not be broadcast together');
-//         var row_div := big_field.row_number div small_field.row_number;
-//         var column_div := big_field.column_number div small_field.column_number;
-//         for var row_block:= 0 to row_div-1 do
-//             for var column_block:= 0 to column_div-1 do
-//                 for var row:= 0 to small_field.row_number-1 do
-//                    for var column:= 0 to small_field.column_number-1 do
-////                        big_field[
-//                        begin end;
-//                    
-//         Result := big_field;
+    function multiply(a,b:field): field;
+        begin
+         var (big_field, small_field) := a.shapes.Product > b.shapes.Product?
+                                            (a, b) : (b, a);
+         var row_mod := big_field.row_number mod small_field.row_number;
+         var column_mod := big_field.column_number mod small_field.column_number;
+         if (row_mod <> 0) or (column_mod <> 0) then
+             raise new Exception('Fields could not be broadcast together');
+         var row_div := big_field.row_number div small_field.row_number;
+         var column_div := big_field.column_number div small_field.column_number;
+         for var row_block:= 0 to row_div-1 do
+             for var column_block:= 0 to column_div-1 do
+                 for var row:= 0 to small_field.row_number-1 do
+                    for var column:= 0 to small_field.column_number-1 do
+                        big_field[row+row_block*row_div,column*column_div] *= 
+                            small_field[row,column];
+         Result := big_field;
         end;
 end.
