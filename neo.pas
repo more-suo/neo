@@ -211,7 +211,18 @@ interface
     /// Transponierung der Matrize
     function transpose(field_a:field): field;
     
+    /// bei Matrize - Summe von jener Spalte, bei Vektor - Summe aller Elemente
+    function sum(field_a:field): Object;
     
+    
+    /// Innerer Produkt einer Matrize
+    function inner(field_a, field_b:field): Object;
+    
+    
+    /// Skalarprodukt von zwei Matrizen
+    function dot(field_a, field_b: field): field;
+        
+        
 implementation
 
     // compare() - Implementierung
@@ -387,16 +398,21 @@ implementation
              raise new Exception('Fields could not be broadcast together');
          var row_div := big_field.row_number div small_field.row_number;
          var column_div := big_field.column_number div small_field.column_number;
+         println(row_div, column_div);
          for var row_block:= 0 to row_div-1 do
              for var column_block:= 0 to column_div-1 do
                  for var row:= 0 to small_field.row_number-1 do
                     for var column:= 0 to small_field.column_number-1 do
-                        big_field[row+row_block*row_div,column*column_div] *= 
+                        begin
+//                        println(big_field[row+row_block*small_field.row_number,column+column_block*small_field.column_number]); 
+                        big_field[row+row_block*small_field.row_number,column+column_block*small_field.column_number] *= 
                             small_field[row,column];
+                        end;
          Result := big_field;
         end;
         
         
+    // transpose() - Implementierung    
     function transpose(field_a:field): field;
         begin
          var return_array := new Real[field_a.column_number, field_a.row_number];
@@ -405,5 +421,41 @@ implementation
                  return_array[j,i] := field_a[i,j];
          Result := new field(return_array);
         end;
+        
     
+    // sum() - Implementierung
+    function sum(field_a:field): Object;
+        begin
+         if field_a.row_number = 1 then
+            Result := field_a.sum
+         else
+            begin
+             var return_array := new Real[1];
+             setlength(return_array, field_a.column_number);
+             for var i:= 0 to field_a.row_number-1 do
+                for var j:= 0 to field_a.column_number-1 do
+                    return_array[j] += field_a[i,j];
+             Result := return_array;
+            end;
+        end;
+    
+    
+    // inner() - Implementierung
+    function inner(field_a, field_b:field): Object;
+        begin
+         if field_a.column_number <> field_b.column_number then
+             raise new System.ArithmeticException('Different column count');
+         Result := sum(transpose(multiply(field_a, field_b)));
+        end;
+    
+    
+    // dot() - Implementierung 
+    function dot(field_a, field_b: field): field;
+        begin
+         if ((field_a.row_number, field_b.row_number) = (1, 1)) and
+            (field_a.column_number = field_b.column_number) then
+             begin
+              
+             end;
+        end;
 end.
