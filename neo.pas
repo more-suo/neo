@@ -196,13 +196,13 @@ interface
             function get_longest(axis, num:integer): real;
                 begin
                  if axis = 0 then
-                    begin
-                     var max := values[0,num];
-                     for var row:= 0 to row_number-1 do
-                             if values[row, num].ToString.Length >  max.ToString.Length then
-                                 max := values[row, num];
-                     Result := max;
-                    end
+                     begin
+                      var max := values[0, num];
+                      for var row:= 0 to row_number-1 do
+                              if values[row, num].ToString.Length >  max.ToString.Length then
+                                  max := values[row, num];
+                      Result := max;
+                     end
                  else if axis = 1 then
                     begin
                      var max := values[num,0];
@@ -216,22 +216,26 @@ interface
             /// konvertiert Matriz zu String
             function ToString: string; override;
                 begin
+                 var (head, foot) := row_number = 1? ('Array(', '])'):('Array([', '],)');
                  var return_string := '';
                  var newline := chr(13) + chr(10);
+                 var spaces := '';
                  for var row:= 0 to row_number-1 do
-                     begin
                       for var column := 0 to column_number-1 do
-                          if column = column_number-1 then
-                              return_string += values[row,column].ToString + 
-                                               '], ' + newline
-                          else if column = 0 then
-                            return_string += '[' + values[row,column].ToString + ', '
-                          else if (row, column) = (row_number-1, column_number-1) then
-                            return_string += ')'
-                          else
-                            return_string += values[row,column].ToString + ', ';
-                     end;
-                 Result := return_string;
+                          begin
+                           spaces := ' ' * (self.get_longest(0, column).ToString.Length - values[row,column].ToString.Length);
+                           if (column, row) = (0, 0) then
+                               return_string += '[' + spaces + values[row,column].ToString + ', '
+                           else if (column = 0) then
+                               return_string += ' ' * head.Length + '[' + spaces + values[row,column].ToString + ', '
+                           else if (row, column) = (row_number-1, column_number-1) then
+                               return_string += spaces + values[row,column].ToString
+                           else if column = column_number-1 then
+                               return_string += spaces + values[row,column].ToString + '], ' + newline
+                           else
+                               return_string += spaces + values[row,column].ToString + ', ';
+                          end;
+                 Result := head + return_string + foot;
                 end;
     end;
     
