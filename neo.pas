@@ -169,6 +169,70 @@ interface
                 begin
                  Result := values;
                 end;
+            
+            /// kehrt den groeßten Wert der Matrize zurueck
+            function get_max(): real;
+                begin
+                 var max := values[0,0];
+                 for var row:= 0 to row_number-1 do
+                     for var column:= 0 to column_number-1 do
+                         if values[row, column] >  max then
+                             max := values[row, column];
+                 Result := max;
+                end;
+                
+            /// kehrt den laengsten Wert der Matrize zurueck, wenn axis = 0 laengster Wert in der Spaltennummer num,
+            /// wenn axis = 1 laengster Wert in der Zeile
+            function get_longest(): real;
+                begin
+                 var max := values[0,0];
+                 for var row:= 0 to row_number-1 do
+                     for var column:= 0 to column_number-1 do
+                         if values[row, column].ToString.Length >  max.ToString.Length then
+                             max := values[row, column];
+                 Result := max;
+                end;
+                
+            function get_longest(axis, num:integer): real;
+                begin
+                 if axis = 0 then
+                    begin
+                     var max := values[0,num];
+                     for var row:= 0 to row_number-1 do
+                             if values[row, num].ToString.Length >  max.ToString.Length then
+                                 max := values[row, num];
+                     Result := max;
+                    end
+                 else if axis = 1 then
+                    begin
+                     var max := values[num,0];
+                     for var column:= 0 to column_number-1 do
+                             if values[num, column].ToString.Length >  max.ToString.Length then
+                                 max := values[num, column];
+                     Result := max;
+                    end
+                end;
+            
+            /// konvertiert Matriz zu String
+            function ToString: string; override;
+                begin
+                 var return_string := '';
+                 var newline := chr(13) + chr(10);
+                 for var row:= 0 to row_number-1 do
+                     begin
+                      for var column := 0 to column_number-1 do
+                          if column = column_number-1 then
+                              return_string += values[row,column].ToString + 
+                                               '], ' + newline
+                          else if column = 0 then
+                            return_string += '[' + values[row,column].ToString + ', '
+                          else if (row, column) = (row_number-1, column_number-1) then
+                            return_string += ')'
+                          else
+                            return_string += values[row,column].ToString + ', ';
+                     end;
+                 Result := return_string;
+                end;
     end;
     
     
@@ -398,16 +462,12 @@ implementation
              raise new Exception('Fields could not be broadcast together');
          var row_div := big_field.row_number div small_field.row_number;
          var column_div := big_field.column_number div small_field.column_number;
-         println(row_div, column_div);
          for var row_block:= 0 to row_div-1 do
              for var column_block:= 0 to column_div-1 do
                  for var row:= 0 to small_field.row_number-1 do
                     for var column:= 0 to small_field.column_number-1 do
-                        begin
-//                        println(big_field[row+row_block*small_field.row_number,column+column_block*small_field.column_number]); 
                         big_field[row+row_block*small_field.row_number,column+column_block*small_field.column_number] *= 
                             small_field[row,column];
-                        end;
          Result := big_field;
         end;
         
