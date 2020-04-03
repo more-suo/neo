@@ -237,6 +237,11 @@ interface
                           end;
                  Result := head + return_string + foot;
                 end;
+                 
+            function copy(): field;
+                begin
+                 Result := new field(values);
+                end;
     end;
     
     
@@ -459,7 +464,7 @@ implementation
     function multiply(a,b:field): field;
         begin
          var (big_field, small_field) := a.shape.Product > b.shape.Product?
-                                            (a, b) : (b, a);
+                                            (a.copy, b.copy) : (b.copy, a.copy);
          var row_mod := big_field.row_number mod small_field.row_number;
          var column_mod := big_field.column_number mod small_field.column_number;
          if (row_mod <> 0) or (column_mod <> 0) then
