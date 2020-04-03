@@ -151,11 +151,34 @@ interface
                 begin
                  var s := 0.0;
                  for var i:= 0 to row_number - 1 do
-                    for var j:= 0 to column_number - 1 do
-                        begin
-                         s += values[i,j];
-                        end;
+                     for var j:= 0 to column_number - 1 do
+                         begin
+                          s += values[i,j];
+                         end;
                  Result := s;
+                end;
+            
+            /// wenn axis = 0, Summe aller Spalten; wenn axis = 1, Summe aller Zeilen
+            function sum(axis:integer): field;
+                begin
+                 var return_array := new Real[1];
+                 if axis = 0 then
+                     begin
+                      setlength(return_array, column_number);
+                      for var column:= 0 to column_number-1 do
+                          for var row:= 0 to row_number-1 do
+                              return_array[column] += values[row,column];
+                     end
+                 else if axis = 1 then
+                     begin
+                      setlength(return_array, row_number);
+                      for var row:= 0 to row_number-1 do
+                          for var column:= 0 to column_number-1 do
+                              return_array[row] += values[row,column];
+                     end
+                 else
+                     raise new Exception('No third dimension');
+                 Result := new field(return_array);
                 end;
                 
             /// Dimensionen der Matrize
