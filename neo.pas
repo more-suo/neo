@@ -307,16 +307,13 @@ interface
     /// Transponierung der Matrize
     function transpose(field_a:field): field;
     
+    
     /// bei Matrize - Summe von jener Spalte, bei Vektor - Summe aller Elemente
     function sum(field_a:field): Object;
     
     
-    /// Innerer Produkt einer Matrize
-    function inner(field_a, field_b:field): Object;
-    
-    
-    /// Skalarprodukt von zwei Matrizen
-    function dot(field_a, field_b: field): field;
+    /// Summe des Skalarproduktes von zwei Vektoren
+    function dot(field_a, field_b: field): real;
         
         
 implementation
@@ -532,22 +529,12 @@ implementation
         end;
     
     
-    // inner() - Implementierung
-    function inner(field_a, field_b:field): Object;
-        begin
-         if field_a.column_number <> field_b.column_number then
-             raise new System.ArithmeticException('Different column count');
-         Result := sum(transpose(multiply(field_a, field_b)));
-        end;
-    
-    
     // dot() - Implementierung 
-    function dot(field_a, field_b: field): field;
+    function dot(field_a, field_b: field): real;
         begin
-         if ((field_a.row_number, field_b.row_number) = (1, 1)) and
-            (field_a.column_number = field_b.column_number) then
-             begin
-              
-             end;
+         if ((field_a.row_number, field_b.row_number) <> (1, 1)) or
+            (field_a.column_number <> field_b.column_number) then
+             raise new Exception('Two vectors excepted');
+         Result := multiply(field_a, field_b).sum;
         end;
 end.
