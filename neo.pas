@@ -68,7 +68,9 @@ interface
                          return_field[i, j] := field_a.values[i, j] + field_b.values[i, j];
                  Result := new field(return_field);    
                 end;
-            
+           
+            /// Matrizenaddition:
+            /// field_sum += field_b; 
             class procedure operator += (var field_a:field; const field_b:field);
                 begin
                  if not compare(field_a.shape, field_b.shape) then
@@ -88,8 +90,10 @@ interface
                          return_field[i, j] := field_a.values[i, j] - field_b.values[i, j];
                  Result := new field(return_field);
                 end;       
-                
-             class procedure operator -= (var field_a:field; const field_b:field);
+            
+            /// Matrizensubtraktion:
+            /// field_difference -= field_b;    
+            class procedure operator -= (var field_a:field; const field_b:field);
                 begin
                  if not compare(field_a.shape, field_b.shape) then
                         raise new Exception('Wrong array sizes');
@@ -107,6 +111,8 @@ interface
                  Result := new field(return_field);
                 end;
             
+            /// Matrizenmultiplikation mit Zahlen:
+            /// field_mult *= b;
             class procedure operator *= (var field_a:field; const b:Real);
                 begin
                  field_a := field_a * b;
@@ -120,7 +126,7 @@ interface
                 end;
                 
             /// Matrizendivision mit Zahlen:
-            /// field_mult := field_a / b;
+            /// field_div := field_a / b;
             class function operator / (field_a:field; b:Real): field;
                 begin
                  if b = 0 then
@@ -128,6 +134,8 @@ interface
                  Result := field_a * (1/b);
                 end;
             
+            /// Matrizendivision mit Zahlen:
+            /// field_div /= b;
             class procedure operator /= (var field_a:field; const b:Real);
                 begin
                  field_a := field_a / b;
@@ -223,8 +231,7 @@ interface
                  Result := max;
                 end;
                 
-            /// kehrt den laengsten Wert der Matrize zurueck, wenn axis = 0 laengster Wert in der Spaltennummer num,
-            /// wenn axis = 1 laengster Wert in der Zeile
+            /// kehrt den laengsten Wert der Matrize zurueck
             function get_longest(): real;
                 begin
                  var max := values[0,0];
@@ -234,7 +241,9 @@ interface
                              max := values[row, column];
                  Result := max;
                 end;
-                
+            
+            /// Wenn axis = 0 laengster Wert in der Spaltennummer num,
+            /// wenn axis = 1 laengster Wert in der Zeile
             function get_longest(axis, num:integer): real;
                 begin
                  if axis = 0 then
@@ -279,7 +288,8 @@ interface
                           end;
                  Result := head + return_string + foot;
                 end;
-                 
+             
+            /// Erstellt eine Kopie der Matrize
             function copy(): field;
                 begin
                  Result := new field(values);
@@ -327,8 +337,11 @@ interface
     function transpose(field_a:field): field;
     
     
-    /// bei Matrize - Summe von jener Spalte, bei Vektor - Summe aller Elemente
-    function sum(field_a:field): Object;
+    /// Summe aller Elemente der Matrize
+    function sum(field_a:field): real;
+    
+    /// wenn axis = 0, Summe aller Spalten; wenn axis = 1, Summe aller Zeilen
+    function sum(field_a:field; axis:integer): field;
     
     
     /// Summe des Skalarproduktes von zwei Vektoren
@@ -532,22 +545,17 @@ implementation
         
     
     // sum() - Implementierung
-    function sum(field_a:field): Object;
+    function sum(field_a:field): Real;
         begin
-         if field_a.row_number = 1 then
-            Result := field_a.sum
-         else
-            begin
-             var return_array := new Real[1];
-             setlength(return_array, field_a.column_number);
-             for var i:= 0 to field_a.row_number-1 do
-                for var j:= 0 to field_a.column_number-1 do
-                    return_array[j] += field_a[i,j];
-             Result := return_array;
-            end;
+         Result := field_a.sum;
         end;
+
+    function sum(field_a:field; axis:integer): field;
+        begin
+         Result := field_a.sum(axis);
+        end;    
     
-    
+
     // dot() - Implementierung 
     function dot(field_a, field_b: field): field;
         begin
