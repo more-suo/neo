@@ -107,37 +107,56 @@ interface
                  Result := new field(return_field);
                 end;
             
+            class procedure operator *= (var field_a:field; const b:Real);
+                begin
+                 field_a := field_a * b;
+                end;
+            
             /// Matrizenmultiplikation mit Zahlen:
             /// field_mult := a * field_b;
             class function operator * (a:Real; field_b:field): field;
                 begin
                  Result := field_b * a;
                 end;
-            
+                
             /// Matrizendivision mit Zahlen:
             /// field_mult := field_a / b;
             class function operator / (field_a:field; b:Real): field;
                 begin
+                 if b = 0 then
+                     raise new System.ArithmeticException('ZeroDivisionError');
                  Result := field_a * (1/b);
                 end;
-                
+            
+            class procedure operator /= (var field_a:field; const b:Real);
+                begin
+                 field_a := field_a / b;
+                end;
+            
             /// Matrizenmultiplikation:
             /// field_mult := field_a * field_b;                  
             class function operator * (field_a, field_b:field): field;
                 begin
-                 if field_a.column_number = field_b.row_number then
-                        raise new Exception('Wrong array sizes');
-                 var return_field := new field(field_a.row_number, field_b.column_number);
-                 for var i:= 0 to return_field.row_number - 1 do
-                     for var j:= 0 to return_field.column_number - 1 do
-                         for var k:= 0 to field_a.column_number - 1 do
-                             return_field.values[i,j]+= field_a.values[i, k] * field_b.values[k, j];
-                 Result := return_field;
+                  var (big_field, small_field) := field_a.shape.Product > field_b.shape.Product?
+                                            (field_a.copy, field_b.copy) : (field_b.copy, field_a.copy);
+                  var row_mod := big_field.row_number mod small_field.row_number;
+                  var column_mod := big_field.column_number mod small_field.column_number;
+                  if (row_mod <> 0) or (column_mod <> 0) then
+                      raise new Exception('Fields could not be broadcast together');
+                  var row_div := big_field.row_number div small_field.row_number;
+                  var column_div := big_field.column_number div small_field.column_number;
+                  for var row_block:= 0 to row_div-1 do
+                      for var column_block:= 0 to column_div-1 do
+                          for var row:= 0 to small_field.row_number-1 do
+                             for var column:= 0 to small_field.column_number-1 do
+                                 big_field[row+row_block*small_field.row_number,column+column_block*small_field.column_number] *= 
+                                     small_field[row,column];
+                  Result := big_field;
                 end;
                 
             /// Exponentiation vom jeden Matrizenelements:
             /// field_exp := field_a ** b
-            class function operator ** (field_a:field; b:real): field;
+            class function operator ** (var field_a:field; const b:real): field;
                 begin
                  var return_field := new Real[field_a.row_number, field_a.column_number];
                  for var i:= 0 to field_a.row_number - 1 do
@@ -145,7 +164,7 @@ interface
                          return_field[i, j] :=  field_a.values[i, j] ** b;
                  Result := new field(return_field);
                 end;
-                 
+                
             /// Summe aller Elemente der Matrize
             function sum(): real;
                 begin
@@ -313,7 +332,7 @@ interface
     
     
     /// Summe des Skalarproduktes von zwei Vektoren
-    function dot(field_a, field_b: field): real;
+    function dot(field_a, field_b: field): field;
         
         
 implementation
@@ -530,11 +549,21 @@ implementation
     
     
     // dot() - Implementierung 
-    function dot(field_a, field_b: field): real;
+    function dot(field_a, field_b: field): field;
         begin
-         if ((field_a.row_number, field_b.row_number) <> (1, 1)) or
-            (field_a.column_number <> field_b.column_number) then
-             raise new Exception('Two vectors excepted');
-         Result := multiply(field_a, field_b).sum;
+         if ((field_a.row_number, field_b.row_number) = (1, 1)) and
+            (field_a.column_number = field_b.column_number) then
+             Result := field_a * field_b
+         else if (field_a.column_number = field_b.row_number) then
+            begin
+            var return_field := new field(field_a.row_number, field_b.column_number);
+             for var i:= 0 to return_field.row_number - 1 do
+                 for var j:= 0 to return_field.column_number - 1 do
+                     for var k:= 0 to field_a.column_number - 1 do
+                         return_field.values[i,j]+= field_a.values[i, k] * field_b.values[k, j];
+             Result := return_field;
+            end
+         else
+            raise new Exception('Wrong array sizes');
         end;
 end.
