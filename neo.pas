@@ -205,6 +205,13 @@ interface
                   Result := big_field;
                 end;
                 
+            /// Matrizenmultiplikation:
+            /// field_mult *= field_b;                  
+            class procedure operator *= (var field_a:field; const field_b:field);
+                begin
+                 field_a := field_a * field_b;
+                end;
+                
             /// Exponentiation vom jeden Matrizenelements:
             /// field_exp := field_a ** b
             class function operator ** (var field_a:field; const b:real): field;
@@ -310,26 +317,45 @@ interface
             /// konvertiert Matriz zu String
             function ToString: string; override;
                 begin
-                 var (head, foot) := row_number = 1? ('Array(', '])'):('Array([', '],)');
+                 var head := row_number = 1? 'Array(': 'Array([';
+                 var foot := '])';
                  var return_string := '';
                  var newline := chr(13) + chr(10);
                  var spaces := '';
-                 for var row:= 0 to row_number-1 do
-                      for var column := 0 to column_number-1 do
+                 
+                 if column_number <> 1 then
+                     begin
+                      for var row:= 0 to row_number-1 do
+                           for var column := 0 to column_number-1 do
+                               begin
+                                spaces := ' ' * (self.get_longest(0, column).ToString.Length - values[row,column].ToString.Length);
+                                if (column, row) = (0, 0) then
+                                    return_string += '[' + spaces + values[row,column].ToString + ', '
+                                else if (column = 0) then
+                                    return_string += ' ' * head.Length + '[' + spaces + values[row,column].ToString + ', '
+                                else if (row, column) = (row_number-1, column_number-1) then
+                                    return_string += spaces + values[row,column].ToString + ']'
+                                else if column = column_number-1 then
+                                    return_string += spaces + values[row,column].ToString + '], ' + newline
+                                else
+                                    return_string += spaces + values[row,column].ToString + ', ';
+                               end;
+                      Result := head + return_string + foot;
+                     end
+                 else
+                     begin
+                      for var row:= 0 to row_number-1 do
                           begin
-                           spaces := ' ' * (self.get_longest(0, column).ToString.Length - values[row,column].ToString.Length);
-                           if (column, row) = (0, 0) then
-                               return_string += '[' + spaces + values[row,column].ToString + ', '
-                           else if (column = 0) then
-                               return_string += ' ' * head.Length + '[' + spaces + values[row,column].ToString + ', '
-                           else if (row, column) = (row_number-1, column_number-1) then
-                               return_string += spaces + values[row,column].ToString
-                           else if column = column_number-1 then
-                               return_string += spaces + values[row,column].ToString + '], ' + newline
+                           spaces := ' ' * (self.get_longest().ToString.Length - values[row,0].ToString.Length);
+                           if row = 0 then
+                               return_string += '[' +  spaces + values[row, 0].ToString +'],' + newline
+                           else if row = row_number - 1 then
+                               return_string += head.Length * ' ' + '[' +  spaces + values[row, 0].ToString + ']'
                            else
-                               return_string += spaces + values[row,column].ToString + ', ';
+                               return_string += head.Length * ' ' + '[' +  spaces + values[row, 0].ToString +'],' + newline;
                           end;
-                 Result := head + return_string + foot;
+                      Result := head + return_string + foot; 
+                     end;
                 end;
              
             /// Erstellt eine Kopie der Matrize
@@ -597,7 +623,7 @@ implementation
         begin
          Result := field_a.sum(axis);
         end;    
-    
+
 
     // dot() - Implementierung 
     function dot(field_a, field_b: field): field;
