@@ -57,6 +57,24 @@ interface
                 end;  
             
             /// Matrizenaddition:
+            /// field_sum := field_a + b;
+            class function operator + (field_a:field; b:Real): field;
+                begin
+                 var return_field := new Real[field_a.row_number, field_a.column_number];
+                 for var i:= 0 to return_field.RowCount-1 do
+                     for var j:= 0 to return_field.ColCount-1 do
+                         return_field[i, j] := field_a.values[i, j] + b;
+                 Result := new field(return_field);    
+                end;
+           
+            /// Matrizenaddition:
+            /// field_sum := a + field_b;
+            class function operator + (a:Real; field_b:field): field;
+                begin
+                 Result := field_b + a;    
+                end;
+           
+            /// Matrizenaddition:
             /// field_sum := field_a + field_b;
             class function operator + (field_a, field_b:field): field;
                 begin
@@ -78,6 +96,24 @@ interface
                  field_a := field_a + field_b;
                 end;
             
+            /// Matrizenaddition:
+            /// field_sum += b; 
+            class procedure operator += (var field_a:field; const b:Real);
+                begin
+                 field_a := field_a + b;
+                end;
+                        
+            /// Matrizensubtraktion:
+            /// field_sum := field_a - b;
+            class function operator - (field_a:field; b:Real): field;
+                begin
+                 var return_field := new Real[field_a.row_number, field_a.column_number];
+                 for var i:= 0 to return_field.RowCount-1 do
+                     for var j:= 0 to return_field.ColCount-1 do
+                         return_field[i, j] := field_a.values[i, j] - b;
+                 Result := new field(return_field);    
+                end;
+                
             /// Matrizensubtraktion:
             /// field_difference := field_a - field_b;
             class function operator - (field_a, field_b:field): field;
@@ -100,6 +136,13 @@ interface
                  field_a := field_a - field_b;
                 end;
             
+            /// Matrizensubtraktion:
+            /// field_sum -= b; 
+            class procedure operator -= (var field_a:field; const b:Real);
+                begin
+                 field_a := field_a - b;
+                end;
+                
             /// Matrizenmultiplikation mit Zahlen:
             /// field_mult := field_a * b;
             class function operator * (field_a:field; b:Real): field;
