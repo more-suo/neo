@@ -188,21 +188,13 @@ interface
             /// field_mult := field_a * field_b;                  
             class function operator * (field_a, field_b:field): field;
                 begin
-                  var (big_field, small_field) := field_a.shape.Product > field_b.shape.Product?
-                                            (field_a.copy, field_b.copy) : (field_b.copy, field_a.copy);
-                  var row_mod := big_field.row_number mod small_field.row_number;
-                  var column_mod := big_field.column_number mod small_field.column_number;
-                  if (row_mod <> 0) or (column_mod <> 0) then
-                      raise new Exception('Fields could not be broadcast together');
-                  var row_div := big_field.row_number div small_field.row_number;
-                  var column_div := big_field.column_number div small_field.column_number;
-                  for var row_block:= 0 to row_div-1 do
-                      for var column_block:= 0 to column_div-1 do
-                          for var row:= 0 to small_field.row_number-1 do
-                             for var column:= 0 to small_field.column_number-1 do
-                                 big_field[row+row_block*small_field.row_number,column+column_block*small_field.column_number] *= 
-                                     small_field[row,column];
-                  Result := big_field;
+                 if not compare(field_a.shape, field_b.shape) then
+                        raise new System.ArithmeticException('Wrong array sizes');
+                 var return_field := new Real[field_a.row_number, field_a.column_number];
+                 for var i:= 0 to return_field.RowCount-1 do
+                     for var j:= 0 to return_field.ColCount-1 do
+                         return_field[i, j] := field_a.values[i, j] * field_b.values[i, j];
+                 Result := new field(return_field);
                 end;
                 
             /// Matrizenmultiplikation:
