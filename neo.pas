@@ -1,9 +1,6 @@
 ﻿unit neo;
 
 interface
-    
-    /// Vergleich von zwei arrays of integer
-    function compare(a,b:array of integer): boolean;
 
         
     type
@@ -29,334 +26,146 @@ interface
             /// Deklaration einer Matrize durch Massiv:  
             /// m := new Matrix(arr[,]);    
             constructor (existing_arr:array[,] of real);
-                begin
-                 (row_number, column_number) := 
-                  (existing_arr.RowCount, existing_arr.ColCount);
-                 values := new Real[row_number, column_number];
-                 for var i:= 0 to row_number - 1 do
-                     for var j:= 0 to column_number - 1 do 
-                         values[i, j] := existing_arr[i, j];
-                end;
-            
+                
             /// Deklaration einer Matrize durch Massiv:  
             /// m := new Matrix(arr[]);          
             constructor (existing_arr:array of real);
-                begin
-                 (row_number, column_number) := (1, existing_arr.Length);
-                 values := new Real[row_number, column_number];
-                 for var i:= 0 to column_number - 1 do
-                         values[0, i] := existing_arr[i];
-                end;
-            
+                
             /// Deklaration einer Nullmatrize durch Zeilen- & Spaltenanzahl:  
             /// m := new Matrix(7, 31);  
             constructor (rows, columns:integer);
-                begin
-                 (row_number, column_number) := (rows, columns);
-                 values := new Real[row_number, column_number];
-                end;  
             
+            /// konvertiert Matriz zu String
+            function ToString: string; override;
+    
             /// Matrizenaddition:
             /// field_sum := field_a + b;
             class function operator + (field_a:field; b:Real): field;
-                begin
-                 var return_field := new Real[field_a.row_number, field_a.column_number];
-                 for var i:= 0 to return_field.RowCount-1 do
-                     for var j:= 0 to return_field.ColCount-1 do
-                         return_field[i, j] := field_a.values[i, j] + b;
-                 Result := new field(return_field);    
-                end;
            
             /// Matrizenaddition:
             /// field_sum := a + field_b;
             class function operator + (a:Real; field_b:field): field;
-                begin
-                 Result := field_b + a;    
-                end;
            
             /// Matrizenaddition:
             /// field_sum := field_a + field_b;
             class function operator + (field_a, field_b:field): field;
-                begin
-                 if not compare(field_a.shape, field_b.shape) then
-                        raise new System.ArithmeticException('Wrong array sizes');
-                 var return_field := new Real[field_a.row_number, field_a.column_number];
-                 for var i:= 0 to return_field.RowCount-1 do
-                     for var j:= 0 to return_field.ColCount-1 do
-                         return_field[i, j] := field_a.values[i, j] + field_b.values[i, j];
-                 Result := new field(return_field);    
-                end;
            
             /// Matrizenaddition:
             /// field_sum += field_b; 
             class procedure operator += (var field_a:field; const field_b:field);
-                begin
-                 if not compare(field_a.shape, field_b.shape) then
-                        raise new Exception('Wrong array sizes');
-                 field_a := field_a + field_b;
-                end;
             
             /// Matrizenaddition:
             /// field_sum += b; 
             class procedure operator += (var field_a:field; const b:Real);
-                begin
-                 field_a := field_a + b;
-                end;
                         
             /// Matrizensubtraktion:
             /// field_sum := field_a - b;
             class function operator - (field_a:field; b:Real): field;
-                begin
-                 var return_field := new Real[field_a.row_number, field_a.column_number];
-                 for var i:= 0 to return_field.RowCount-1 do
-                     for var j:= 0 to return_field.ColCount-1 do
-                         return_field[i, j] := field_a.values[i, j] - b;
-                 Result := new field(return_field);    
-                end;
                 
             /// Matrizensubtraktion:
             /// field_difference := field_a - field_b;
             class function operator - (field_a, field_b:field): field;
-                begin
-                 if not compare(field_a.shape, field_b.shape) then
-                        raise new System.ArithmeticException('Wrong array sizes');
-                 var return_field := new Real[field_a.row_number, field_a.column_number];
-                 for var i:= 0 to return_field.RowCount-1 do
-                     for var j:= 0 to return_field.ColCount-1 do
-                         return_field[i, j] := field_a.values[i, j] - field_b.values[i, j];
-                 Result := new field(return_field);
-                end;       
             
             /// Matrizensubtraktion:
             /// field_difference -= field_b;    
             class procedure operator -= (var field_a:field; const field_b:field);
-                begin
-                 if not compare(field_a.shape, field_b.shape) then
-                        raise new Exception('Wrong array sizes');
-                 field_a := field_a - field_b;
-                end;
             
             /// Matrizensubtraktion:
             /// field_sum -= b; 
             class procedure operator -= (var field_a:field; const b:Real);
-                begin
-                 field_a := field_a - b;
-                end;
                 
             /// Matrizenmultiplikation mit Zahlen:
             /// field_mult := field_a * b;
             class function operator * (field_a:field; b:Real): field;
-                begin
-                 var return_field := new Real[field_a.row_number, field_a.column_number];
-                 for var i:= 0 to field_a.values.RowCount - 1 do
-                     for var j:= 0 to field_a.values.ColCount - 1 do
-                         return_field[i, j] :=  field_a.values[i, j] * b;
-                 Result := new field(return_field);
-                end;
             
             /// Matrizenmultiplikation mit Zahlen:
             /// field_mult *= b;
             class procedure operator *= (var field_a:field; const b:Real);
-                begin
-                 field_a := field_a * b;
-                end;
             
             /// Matrizenmultiplikation mit Zahlen:
             /// field_mult := a * field_b;
             class function operator * (a:Real; field_b:field): field;
-                begin
-                 Result := field_b * a;
-                end;
                 
             /// Matrizendivision mit Zahlen:
             /// field_div := field_a / b;
             class function operator / (field_a:field; b:Real): field;
-                begin
-                 if b = 0 then
-                     raise new System.ArithmeticException('ZeroDivisionError');
-                 Result := field_a * (1/b);
-                end;
             
             /// Matrizendivision mit Zahlen:
             /// field_div /= b;
             class procedure operator /= (var field_a:field; const b:Real);
-                begin
-                 field_a := field_a / b;
-                end;
             
             /// Matrizenmultiplikation:
             /// field_mult := field_a * field_b;                  
             class function operator * (field_a, field_b:field): field;
-                begin
-                 if not compare(field_a.shape, field_b.shape) then
-                        raise new System.ArithmeticException('Wrong array sizes');
-                 var return_field := new Real[field_a.row_number, field_a.column_number];
-                 for var i:= 0 to return_field.RowCount-1 do
-                     for var j:= 0 to return_field.ColCount-1 do
-                         return_field[i, j] := field_a.values[i, j] * field_b.values[i, j];
-                 Result := new field(return_field);
-                end;
                 
             /// Matrizenmultiplikation:
             /// field_mult *= field_b;                  
             class procedure operator *= (var field_a:field; const field_b:field);
-                begin
-                 field_a := field_a * field_b;
-                end;
                 
             /// Exponentiation vom jeden Matrizenelements:
             /// field_exp := field_a ** b
             class function operator ** (var field_a:field; const b:real): field;
-                begin
-                 var return_field := new Real[field_a.row_number, field_a.column_number];
-                 for var i:= 0 to field_a.row_number - 1 do
-                     for var j:= 0 to field_a.column_number - 1 do
-                         return_field[i, j] :=  field_a.values[i, j] ** b;
-                 Result := new field(return_field);
-                end;
                 
             /// Summe aller Elemente der Matrize
             function sum(): real;
-                begin
-                 var s := 0.0;
-                 for var i:= 0 to row_number - 1 do
-                     for var j:= 0 to column_number - 1 do
-                         begin
-                          s += values[i,j];
-                         end;
-                 Result := s;
-                end;
             
             /// wenn axis = 0, Summe aller Spalten; wenn axis = 1, Summe aller Zeilen
             function sum(axis:integer): field;
-                begin
-                 var return_array := new Real[1];
-                 if axis = 0 then
-                     begin
-                      setlength(return_array, column_number);
-                      for var column:= 0 to column_number-1 do
-                          for var row:= 0 to row_number-1 do
-                              return_array[column] += values[row,column];
-                     end
-                 else if axis = 1 then
-                     begin
-                      setlength(return_array, row_number);
-                      for var row:= 0 to row_number-1 do
-                          for var column:= 0 to column_number-1 do
-                              return_array[row] += values[row,column];
-                     end
-                 else
-                     raise new Exception('No third dimension');
-                 Result := new field(return_array);
-                end;
                 
             /// Dimensionen der Matrize
             function shape(): array of integer;
-                begin
-                 Result := Arr(row_number, column_number);
-                end;
               
             /// das Werte der Matrize
             function get_value(): array[,] of real;
-                begin
-                 Result := values;
-                end;
             
             /// kehrt den groeßten Wert der Matrize zurueck
             function get_max(): real;
-                begin
-                 var max := values[0,0];
-                 for var row:= 0 to row_number-1 do
-                     for var column:= 0 to column_number-1 do
-                         if values[row, column] >  max then
-                             max := values[row, column];
-                 Result := max;
-                end;
                 
             /// kehrt den laengsten Wert der Matrize zurueck
             function get_longest(): real;
-                begin
-                 var max := values[0,0];
-                 for var row:= 0 to row_number-1 do
-                     for var column:= 0 to column_number-1 do
-                         if values[row, column].ToString.Length >  max.ToString.Length then
-                             max := values[row, column];
-                 Result := max;
-                end;
             
             /// Wenn axis = 0 laengster Wert in der Spaltennummer num,
             /// wenn axis = 1 laengster Wert in der Zeile
             function get_longest(axis, num:integer): real;
-                begin
-                 if axis = 0 then
-                     begin
-                      var max := values[0, num];
-                      for var row:= 0 to row_number-1 do
-                              if values[row, num].ToString.Length >  max.ToString.Length then
-                                  max := values[row, num];
-                      Result := max;
-                     end
-                 else if axis = 1 then
-                    begin
-                     var max := values[num,0];
-                     for var column:= 0 to column_number-1 do
-                             if values[num, column].ToString.Length >  max.ToString.Length then
-                                 max := values[num, column];
-                     Result := max;
-                    end
-                end;
-            
-            /// konvertiert Matriz zu String
-            function ToString: string; override;
-                begin
-                 var head := row_number = 1? 'Array(': 'Array([';
-                 var foot := '])';
-                 var return_string := '';
-                 var newline := chr(13) + chr(10);
-                 var spaces := '';
-                 
-                 if column_number <> 1 then
-                     begin
-                      for var row:= 0 to row_number-1 do
-                           for var column := 0 to column_number-1 do
-                               begin
-                                spaces := ' ' * (self.get_longest(0, column).ToString.Length - values[row,column].ToString.Length);
-                                if (column, row) = (0, 0) then
-                                    return_string += '[' + spaces + values[row,column].ToString + ', '
-                                else if (column = 0) then
-                                    return_string += ' ' * head.Length + '[' + spaces + values[row,column].ToString + ', '
-                                else if (row, column) = (row_number-1, column_number-1) then
-                                    return_string += spaces + values[row,column].ToString + ']'
-                                else if column = column_number-1 then
-                                    return_string += spaces + values[row,column].ToString + '], ' + newline
-                                else
-                                    return_string += spaces + values[row,column].ToString + ', ';
-                               end;
-                      Result := head + return_string + foot;
-                     end
-                 else
-                     begin
-                      for var row:= 0 to row_number-1 do
-                          begin
-                           spaces := ' ' * (self.get_longest().ToString.Length - values[row,0].ToString.Length);
-                           if row = 0 then
-                               return_string += '[' +  spaces + values[row, 0].ToString +'],' + newline
-                           else if row = row_number - 1 then
-                               return_string += head.Length * ' ' + '[' +  spaces + values[row, 0].ToString + ']'
-                           else
-                               return_string += head.Length * ' ' + '[' +  spaces + values[row, 0].ToString +'],' + newline;
-                          end;
-                      Result := head + return_string + foot; 
-                     end;
-                end;
-             
+                     
             /// Erstellt eine Kopie der Matrize
             function copy(): field;
-                begin
-                 Result := new field(values);
-                end;
     end;
     
+    
+    /// Summe aller Elemente der Matrize
+    function sum(a:field): real;
+    
+    /// wenn axis = 0, Summe aller Spalten; wenn axis = 1, Summe aller Zeilen
+    function sum(a:field; axis:integer): field;
+        
+    
+    /// Dimensionen der Matrize
+    function shape(a:field): array of integer;
+      
+      
+    /// das Werte der Matrize
+    function get_value(a:field): array[,] of real;
+    
+    
+    /// kehrt den groeßten Wert der Matrize zurueck
+    function get_max(a:field): real;
+      
+      
+    /// kehrt den laengsten Wert der Matrize zurueck
+    function get_longest(a:field): real;
+    
+    /// Wenn axis = 0 laengster Wert in der Spaltennummer num,
+    /// wenn axis = 1 laengster Wert in der Zeile
+    function get_longest(a:field; axis, num:integer): real;
+      
+      
+    /// Erstellt eine Kopie der Matrize
+    function copy(a:field): field;
+    
+    
+    /// Vergleich von zwei arrays of integer
+//    function compare(a,b:array of integer): boolean;
     
     /// Anwendung einer Funktion an alle Elemente einer Neo
     function map(func: float_func; field_a: field): field;
@@ -398,33 +207,369 @@ interface
     function transpose(field_a:field): field;
     
     
-    /// Summe aller Elemente der Matrize
-    function sum(field_a:field): real;
-    
-    /// wenn axis = 0, Summe aller Spalten; wenn axis = 1, Summe aller Zeilen
-    function sum(field_a:field; axis:integer): field;
-    
-    
     /// Summe des Skalarproduktes von zwei Vektoren
     function dot(field_a, field_b: field): field;
         
         
 implementation
-
-    // compare() - Implementierung
-    function compare(a, b:array of integer): boolean;
-        begin
+    
+   function compare(a, b:array of integer): boolean;
+        begin 
+         Result := False;
          if a.Length <> b.Length then
-             raise new System.ArithmeticException('Different array sizes');
+             exit;
          for var i:= 0 to a.Length-1 do
              if a[i] <> b[i] then
-                 begin
-                  Result := False;
                   exit;
-                 end;
          Result := True;
         end;
         
+        
+    // field.Create() - Implementierung
+    constructor field.Create(existing_arr:array[,] of real);
+        begin
+         (row_number, column_number) := 
+          (existing_arr.RowCount, existing_arr.ColCount);
+         values := new Real[row_number, column_number];
+         for var i:= 0 to row_number - 1 do
+             for var j:= 0 to column_number - 1 do 
+                 values[i, j] := existing_arr[i, j];
+        end;
+    
+    constructor field.Create(existing_arr:array of real);
+        begin
+         (row_number, column_number) := (1, existing_arr.Length);
+         values := new Real[row_number, column_number];
+         for var i:= 0 to column_number - 1 do
+                 values[0, i] := existing_arr[i];
+        end;
+    
+    constructor field.Create(rows, columns:integer);
+        begin
+         (row_number, column_number) := (rows, columns);
+         values := new Real[row_number, column_number];
+        end;  
+    
+    // field.ToString() - Implementierung
+    function field.ToString: string;
+        begin
+         var head := row_number = 1? 'Array(': 'Array([';
+         var foot := '])';
+         var return_string := '';
+         var newline := chr(13) + chr(10);
+         var spaces := '';
+         
+         if column_number <> 1 then
+             begin
+              for var row:= 0 to row_number-1 do
+                   for var column := 0 to column_number-1 do
+                       begin
+                        spaces := ' ' * (self.get_longest(0, column).ToString.Length - values[row,column].ToString.Length);
+                        if (column, row) = (0, 0) then
+                            return_string += '[' + spaces + values[row,column].ToString + ', '
+                        else if (column = 0) then
+                            return_string += ' ' * head.Length + '[' + spaces + values[row,column].ToString + ', '
+                        else if (row, column) = (row_number-1, column_number-1) then
+                            return_string += spaces + values[row,column].ToString + ']'
+                        else if column = column_number-1 then
+                            return_string += spaces + values[row,column].ToString + '], ' + newline
+                        else
+                            return_string += spaces + values[row,column].ToString + ', ';
+                       end;
+              Result := head + return_string + foot;
+             end
+         else
+             begin
+              for var row:= 0 to row_number-1 do
+                  begin
+                   spaces := ' ' * (self.get_longest().ToString.Length - values[row,0].ToString.Length);
+                   if row = 0 then
+                       return_string += '[' +  spaces + values[row, 0].ToString +'],' + newline
+                   else if row = row_number - 1 then
+                       return_string += head.Length * ' ' + '[' +  spaces + values[row, 0].ToString + ']'
+                   else
+                       return_string += head.Length * ' ' + '[' +  spaces + values[row, 0].ToString +'],' + newline;
+                  end;
+              Result := head + return_string + foot; 
+             end;
+        end;
+        
+    // field.operator + () and field.operator += () - Implementierung
+    class function field.operator + (field_a:field; b:Real): field;
+        begin
+         var return_field := new Real[field_a.row_number, field_a.column_number];
+         for var i:= 0 to return_field.RowCount-1 do
+             for var j:= 0 to return_field.ColCount-1 do
+                 return_field[i, j] := field_a.values[i, j] + b;
+         Result := new field(return_field);    
+        end;
+        
+    class function field.operator + (a:Real; field_b:field): field;
+        begin
+         Result := field_b + a;    
+        end;
+        
+    class function field.operator + (field_a, field_b:field): field;
+        begin
+         if not compare(field_a.shape, field_b.shape) then
+                raise new System.ArithmeticException('Wrong array sizes');
+         var return_field := new Real[field_a.row_number, field_a.column_number];
+         for var i:= 0 to return_field.RowCount-1 do
+             for var j:= 0 to return_field.ColCount-1 do
+                 return_field[i, j] := field_a.values[i, j] + field_b.values[i, j];
+         Result := new field(return_field);    
+        end;
+        
+    class procedure field.operator += (var field_a:field; const field_b:field);
+        begin
+         if not compare(field_a.shape, field_b.shape) then
+                raise new Exception('Wrong array sizes');
+         field_a := field_a + field_b;
+        end;
+    
+    class procedure field.operator += (var field_a:field; const b:Real);
+        begin
+         field_a := field_a + b;
+        end;
+        
+    // field.operator - () and field.operator -= () - Implementierung        
+    class function field.operator - (field_a:field; b:Real): field;
+        begin
+         var return_field := new Real[field_a.row_number, field_a.column_number];
+         for var i:= 0 to return_field.RowCount-1 do
+             for var j:= 0 to return_field.ColCount-1 do
+                 return_field[i, j] := field_a.values[i, j] - b;
+         Result := new field(return_field);    
+        end;
+        
+    class function field.operator - (field_a, field_b:field): field;
+        begin
+         if not compare(field_a.shape, field_b.shape) then
+                raise new System.ArithmeticException('Wrong array sizes');
+         var return_field := new Real[field_a.row_number, field_a.column_number];
+         for var i:= 0 to return_field.RowCount-1 do
+             for var j:= 0 to return_field.ColCount-1 do
+                 return_field[i, j] := field_a.values[i, j] - field_b.values[i, j];
+         Result := new field(return_field);
+        end;       
+    
+    class procedure field.operator -= (var field_a:field; const field_b:field);
+        begin
+         if not compare(field_a.shape, field_b.shape) then
+                raise new Exception('Wrong array sizes');
+         field_a := field_a - field_b;
+        end;
+    
+    class procedure field.operator -= (var field_a:field; const b:Real);
+        begin
+         field_a := field_a - b;
+        end;
+        
+    // field.operator * () and field.operator *= () - Implementierung
+    class function field.operator * (field_a:field; b:Real): field;
+        begin
+         var return_field := new Real[field_a.row_number, field_a.column_number];
+         for var i:= 0 to field_a.values.RowCount - 1 do
+             for var j:= 0 to field_a.values.ColCount - 1 do
+                 return_field[i, j] :=  field_a.values[i, j] * b;
+         Result := new field(return_field);
+        end;
+    
+    class procedure field.operator *= (var field_a:field; const b:Real);
+        begin
+         field_a := field_a * b;
+        end;
+    
+    class function field.operator * (a:Real; field_b:field): field;
+        begin
+         Result := field_b * a;
+        end;
+                          
+    class function field.operator * (field_a, field_b:field): field;
+        begin
+         if not compare(field_a.shape, field_b.shape) then
+                raise new System.ArithmeticException('Wrong array sizes');
+         var return_field := new Real[field_a.row_number, field_a.column_number];
+         for var i:= 0 to return_field.RowCount-1 do
+             for var j:= 0 to return_field.ColCount-1 do
+                 return_field[i, j] := field_a.values[i, j] * field_b.values[i, j];
+         Result := new field(return_field);
+        end;
+                
+    class procedure field.operator *= (var field_a:field; const field_b:field);
+        begin
+         field_a := field_a * field_b;
+        end;
+        
+    // field.operator / () and field.operator /= () - Implementierung
+    class function field.operator / (field_a:field; b:Real): field;
+        begin
+         if b = 0 then
+             raise new System.ArithmeticException('ZeroDivisionError');
+         Result := field_a * (1/b);
+        end;
+    
+    class procedure field.operator /= (var field_a:field; const b:Real);
+        begin
+         field_a := field_a / b;
+        end;
+    
+    // field.operator ** () - Implementierung
+    class function field.operator ** (var field_a:field; const b:real): field;
+        begin
+         var return_field := new Real[field_a.row_number, field_a.column_number];
+         for var i:= 0 to field_a.row_number - 1 do
+             for var j:= 0 to field_a.column_number - 1 do
+                 return_field[i, j] :=  field_a.values[i, j] ** b;
+         Result := new field(return_field);
+        end;
+        
+    // field.sum() - Implementierung
+    function field.sum(): real;
+        begin
+         var s := 0.0;
+         for var i:= 0 to row_number - 1 do
+             for var j:= 0 to column_number - 1 do
+                 begin
+                  s += values[i,j];
+                 end;
+         Result := s;
+        end;
+    
+    function field.sum(axis:integer): field;
+        begin
+         var return_array := new Real[1];
+         if axis = 0 then
+             begin
+              setlength(return_array, column_number);
+              for var column:= 0 to column_number-1 do
+                  for var row:= 0 to row_number-1 do
+                      return_array[column] += values[row,column];
+             end
+         else if axis = 1 then
+             begin
+              setlength(return_array, row_number);
+              for var row:= 0 to row_number-1 do
+                  for var column:= 0 to column_number-1 do
+                      return_array[row] += values[row,column];
+             end
+         else
+             raise new Exception('No third dimension');
+         Result := new field(return_array);
+        end;
+        
+    // field.shape() - Implementierung
+    function field.shape(): array of integer;
+        begin
+         Result := Arr(row_number, column_number);
+        end;
+      
+    // field.get_value() - Implementierung
+    function field.get_value(): array[,] of real;
+        begin
+         Result := values;
+        end;
+    
+    // field.get_max() - Implementierung
+    function field.get_max(): real;
+        begin
+         var max := values[0,0];
+         for var row:= 0 to row_number-1 do
+             for var column:= 0 to column_number-1 do
+                 if values[row, column] >  max then
+                     max := values[row, column];
+         Result := max;
+        end;
+        
+    // field.get_longest() - Implementierung
+    function field.get_longest(): real;
+        begin
+         var max := values[0,0];
+         for var row:= 0 to row_number-1 do
+             for var column:= 0 to column_number-1 do
+                 if values[row, column].ToString.Length >  max.ToString.Length then
+                     max := values[row, column];
+         Result := max;
+        end;
+    
+    function field.get_longest(axis, num:integer): real;
+        begin
+         if axis = 0 then
+             begin
+              var max := values[0, num];
+              for var row:= 0 to row_number-1 do
+                      if values[row, num].ToString.Length >  max.ToString.Length then
+                          max := values[row, num];
+              Result := max;
+             end
+         else if axis = 1 then
+            begin
+             var max := values[num,0];
+             for var column:= 0 to column_number-1 do
+                     if values[num, column].ToString.Length >  max.ToString.Length then
+                         max := values[num, column];
+             Result := max;
+            end
+        end;
+    
+    // field.copy() - Implementierung
+    function field.copy(): field;
+        begin
+         Result := new field(values);
+        end;
+    
+      
+    // sum() - Implementierung
+    function sum(a:field): real;
+        begin
+         Result := a.sum();
+        end;
+    
+    function sum(a:field; axis:integer): field;
+        begin
+         Result := a.sum(axis);
+        end;
+      
+      
+    // shape() - Implementierung
+    function shape(a:field): array of integer;
+        begin
+         Result := a.shape();
+        end;
+      
+      
+    // get_value() - Implementierung
+    function get_value(a:field): array[,] of real;
+        begin
+         Result := a.get_value();
+        end;
+    
+    
+    // get_max() - Implementierung
+    function get_max(a:field): real;
+        begin
+         Result := a.get_max();
+        end;
+    
+    
+    // get_longest() - Implementierung
+    function get_longest(a:field): real;
+        begin
+         Result := a.get_longest();
+        end;
+    
+    function get_longest(a:field; axis, num:integer): real;
+        begin
+         Result := a.get_longest(axis, num);
+        end;
+   
+   
+    // copy() - Implementierung
+    function copy(a: field): field;
+        begin
+         Result := a.copy();
+        end;
+ 
         
     // map() - Implementierung
     function map(func: float_func; field_a: field): field;
@@ -605,19 +750,7 @@ implementation
         end;
         
     
-    // sum() - Implementierung
-    function sum(field_a:field): Real;
-        begin
-         Result := field_a.sum;
-        end;
-
-    function sum(field_a:field; axis:integer): field;
-        begin
-         Result := field_a.sum(axis);
-        end;    
-
-
-    // dot() - Implementierung 
+    // dot() - Implementierung
     function dot(field_a, field_b: field): field;
         begin
          if ((field_a.row_number, field_b.row_number) = (1, 1)) and
