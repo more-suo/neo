@@ -17,6 +17,8 @@ uses dump;
 //            column_number: integer;
 //            values: array[,] of real;
             value: array of integer;      
+            
+            constructor Create(arr, shape: array of integer; rank, length: integer);
 
         public
         
@@ -25,6 +27,8 @@ uses dump;
 //                read values[row, column]
 //                write values[row, column] := value;
 //                default;
+            length: integer;
+            rank: integer;
             shape: array of integer;
             
             constructor Create(array_ptr: pointer; rank: integer);
@@ -34,73 +38,73 @@ uses dump;
             /// konvertiert Matriz zu String
             function ToString: string; override;
     
+            /// Matrizenaddition:
+            /// field_sum := self_field + b;
+            class function operator + (self_field: field; number: integer): field;
+           
+            /// Matrizenaddition:
+            /// field_sum := a + other_field;
+            class function operator + (number: integer; other_field: field): field;
+           
+            /// Matrizenaddition:
+            /// field_sum := self_field + other_field;
+            class function operator + (self_field, other_field:field): field;
+           
 //            /// Matrizenaddition:
-//            /// field_sum := field_a + b;
-//            class function operator + (self_field: field; number: integer): field;
-//           
-//            /// Matrizenaddition:
-//            /// field_sum := a + field_b;
-//            class function operator + (a:Real; field_b:field): field;
-//           
-//            /// Matrizenaddition:
-//            /// field_sum := field_a + field_b;
-//            class function operator + (field_a, field_b:field): field;
-//           
-//            /// Matrizenaddition:
-//            /// field_sum += field_b; 
-//            class procedure operator += (var field_a:field; const field_b:field);
+//            /// field_sum += other_field; 
+//            class procedure operator += (var self_field:field; const other_field:field);
 //            
 //            /// Matrizenaddition:
 //            /// field_sum += b; 
-//            class procedure operator += (var field_a:field; const b:Real);
+//            class procedure operator += (var self_field:field; const b:Real);
 //                        
 //            /// Matrizensubtraktion:
-//            /// field_sum := field_a - b;
-//            class function operator - (field_a:field; b:Real): field;
+//            /// field_sum := self_field - b;
+//            class function operator - (self_field:field; b:Real): field;
 //                
 //            /// Matrizensubtraktion:
-//            /// field_difference := field_a - field_b;
-//            class function operator - (field_a, field_b:field): field;
+//            /// field_difference := self_field - other_field;
+//            class function operator - (self_field, other_field:field): field;
 //            
 //            /// Matrizensubtraktion:
-//            /// field_difference -= field_b;    
-//            class procedure operator -= (var field_a:field; const field_b:field);
+//            /// field_difference -= other_field;    
+//            class procedure operator -= (var self_field:field; const other_field:field);
 //            
 //            /// Matrizensubtraktion:
 //            /// field_sum -= b; 
-//            class procedure operator -= (var field_a:field; const b:Real);
+//            class procedure operator -= (var self_field:field; const b:Real);
 //                
 //            /// Matrizenmultiplikation mit Zahlen:
-//            /// field_mult := field_a * b;
-//            class function operator * (field_a:field; b:Real): field;
+//            /// field_mult := self_field * b;
+//            class function operator * (self_field:field; b:Real): field;
 //            
 //            /// Matrizenmultiplikation mit Zahlen:
 //            /// field_mult *= b;
-//            class procedure operator *= (var field_a:field; const b:Real);
+//            class procedure operator *= (var self_field:field; const b:Real);
 //            
 //            /// Matrizenmultiplikation mit Zahlen:
-//            /// field_mult := a * field_b;
-//            class function operator * (a:Real; field_b:field): field;
+//            /// field_mult := a * other_field;
+//            class function operator * (a:Real; other_field:field): field;
 //                
 //            /// Matrizendivision mit Zahlen:
-//            /// field_div := field_a / b;
-//            class function operator / (field_a:field; b:Real): field;
+//            /// field_div := self_field / b;
+//            class function operator / (self_field:field; b:Real): field;
 //            
 //            /// Matrizendivision mit Zahlen:
 //            /// field_div /= b;
-//            class procedure operator /= (var field_a:field; const b:Real);
+//            class procedure operator /= (var self_field:field; const b:Real);
 //            
 //            /// Matrizenmultiplikation:
-//            /// field_mult := field_a * field_b;                  
-//            class function operator * (field_a, field_b:field): field;
+//            /// field_mult := self_field * other_field;                  
+//            class function operator * (self_field, other_field:field): field;
 //                
 //            /// Matrizenmultiplikation:
-//            /// field_mult *= field_b;                  
-//            class procedure operator *= (var field_a:field; const field_b:field);
+//            /// field_mult *= other_field;                  
+//            class procedure operator *= (var self_field:field; const other_field:field);
 //                
 //            /// Exponentiation vom jeden Matrizenelements:
-//            /// field_exp := field_a ** b
-//            class function operator ** (var field_a:field; const b:real): field;
+//            /// field_exp := self_field ** b
+//            class function operator ** (var self_field:field; const b:real): field;
 //                
 //            /// Summe aller Elemente der Matrize
 //            function sum(): real;
@@ -164,9 +168,9 @@ uses dump;
 ////    function compare(a,b:array of integer): boolean;
 //    
 //    /// Anwendung einer Funktion an alle Elemente einer Neo
-//    function map(func: float_func; field_a: field): field;
+//    function map(func: float_func; self_field: field): field;
 //    /// Anwendung einer Funktion an alle Elemente einer Neo
-//    function map(func: int_func; field_a: field): field;
+//    function map(func: int_func; self_field: field): field;
 //    
 //        
 //    /// Matrizengenerator mit rows*colums, (0, 1)
@@ -200,11 +204,11 @@ uses dump;
 //    
 //    
 //    /// Transponierung der Matrize
-//    function transpose(field_a:field): field;
+//    function transpose(self_field:field): field;
 //    
 //    
 //    /// Summe des Skalarproduktes von zwei Vektoren
-//    function dot(field_a, field_b: field): field;
+//    function dot(self_field, other_field: field): field;
         
         
 implementation
@@ -232,6 +236,8 @@ implementation
       
       size := pointer(integer(array_ptr)+8);
 
+      self.length := size^;
+      self.rank := rank;
       self.shape := new integer[rank];
       for var index := 0 to rank-1 do
         begin
@@ -248,10 +254,18 @@ implementation
     end;
     
     constructor field.Create(shape: array of integer);
-      begin
-        self.shape := shape;
-        self.value := new integer[shape.Product]; 
-      end;  
+    begin
+      self.shape := shape;
+      self.value := new integer[shape.Product]; 
+    end;  
+      
+    constructor field.Create(arr, shape: array of integer; rank, length: integer);
+    begin
+      self.value := arr;
+      self.shape := shape;
+      self.rank := rank;
+      self.length := length;
+    end;
     
     // field.ToString() - Implementierung
     function field.ToString: string;
@@ -297,134 +311,133 @@ implementation
 //                  end;
 //              Result := head + return_string + foot; 
 //             end;
-//        
-//    // field.operator + () and field.operator += () - Implementierung
-//    class function field.operator+(self_field: field; number: integer): field;
-//      begin
-//       var tmp_result := self_field.value;
-//       tmp_result.ForEach(procedure(x)->x+=number); 
-//       print(self_field, tmp_result);
-//       result := new field(@tmp_result, self_field.shape);    
-//      end;
-//        
-//    class function field.operator + (a:Real; field_b:field): field;
+        
+    // field.operator + () and field.operator += () - Implementierung
+    class function field.operator+(self_field: field; number: integer): field;
+      begin
+        var tmp_result := new integer[self_field.length];
+        for var index := 0 to self_field.length-1 do
+          tmp_result[index] := self_field.value[index] + number;
+        result := new field(tmp_result, self_field.shape, self_field.rank, self_field.length);    
+      end;
+        
+    class function field.operator+(number: integer; other_field: field): field;
+      begin
+        Result := other_field + number;    
+      end;
+        
+    class function field.operator+(self_field, other_field: field): field;
+        begin
+//         if not compare(self_field.shape, other_field.shape) then
+//           raise new System.ArithmeticException('Wrong array sizes');
+         var tmp_result := new integer[self_field.length];
+         for var index := 0 to self_field.length-1 do
+           tmp_result[index] := self_field.value[index] + other_field.value[index]; 
+         Result := new field(tmp_result, self_field.shape, self_field.rank, self_field.length);    
+        end;
+        
+//    class procedure field.operator += (var self_field:field; const other_field:field);
 //        begin
-//         Result := field_b + a;    
-//        end;
-//        
-//    class function field.operator + (field_a, field_b:field): field;
-//        begin
-//         if not compare(field_a.shape, field_b.shape) then
-//                raise new System.ArithmeticException('Wrong array sizes');
-//         var return_field := new Real[field_a.row_number, field_a.column_number];
-//         for var i:= 0 to return_field.RowCount-1 do
-//             for var j:= 0 to return_field.ColCount-1 do
-//                 return_field[i, j] := field_a.values[i, j] + field_b.values[i, j];
-//         Result := new field(return_field);    
-//        end;
-//        
-//    class procedure field.operator += (var field_a:field; const field_b:field);
-//        begin
-//         if not compare(field_a.shape, field_b.shape) then
+//         if not compare(self_field.shape, other_field.shape) then
 //                raise new Exception('Wrong array sizes');
-//         field_a := field_a + field_b;
+//         self_field := self_field + other_field;
 //        end;
 //    
-//    class procedure field.operator += (var field_a:field; const b:Real);
+//    class procedure field.operator += (var self_field:field; const b:Real);
 //        begin
-//         field_a := field_a + b;
+//         self_field := self_field + b;
 //        end;
 //        
 //    // field.operator - () and field.operator -= () - Implementierung        
-//    class function field.operator - (field_a:field; b:Real): field;
+//    class function field.operator - (self_field:field; b:Real): field;
 //        begin
-//         var return_field := new Real[field_a.row_number, field_a.column_number];
-//         for var i:= 0 to return_field.RowCount-1 do
-//             for var j:= 0 to return_field.ColCount-1 do
-//                 return_field[i, j] := field_a.values[i, j] - b;
-//         Result := new field(return_field);    
+//         var tmp_result := new Real[self_field.row_number, self_field.column_number];
+//         for var i:= 0 to tmp_result.RowCount-1 do
+//             for var j:= 0 to tmp_result.ColCount-1 do
+//                 tmp_result[i, j] := self_field.values[i, j] - b;
+//         Result := new field(tmp_result);    
 //        end;
 //        
-//    class function field.operator - (field_a, field_b:field): field;
+//    class function field.operator - (self_field, other_field:field): field;
 //        begin
-//         if not compare(field_a.shape, field_b.shape) then
+//         if not compare(self_field.shape, other_field.shape) then
 //                raise new System.ArithmeticException('Wrong array sizes');
-//         var return_field := new Real[field_a.row_number, field_a.column_number];
-//         for var i:= 0 to return_field.RowCount-1 do
-//             for var j:= 0 to return_field.ColCount-1 do
-//                 return_field[i, j] := field_a.values[i, j] - field_b.values[i, j];
-//         Result := new field(return_field);
+//         var tmp_result := new Real[self_field.row_number, self_field.column_number];
+//         for var i:= 0 to tmp_result.RowCount-1 do
+//             for var j:= 0 to tmp_result.ColCount-1 do
+//                 tmp_result[i, j] := self_field.values[i, j] - other_field.values[i, j];
+//         Result := new field(tmp_result);
 //        end;       
 //    
-//    class procedure field.operator -= (var field_a:field; const field_b:field);
+//    class procedure field.operator -= (var self_field:field; const other_field:field);
 //        begin
-//         if not compare(field_a.shape, field_b.shape) then
+//         if not compare(self_field.shape, other_field.shape) then
 //                raise new Exception('Wrong array sizes');
-//         field_a := field_a - field_b;
+//         self_field := self_field - other_field;
 //        end;
 //    
-//    class procedure field.operator -= (var field_a:field; const b:Real);
+//    class procedure field.operator -= (var self_field:field; const b:Real);
 //        begin
-//         field_a := field_a - b;
+//         self_field := self_field - b;
 //        end;
 //        
 //    // field.operator * () and field.operator *= () - Implementierung
-//    class function field.operator * (field_a:field; b:Real): field;
+//    class function field.operator * (self_field:field; b:Real): field;
 //        begin
-//         var return_field := new Real[field_a.row_number, field_a.column_number];
-//         for var i:= 0 to field_a.values.RowCount - 1 do
-//             for var j:= 0 to field_a.values.ColCount - 1 do
-//                 return_field[i, j] :=  field_a.values[i, j] * b;
-//         Result := new field(return_field);
+//         var tmp_result := new Real[self_field.row_number, self_field.column_number];
+//         for var i:= 0 to self_field.values.RowCount - 1 do
+//             for var j:= 0 to self_field.values.ColCount - 1 do
+//                 tmp_result[i, j] :=  self_field.values[i, j] * b;
+//         Result := new field(tmp_result);
 //        end;
 //    
-//    class procedure field.operator *= (var field_a:field; const b:Real);
+//    class procedure field.operator *= (var self_field:field; const b:Real);
 //        begin
-//         field_a := field_a * b;
+//         self_field := self_field * b;
 //        end;
 //    
-//    class function field.operator * (a:Real; field_b:field): field;
+//    class function field.operator * (a:Real; other_field:field): field;
 //        begin
-//         Result := field_b * a;
+//         Result := other_field * a;
 //        end;
 //                          
-//    class function field.operator * (field_a, field_b:field): field;
+//    class function field.operator * (self_field, other_field:field): field;
 //        begin
-//         if not compare(field_a.shape, field_b.shape) then
+//         if not compare(self_field.shape, other_field.shape) then
 //                raise new System.ArithmeticException('Wrong array sizes');
-//         var return_field := new Real[field_a.row_number, field_a.column_number];
-//         for var i:= 0 to return_field.RowCount-1 do
-//             for var j:= 0 to return_field.ColCount-1 do
-//                 return_field[i, j] := field_a.values[i, j] * field_b.values[i, j];
-//         Result := new field(return_field);
+//         var tmp_result := new Real[self_field.row_number, self_field.column_number];
+//         for var i:= 0 to tmp_result.RowCount-1 do
+//             for var j:= 0 to tmp_result.ColCount-1 do
+//                 tmp_result[i, j] := self_field.values[i, j] * other_field.values[i, j];
+//         Result := new field(tmp_result);
 //        end;
 //                
-//    class procedure field.operator *= (var field_a:field; const field_b:field);
+//    class procedure field.operator *= (var self_field:field; const other_field:field);
 //        begin
-//         field_a := field_a * field_b;
+//         self_field := self_field * other_field;
 //        end;
 //        
 //    // field.operator / () and field.operator /= () - Implementierung
-//    class function field.operator / (field_a:field; b:Real): field;
+//    class function field.operator / (self_field:field; b:Real): field;
 //        begin
 //         if b = 0 then
 //             raise new System.ArithmeticException('ZeroDivisionError');
-//         Result := field_a * (1/b);
+//         Result := self_field * (1/b);
 //        end;
 //    
-//    class procedure field.operator /= (var field_a:field; const b:Real);
+//    class procedure field.operator /= (var self_field:field; const b:Real);
 //        begin
-//         field_a := field_a / b;
+//         self_field := self_field / b;
 //        end;
 //    
 //    // field.operator ** () - Implementierung
-//    class function field.operator ** (var field_a:field; const b:real): field;
+//    class function field.operator ** (var self_field:field; const b:real): field;
 //        begin
-//         var return_field := new Real[field_a.row_number, field_a.column_number];
-//         for var i:= 0 to field_a.row_number - 1 do
-//             for var j:= 0 to field_a.column_number - 1 do
-//                 return_field[i, j] :=  field_a.values[i, j] ** b;
-//         Result := new field(return_field);
+//         var tmp_result := new Real[self_field.row_number, self_field.column_number];
+//         for var i:= 0 to self_field.row_number - 1 do
+//             for var j:= 0 to self_field.column_number - 1 do
+//                 tmp_result[i, j] :=  self_field.values[i, j] ** b;
+//         Result := new field(tmp_result);
 //        end;
 //        
 //    // field.sum() - Implementierung
@@ -575,21 +588,21 @@ implementation
 // 
 //        
 //    // map() - Implementierung
-//    function map(func: float_func; field_a: field): field;
+//    function map(func: float_func; self_field: field): field;
 //        begin
-//         var return_array := new Real[field_a.row_number, field_a.column_number];
-//         for var i:= 0 to field_a.row_number - 1 do
-//            for var j:= 0 to field_a.column_number - 1 do
-//                return_array[i,j] := func(field_a.values[i,j]);
+//         var return_array := new Real[self_field.row_number, self_field.column_number];
+//         for var i:= 0 to self_field.row_number - 1 do
+//            for var j:= 0 to self_field.column_number - 1 do
+//                return_array[i,j] := func(self_field.values[i,j]);
 //         Result := new field(return_array);
 //        end;
 //    
-//    function map(func: int_func; field_a: field): field;
+//    function map(func: int_func; self_field: field): field;
 //        begin
-//         var return_array := new Real[field_a.row_number, field_a.column_number];
-//         for var i:= 0 to field_a.row_number - 1 do
-//            for var j:= 0 to field_a.column_number - 1 do
-//                return_array[i,j] := func(field_a.values[i,j]);
+//         var return_array := new Real[self_field.row_number, self_field.column_number];
+//         for var i:= 0 to self_field.row_number - 1 do
+//            for var j:= 0 to self_field.column_number - 1 do
+//                return_array[i,j] := func(self_field.values[i,j]);
 //         Result := new field(return_array);
 //        end;
 //        
@@ -743,30 +756,30 @@ implementation
 //        
 //        
 //    // transpose() - Implementierung    
-//    function transpose(field_a:field): field;
+//    function transpose(self_field:field): field;
 //        begin
-//         var return_array := new Real[field_a.column_number, field_a.row_number];
-//         for var i:= 0 to field_a.row_number-1 do
-//             for var j:= 0 to field_a.column_number-1 do
-//                 return_array[j,i] := field_a[i,j];
+//         var return_array := new Real[self_field.column_number, self_field.row_number];
+//         for var i:= 0 to self_field.row_number-1 do
+//             for var j:= 0 to self_field.column_number-1 do
+//                 return_array[j,i] := self_field[i,j];
 //         Result := new field(return_array);
 //        end;
 //        
 //    
 //    // dot() - Implementierung
-//    function dot(field_a, field_b: field): field;
+//    function dot(self_field, other_field: field): field;
 //        begin
-//         if ((field_a.row_number, field_b.row_number) = (1, 1)) and
-//            (field_a.column_number = field_b.column_number) then
-//             Result := field_a * field_b
-//         else if (field_a.column_number = field_b.row_number) then
+//         if ((self_field.row_number, other_field.row_number) = (1, 1)) and
+//            (self_field.column_number = other_field.column_number) then
+//             Result := self_field * other_field
+//         else if (self_field.column_number = other_field.row_number) then
 //            begin
-//            var return_field := new field(field_a.row_number, field_b.column_number);
-//             for var i:= 0 to return_field.row_number - 1 do
-//                 for var j:= 0 to return_field.column_number - 1 do
-//                     for var k:= 0 to field_a.column_number - 1 do
-//                         return_field.values[i,j]+= field_a.values[i, k] * field_b.values[k, j];
-//             Result := return_field;
+//            var tmp_result := new field(self_field.row_number, other_field.column_number);
+//             for var i:= 0 to tmp_result.row_number - 1 do
+//                 for var j:= 0 to tmp_result.column_number - 1 do
+//                     for var k:= 0 to self_field.column_number - 1 do
+//                         tmp_result.values[i,j]+= self_field.values[i, k] * other_field.values[k, j];
+//             Result := tmp_result;
 //            end
 //         else
 //            raise new Exception('Wrong array sizes');
