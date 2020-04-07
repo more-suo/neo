@@ -27,17 +27,17 @@ uses dump;
 //                default;
             shape: array of integer;
             
-            constructor Create(array_pointer: pointer; shape: array of integer);
+            constructor Create(array_ptr: pointer; rank: integer);
             
             constructor (shape: array of integer);
             
             /// konvertiert Matriz zu String
             function ToString: string; override;
     
-            /// Matrizenaddition:
-            /// field_sum := field_a + b;
-            class function operator + (self_field: field; number: integer): field;
-           
+//            /// Matrizenaddition:
+//            /// field_sum := field_a + b;
+//            class function operator + (self_field: field; number: integer): field;
+//           
 //            /// Matrizenaddition:
 //            /// field_sum := a + field_b;
 //            class function operator + (a:Real; field_b:field): field;
@@ -221,24 +221,29 @@ implementation
 //        end;  
         
     // field.Create() - Implementierung
-    constructor field.Create(array_pointer: pointer; shape: array of integer);
-    var true_array_pointer : ^^integer;
-        element_pointer : ^integer;
+    constructor field.Create(array_ptr: pointer; rank: integer);
+    var tmp_ptr : ^^integer;
+        element_ptr : ^integer;
+        size : ^integer;
+    
     begin
-      self.shape := shape;
-      self.value := new integer[self.shape.Product];
-      true_array_pointer := array_pointer;
+      tmp_ptr := array_ptr;
+      array_ptr := tmp_ptr^;
       
-      dump.get_dump(integer(true_array_pointer^), 64);
-      dump.get_dump(integer(pointer($07ff845b04778)), 64);
-//      dump.get_dump(integer(true_array_pointer^^), 1);
-      var shift := 16 + 8*(shape.Length - (shape.Length=1?1:0));
-      true_array_pointer := pointer(integer(true_array_pointer^) + shift);
-      
-      for var index := 0 to self.shape.Product-1 do
+      size := pointer(integer(array_ptr)+8);
+
+      self.shape := new integer[rank];
+      for var index := 0 to rank-1 do
         begin
-        element_pointer := pointer(integer(true_array_pointer)+index*sizeof(integer));   
-        self.value[index] := element_pointer^;
+          element_ptr := pointer(integer(array_ptr) + 16 + index*4);
+          self.shape[index] := element_ptr^;
+        end;
+
+      self.value := new integer[size^];
+      for var index := 0 to size^-1 do
+        begin
+        element_ptr := pointer(integer(array_ptr) + 16 + 2*4*(rank-(rank=1?1:0)) + index*sizeof(integer));
+        self.value[index] := element_ptr^;
         end;
     end;
     
@@ -292,15 +297,15 @@ implementation
 //                  end;
 //              Result := head + return_string + foot; 
 //             end;
-        
-    // field.operator + () and field.operator += () - Implementierung
-    class function field.operator+(self_field: field; number: integer): field;
-      begin
-       var tmp_result := self_field.value;
-       tmp_result.ForEach(procedure(x)->x+=number); 
-       print(self_field, tmp_result);
-       result := new field(@tmp_result, self_field.shape);    
-      end;
+//        
+//    // field.operator + () and field.operator += () - Implementierung
+//    class function field.operator+(self_field: field; number: integer): field;
+//      begin
+//       var tmp_result := self_field.value;
+//       tmp_result.ForEach(procedure(x)->x+=number); 
+//       print(self_field, tmp_result);
+//       result := new field(@tmp_result, self_field.shape);    
+//      end;
 //        
 //    class function field.operator + (a:Real; field_b:field): field;
 //        begin
