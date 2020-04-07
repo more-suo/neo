@@ -114,7 +114,16 @@ interface
                 
             /// Dimensionen der Matrize
             function shape(): array of integer;
-              
+            
+            /// Umformung der Matrize in einen eindemensionalen Vektor mit Laenge size    
+            function reshape(size:integer): field;
+            
+            /// Umformung der Matrize in eine andere Matrize mit Groeße size
+            function reshape(size:array of integer): field;
+            
+            /// Transpoierung einer Matrize
+            function transpose(): field;
+            
             /// das Werte der Matrize
             function get_value(): array[,] of real;
             
@@ -130,6 +139,15 @@ interface
                      
             /// Erstellt eine Kopie der Matrize
             function copy(): field;
+            
+            /// Verlaengert die Matrize um rep in Richtung (0, 1) = (waagerecht, senkrecht)
+            function recurrence(rep, axis:integer): field;
+            
+            /// Verlaengert die Matrize um zwei in Richtung (0, 1) = (waagerecht, senkrecht)
+            function recurrence(rep:integer): field;
+            
+            /// Verlaengert die Matrize um zwei waagerecht
+            function recurrence(): field;
     end;
     
     
@@ -164,8 +182,15 @@ interface
     function copy(a:field): field;
     
     
-    /// Vergleich von zwei arrays of integer
-//    function compare(a,b:array of integer): boolean;
+    /// Verlaengert die Matrize um rep in Richtung (0, 1) = (waagerecht, senkrecht)
+    function recurrence(a:field; rep, axis:integer): field;
+    
+    /// Verlaengert die Matrize um zwei in Richtung (0, 1) = (waagerecht, senkrecht)
+    function recurrence(a:field; rep:integer): field;
+    
+    /// Verlaengert die Matrize um zwei waagerecht
+    function recurrence(a:field): field;
+    
     
     /// Anwendung einer Funktion an alle Elemente einer Neo
     function map(func: float_func; field_a: field): field;
@@ -213,7 +238,7 @@ interface
         
 implementation
     
-   function compare(a, b:array of integer): boolean;
+    function compare(a, b:array of integer): boolean;
         begin 
          Result := False;
          if a.Length <> b.Length then
@@ -253,45 +278,48 @@ implementation
     // field.ToString() - Implementierung
     function field.ToString: string;
         begin
-         var head := row_number = 1? 'Array(': 'Array([';
-         var foot := '])';
          var return_string := '';
          var newline := chr(13) + chr(10);
          var spaces := '';
          
-         if column_number <> 1 then
-             begin
+         if (row_number > 1) and (column_number <> 1) then
               for var row:= 0 to row_number-1 do
                    for var column := 0 to column_number-1 do
                        begin
                         spaces := ' ' * (self.get_longest(0, column).ToString.Length - values[row,column].ToString.Length);
                         if (column, row) = (0, 0) then
-                            return_string += '[' + spaces + values[row,column].ToString + ', '
+                            return_string += '[[' + spaces + values[row,column].ToString + ', '
                         else if (column = 0) then
-                            return_string += ' ' * head.Length + '[' + spaces + values[row,column].ToString + ', '
+                            return_string += ' ' * 7 + '[' + spaces + values[row,column].ToString + ', '
                         else if (row, column) = (row_number-1, column_number-1) then
-                            return_string += spaces + values[row,column].ToString + ']'
+                            return_string += spaces + values[row,column].ToString + ']]'
                         else if column = column_number-1 then
                             return_string += spaces + values[row,column].ToString + '], ' + newline
                         else
                             return_string += spaces + values[row,column].ToString + ', ';
-                       end;
-              Result := head + return_string + foot;
-             end
-         else
-             begin
+                       end
+         else if (row_number > 1) and (column_number = 1) then
               for var row:= 0 to row_number-1 do
                   begin
                    spaces := ' ' * (self.get_longest().ToString.Length - values[row,0].ToString.Length);
                    if row = 0 then
-                       return_string += '[' +  spaces + values[row, 0].ToString +'],' + newline
+                       return_string += '[[' +  spaces + values[row, 0].ToString +'],' + newline
                    else if row = row_number - 1 then
-                       return_string += head.Length * ' ' + '[' +  spaces + values[row, 0].ToString + ']'
+                       return_string += 7 * ' ' + '[' +  spaces + values[row, 0].ToString + ']]'
                    else
-                       return_string += head.Length * ' ' + '[' +  spaces + values[row, 0].ToString +'],' + newline;
-                  end;
-              Result := head + return_string + foot; 
-             end;
+                       return_string += 7 * ' ' + '[' +  spaces + values[row, 0].ToString +'],' + newline;
+                  end
+         else if (row_number = 1) and (column_number > 1) then
+             for var column:= 0 to column_number-1 do
+                 if column = 0 then
+                     return_string += '[' + values[0, column].ToString + ', '
+                 else if column = column_number-1 then
+                     return_string += values[0, column].ToString + ']'
+                 else
+                     return_string += values[0, column].ToString + ', '
+         else
+            return_string := '[' + values[0, 0] + ']';
+         Result := 'Array(' + return_string + ')';
         end;
         
     // field.operator + () and field.operator += () - Implementierung
@@ -463,7 +491,61 @@ implementation
         begin
          Result := Arr(row_number, column_number);
         end;
+    
+    // field.reshape() - Implementierung
+    function field.reshape(size:integer): field;
+        begin
+         if column_number * row_number <> size then
+             raise new Exception('Wrong size');
+         var counter := 0;
+         var return_array := new Real[size];
+         foreach var element in get_value do
+                begin
+                 return_array[counter] := element;
+                 counter += 1;
+                end;
+         Result := new field(return_array);
+        end;
       
+    function field.reshape(size:array of integer): field;
+        begin
+         var rows := 0;
+         var columns := 0;
+         var elements_needed := 1;
+         if size.Length < 1 then
+             raise new Exception('Size must contain at least 1 argument');
+         foreach x: integer in size do
+             elements_needed *= x;
+         if size.Length = 1 then
+             (rows, columns) := (size[0], 1)
+         else if size.Length = 2 then
+             (rows, columns) := (size[0], size[1]);
+         var elements_given := column_number * row_number;
+         if elements_given <> elements_needed then
+             raise new Exception('Wrong size');
+         var return_array := new Real[rows, columns];
+         var tmp := self.reshape(elements_given).values;
+         var counter := 0;
+         for var i:= 0 to rows-1 do
+             for var j:= 0 to columns-1 do
+                 begin
+                  return_array[i,j] := tmp[0, counter];
+                  counter += 1;
+                 end;
+         Result := new field(return_array);
+        end;
+    
+    
+    // field.transpose() - Implementierung
+    function field.transpose(): field;
+        begin       
+         var return_array := new Real[column_number, row_number];
+         for var i:= 0 to row_number-1 do
+             for var j:= 0 to column_number-1 do
+                 return_array[j,i] := self[i,j];
+         Result := new field(return_array);
+        end;
+    
     // field.get_value() - Implementierung
     function field.get_value(): array[,] of real;
         begin
@@ -518,7 +600,44 @@ implementation
          Result := new field(values);
         end;
     
-      
+    // field.recurrence() - Implementierung
+    function field.recurrence(rep:integer): field;
+        begin
+         var tmp := self.reshape(values.Length).values;
+         var return_array := new Real[tmp.Length * rep];
+         var c := 0;
+         foreach x:real in tmp do
+             for var r:= 0 to rep-1 do
+                 begin
+                  return_array[c] := x;
+                  c += 1;
+                 end;
+         Result := new field(return_array);
+        end;
+    
+    function field.recurrence(): field;
+        begin
+         Result := self.recurrence(2);
+        end;
+        
+    function field.recurrence(rep, axis:integer): field;
+        begin
+         if axis = 0 then
+             begin
+              var return_array := new Real[row_number*rep,column_number];
+              for var row:= 0 to row_number-1 do
+                  for var r:= 0 to rep-1 do
+                      for var column:= 0 to column_number-1 do
+                          return_array[(row*rep) + r ,column] := values[row,column];
+              Result := new field(return_array);
+             end
+         else if axis = 1 then
+             Result := self.recurrence(rep).reshape(Arr(row_number, column_number*rep))
+         else 
+             raise new Exception('Not existing dimension');
+         end;
+        
+    
     // sum() - Implementierung
     function sum(a:field): real;
         begin
@@ -538,6 +657,18 @@ implementation
         end;
       
       
+    // reshape() - Implementierung
+    function reshape(a:field; size:integer): field;
+        begin
+         Result := a.reshape(size);
+        end;
+        
+    function reshape(a:field; size:array of integer): field;
+        begin
+         Result := a.reshape(size);
+        end;
+    
+    
     // get_value() - Implementierung
     function get_value(a:field): array[,] of real;
         begin
@@ -570,6 +701,22 @@ implementation
          Result := a.copy();
         end;
  
+    
+    // recurrence() - Implementierung
+    function recurrence(a:field; rep:integer): field;
+        begin
+         Result := a.recurrence(rep);
+        end;
+    
+    function recurrence(a:field): field;
+        begin
+         Result := a.recurrence();
+        end;
+        
+    function recurrence(a:field; rep, axis:integer): field;
+        begin
+         Result := a.recurrence(rep, axis)
+        end;
         
     // map() - Implementierung
     function map(func: float_func; field_a: field): field;
@@ -618,50 +765,6 @@ implementation
                 return_array[i,j] := Random + Random(min, max);
          Result := new field(return_array);
         end;    
-    
-    
-    // reshape() - Implementierung
-    function reshape(a:field; size:integer): field;
-        begin
-         if a.column_number * a.row_number <> size then
-            raise new Exception('Wrong size');
-         var counter := 0;
-         var return_array := new Real[size];
-         foreach var element in a.get_value do
-                begin
-                 return_array[counter] := element;
-                 counter += 1;
-                end;
-         Result := new field(return_array);
-        end;
-        
-    function reshape(a:field; size:array of integer): field;
-        begin
-         var rows := 0;
-         var columns := 0;
-         var elements_needed := 1;
-         if size.Length < 1 then
-             raise new Exception('Size must contain at least 1 argument');
-         foreach x: integer in size do
-              elements_needed *= x;
-         if size.Length = 1 then
-            (rows, columns) := (size[0], 1)
-         else if size.Length = 2 then
-            (rows, columns) := (size[0], size[1]);
-         var elements_given := a.column_number * a.row_number;
-         if elements_given <> elements_needed then
-             raise new Exception('Wrong size');
-         var return_array := new Real[rows, columns];
-         var tmp := reshape(a, elements_given).values;
-         var counter := 0;
-         for var i:= 0 to rows-1 do
-            for var j:= 0 to columns-1 do
-                begin
-                 return_array[i,j] := tmp[0, counter];
-                 counter += 1;
-                end;
-         Result := new field(return_array);
-        end;
     
     
     // concatenate() - Implementierung
