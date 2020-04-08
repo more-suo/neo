@@ -1,9 +1,6 @@
 ﻿unit neo;
 
-
 interface
-uses dump;
-
         
 //    type
 //        float_func = System.Func<real, real>;
@@ -18,10 +15,9 @@ uses dump;
 //            values: array[,] of real;
             value: array of integer;      
             
-            constructor Create(arr, shape: array of integer; rank, length: integer);
+            constructor Create(new_field: field; value: array of integer);
 
         public
-        
 //            /// Zugriff auf Elemente einer Matrize
 //            property element[row, column: integer]: real
 //                read values[row, column]
@@ -51,14 +47,14 @@ uses dump;
             /// field_sum := self_field + other_field;
             class function operator + (self_field, other_field:field): field;
            
-//            /// Matrizenaddition:
-//            /// field_sum += other_field; 
-//            class procedure operator += (var self_field:field; const other_field:field);
-//            
-//            /// Matrizenaddition:
-//            /// field_sum += b; 
-//            class procedure operator += (var self_field:field; const b:Real);
-//                        
+            /// Matrizenaddition:
+            /// field_sum += other_field; 
+            class procedure operator += (var self_field, other_field: field);
+            
+            /// Matrizenaddition:
+            /// field_sum += b; 
+            class procedure operator += (var self_field: field; number: integer);
+                        
 //            /// Matrizensubtraktion:
 //            /// field_sum := self_field - b;
 //            class function operator - (self_field:field; b:Real): field;
@@ -242,8 +238,8 @@ implementation
       self.shape := new integer[rank];
       for var index := 0 to rank-1 do
         begin
-          element_ptr := pointer(integer(array_ptr) + 16 + index*4);
-          self.shape[index] := element_ptr^;
+        element_ptr := pointer(integer(array_ptr) + 16 + index*4);
+        self.shape[index] := element_ptr^;
         end;
       
       self.iter_array := new integer[rank];
@@ -265,12 +261,13 @@ implementation
       self.value := new integer[shape.Product]; 
     end;  
       
-    constructor field.Create(arr, shape: array of integer; rank, length: integer);
+    constructor field.Create(new_field: field; value: array of integer);
     begin
-      self.value := arr;
-      self.shape := shape;
-      self.rank := rank;
-      self.length := length;
+      self.value := value;
+      self.shape := new_field.shape;
+      self.rank := new_field.rank;
+      self.length := new_field.length;
+      self.iter_array := new_field.iter_array;
     end;
     
     // field.ToString() - Implementierung
@@ -298,45 +295,6 @@ implementation
           end;
         write(']'*self.rank);
       end;
-//         var head := row_number = 1? 'Array(': 'Array([';
-//         var foot := '])';
-//         var return_string := '';
-//         var newline := chr(13) + chr(10);
-//         var spaces := '';
-//         
-//         if column_number <> 1 then
-//             begin
-//              for var row:= 0 to row_number-1 do
-//                   for var column := 0 to column_number-1 do
-//                       begin
-//                        spaces := ' ' * (self.get_longest(0, column).ToString.Length - values[row,column].ToString.Length);
-//                        if (column, row) = (0, 0) then
-//                            return_string += '[' + spaces + values[row,column].ToString + ', '
-//                        else if (column = 0) then
-//                            return_string += ' ' * head.Length + '[' + spaces + values[row,column].ToString + ', '
-//                        else if (row, column) = (row_number-1, column_number-1) then
-//                            return_string += spaces + values[row,column].ToString + ']'
-//                        else if column = column_number-1 then
-//                            return_string += spaces + values[row,column].ToString + '], ' + newline
-//                        else
-//                            return_string += spaces + values[row,column].ToString + ', ';
-//                       end;
-//              Result := head + return_string + foot;
-//             end
-//         else
-//             begin
-//              for var row:= 0 to row_number-1 do
-//                  begin
-//                   spaces := ' ' * (self.get_longest().ToString.Length - values[row,0].ToString.Length);
-//                   if row = 0 then
-//                       return_string += '[' +  spaces + values[row, 0].ToString +'],' + newline
-//                   else if row = row_number - 1 then
-//                       return_string += head.Length * ' ' + '[' +  spaces + values[row, 0].ToString + ']'
-//                   else
-//                       return_string += head.Length * ' ' + '[' +  spaces + values[row, 0].ToString +'],' + newline;
-//                  end;
-//              Result := head + return_string + foot; 
-//             end;
         
     // field.operator + () and field.operator += () - Implementierung
     class function field.operator+(self_field: field; number: integer): field;
@@ -344,7 +302,7 @@ implementation
         var tmp_result := new integer[self_field.length];
         for var index := 0 to self_field.length-1 do
           tmp_result[index] := self_field.value[index] + number;
-        result := new field(tmp_result, self_field.shape, self_field.rank, self_field.length);    
+        result := new field(self_field, tmp_result);    
       end;
         
     class function field.operator+(number: integer; other_field: field): field;
@@ -353,27 +311,27 @@ implementation
       end;
         
     class function field.operator+(self_field, other_field: field): field;
-        begin
+      begin
 //         if not compare(self_field.shape, other_field.shape) then
 //           raise new System.ArithmeticException('Wrong array sizes');
-         var tmp_result := new integer[self_field.length];
-         for var index := 0 to self_field.length-1 do
-           tmp_result[index] := self_field.value[index] + other_field.value[index]; 
-         Result := new field(tmp_result, self_field.shape, self_field.rank, self_field.length);    
-        end;
+        var tmp_result := new integer[self_field.length];
+        for var index := 0 to self_field.length-1 do
+          tmp_result[index] := self_field.value[index] + other_field.value[index]; 
+        Result := new field(self_field, tmp_result);    
+      end;
         
-//    class procedure field.operator += (var self_field:field; const other_field:field);
-//        begin
+    class procedure field.operator += (var self_field, other_field: field);
+      begin
 //         if not compare(self_field.shape, other_field.shape) then
 //                raise new Exception('Wrong array sizes');
-//         self_field := self_field + other_field;
-//        end;
-//    
-//    class procedure field.operator += (var self_field:field; const b:Real);
-//        begin
-//         self_field := self_field + b;
-//        end;
-//        
+        self_field := self_field + other_field;
+      end;
+    
+    class procedure field.operator += (var self_field:field; number: integer);
+      begin
+       self_field := self_field + number;
+      end;
+        
 //    // field.operator - () and field.operator -= () - Implementierung        
 //    class function field.operator - (self_field:field; b:Real): field;
 //        begin
