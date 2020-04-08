@@ -27,6 +27,7 @@ uses dump;
 //                read values[row, column]
 //                write values[row, column] := value;
 //                default;
+            iter_array: array of integer;
             length: integer;
             rank: integer;
             shape: array of integer;
@@ -114,10 +115,10 @@ uses dump;
 //                
 //            /// Dimensionen der Matrize
 //            function shape(): array of integer;
-//              
-//            /// das Werte der Matrize
-//            function get_value(): array[,] of real;
-//            
+              
+            /// das Werte der Matrize
+            function get(params index: array of integer): integer;
+            
 //            /// kehrt den groeßten Wert der Matrize zurueck
 //            function get_max(): real;
 //                
@@ -143,10 +144,10 @@ uses dump;
 //    /// Dimensionen der Matrize
 //    function shape(a:field): array of integer;
 //      
-//      
+//
 //    /// das Werte der Matrize
-//    function get_value(a:field): array[,] of real;
-//    
+//    function get(params index: array of integer): integer;
+//
 //    
 //    /// kehrt den groeßten Wert der Matrize zurueck
 //    function get_max(a:field): real;
@@ -244,6 +245,11 @@ implementation
           element_ptr := pointer(integer(array_ptr) + 16 + index*4);
           self.shape[index] := element_ptr^;
         end;
+      
+      self.iter_array := new integer[rank];
+      for var i := 1 to rank-1 do
+        self.iter_array[rank-i-1] := self.iter_array[rank-i] * self.shape[rank-i];
+      
 
       self.value := new integer[size^];
       for var index := 0 to size^-1 do
@@ -289,7 +295,6 @@ implementation
           write('['*cnt); cnt := 0;
           arr[self.rank-1] += 1;
           write(self.value[index], ', ');
-          flag := False;
           end;
         write(']'*self.rank);
       end;
@@ -500,13 +505,16 @@ implementation
 //        begin
 //         Result := Arr(row_number, column_number);
 //        end;
-//      
-//    // field.get_value() - Implementierung
-//    function field.get_value(): array[,] of real;
-//        begin
-//         Result := values;
-//        end;
-//    
+      
+    // field.get() - Implementierung
+    function field.get(params index: array of integer): integer;
+      begin
+        var acc := 0;
+        for var i := 0 to self.rank-1 do
+          acc += self.iter_array[i] * index[i];
+        Result := self.value[acc];
+      end;
+    
 //    // field.get_max() - Implementierung
 //    function field.get_max(): real;
 //        begin
