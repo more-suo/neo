@@ -125,42 +125,10 @@ interface
 //            /// wenn axis = 1 laengster Wert in der Zeile
 //            function get_longest(axis, num:integer): real;
 //                     
-//            /// Erstellt eine Kopie der Matrize
-//            function copy(): field;
+            /// Erstellt eine Kopie der Matrize
+            function copy(): field;
     end;
-//    
-//    
-//    /// Summe aller Elemente der Matrize
-//    function sum(a:field): real;
-//    
-//    /// wenn axis = 0, Summe aller Spalten; wenn axis = 1, Summe aller Zeilen
-//    function sum(a:field; axis:integer): field;
-//        
-//    
-//    /// Dimensionen der Matrize
-//    function shape(a:field): array of integer;
-//      
-//
-//    /// das Werte der Matrize
-//    function get(params index: array of integer): integer;
-//
-//    
-//    /// kehrt den groeßten Wert der Matrize zurueck
-//    function get_max(a:field): real;
-//      
-//      
-//    /// kehrt den laengsten Wert der Matrize zurueck
-//    function get_longest(a:field): real;
-//    
-//    /// Wenn axis = 0 laengster Wert in der Spaltennummer num,
-//    /// wenn axis = 1 laengster Wert in der Zeile
-//    function get_longest(a:field; axis, num:integer): real;
-//      
-//      
-//    /// Erstellt eine Kopie der Matrize
-//    function copy(a:field): field;
-//    
-//    
+
 //    /// Vergleich von zwei arrays of integer
 ////    function compare(a,b:array of integer): boolean;
 //    
@@ -514,14 +482,13 @@ implementation
 //             Result := max;
 //            end
 //        end;
-//    
-//    // field.copy() - Implementierung
-//    function field.copy(): field;
-//        begin
-//         Result := new field(values);
-//        end;
-//    
-//      
+    
+    // field.copy() - Implementierung
+    function field.copy(): field;
+      begin
+        Result := new field(self, self.value);
+      end;
+      
 //    // sum() - Implementierung
 //    function sum(a:field): real;
 //        begin
