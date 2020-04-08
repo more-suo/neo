@@ -270,7 +270,28 @@ implementation
     // field.ToString() - Implementierung
     function field.ToString: string;
       begin
-        print(self.value); 
+        var cnt := 0;
+        write('['*self.rank);
+        var arr := new integer[self.rank];
+        for var index := 0 to self.length-1 do
+          begin
+          if arr.Length > 1 then 
+            for var i := self.rank-1 downto 0 do
+              begin
+              if arr[i] = self.shape[i] then
+                begin
+                arr[i-1] += 1;
+                arr[i] := 0;
+                write('], ');
+                cnt += 1;
+                end
+              end;
+          write('['*cnt); cnt := 0;
+          arr[self.rank-1] += 1;
+          write(self.value[index], ', ');
+          flag := False;
+          end;
+        write(']'*self.rank);
       end;
 //         var head := row_number = 1? 'Array(': 'Array([';
 //         var foot := '])';
