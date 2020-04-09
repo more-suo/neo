@@ -47,14 +47,14 @@ interface
             /// field_sum += b; 
             class procedure operator += (var self_field: field; number: integer);
                         
-//            /// Matrizensubtraktion:
-//            /// field_sum := self_field - b;
-//            class function operator - (self_field:field; b:Real): field;
-//                
-//            /// Matrizensubtraktion:
-//            /// field_difference := self_field - other_field;
-//            class function operator - (self_field, other_field:field): field;
-//            
+            /// Matrizensubtraktion:
+            /// field_sum := self_field - b;
+            class function operator - (self_field: field; number: integer): field;
+                
+            /// Matrizensubtraktion:
+            /// field_difference := self_field - other_field;
+            class function operator - (self_field, other_field: field): field;
+            
 //            /// Matrizensubtraktion:
 //            /// field_difference -= other_field;    
 //            class procedure operator -= (var self_field:field; const other_field:field);
@@ -89,11 +89,11 @@ interface
             
             /// Matrizendivision mit Zahlen:
             /// field_div /= b;
-            class procedure operator/=(var self_field:field; number: integer);
+            class procedure operator/=(var self_field: field; number: integer);
 
 //            /// Exponentiation vom jeden Matrizenelements:
 //            /// field_exp := self_field ** b
-//            class function operator ** (var self_field:field; const b:real): field;
+//            class function operator**(var self_field: field; number: real): field;
 //                
 //            /// Summe aller Elemente der Matrize
 //            function sum(): real;
@@ -300,29 +300,27 @@ implementation
       end;
         
         
-//    // field.operator - () and field.operator -= () - Implementierung        
-//    class function field.operator - (self_field:field; b:Real): field;
-//        begin
-//         var tmp_result := new Real[self_field.row_number, self_field.column_number];
-//         for var i:= 0 to tmp_result.RowCount-1 do
-//             for var j:= 0 to tmp_result.ColCount-1 do
-//                 tmp_result[i, j] := self_field.values[i, j] - b;
-//         Result := new field(tmp_result);    
-//        end;
-//        
-//
-//    class function field.operator - (self_field, other_field:field): field;
-//        begin
+    // field.operator - () and field.operator -= () - Implementierung        
+    class function field.operator-(self_field: field; number: integer): field;
+        begin
+        var tmp_result := new integer[self_field.length];
+        for var index := 0 to self_field.length-1 do
+          tmp_result[index] := self_field.value[index] - number; 
+        Result := new field(self_field, tmp_result);        
+        end;
+        
+
+    class function field.operator-(self_field, other_field: field): field;
+        begin
 //         if not compare(self_field.shape, other_field.shape) then
 //                raise new System.ArithmeticException('Wrong array sizes');
-//         var tmp_result := new Real[self_field.row_number, self_field.column_number];
-//         for var i:= 0 to tmp_result.RowCount-1 do
-//             for var j:= 0 to tmp_result.ColCount-1 do
-//                 tmp_result[i, j] := self_field.values[i, j] - other_field.values[i, j];
-//         Result := new field(tmp_result);
-//        end;       
-//
-//    
+        var tmp_result := new integer[self_field.length];
+        for var index := 0 to self_field.length-1 do
+          tmp_result[index] := self_field.value[index] - other_field.value[index]; 
+        Result := new field(self_field, tmp_result);    
+        end;       
+
+    
 //    class procedure field.operator -= (var self_field:field; const other_field:field);
 //        begin
 //         if not compare(self_field.shape, other_field.shape) then
@@ -395,7 +393,7 @@ implementation
     
 
 //    // field.operator ** () - Implementierung
-//    class function field.operator ** (var self_field:field; const b:real): field;
+//    class function field.operator**(var self_field: field; number: real): field;
 //        begin
 //         var tmp_result := new Real[self_field.row_number, self_field.column_number];
 //         for var i:= 0 to self_field.row_number - 1 do
