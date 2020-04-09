@@ -75,10 +75,14 @@ interface
             /// field_mult := self_field * other_field;                  
             class function operator*(self_field, other_field: field): field;
             
-//            /// Matrizenmultiplikation mit Zahlen:
-//            /// field_mult *= b;
-//            class procedure operator *= (var self_field:field; const b:Real);
-//                
+            /// Matrizenmultiplikation mit Zahlen:
+            /// field_mult *= b;
+            class procedure operator*=(var self_field: field; const number: integer);
+
+            /// Matrizenmultiplikation:
+            /// field_mult *= other_field;                  
+            class procedure operator*=(var self_field: field; const other_field: field);
+                
 //            /// Matrizendivision mit Zahlen:
 //            /// field_div := self_field / b;
 //            class function operator / (self_field:field; b:Real): field;
@@ -87,10 +91,6 @@ interface
 //            /// field_div /= b;
 //            class procedure operator /= (var self_field:field; const b:Real);
 //
-//            /// Matrizenmultiplikation:
-//            /// field_mult *= other_field;                  
-//            class procedure operator *= (var self_field:field; const other_field:field);
-//                
 //            /// Exponentiation vom jeden Matrizenelements:
 //            /// field_exp := self_field ** b
 //            class function operator ** (var self_field:field; const b:real): field;
@@ -364,18 +364,18 @@ implementation
       end;
             
             
-//    class procedure field.operator *= (var self_field:field; const b:Real);
-//        begin
-//         self_field := self_field * b;
-//        end;
-//          
-//      
-//    class procedure field.operator *= (var self_field:field; const other_field:field);
-//        begin
-//         self_field := self_field * other_field;
-//        end;
-//        
-//
+    class procedure field.operator*=(var self_field: field; number: integer);
+      begin
+        self_field := self_field * number;
+      end;
+          
+      
+    class procedure field.operator*=(var self_field: field; other_field: field);
+      begin
+        self_field := self_field * other_field;
+      end;
+        
+
 //    // field.operator / () and field.operator /= () - Implementierung
 //    class function field.operator / (self_field:field; b:Real): field;
 //        begin
