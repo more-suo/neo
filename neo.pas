@@ -83,14 +83,14 @@ interface
             /// field_mult *= other_field;                  
             class procedure operator*=(var self_field: field; const other_field: field);
                 
-//            /// Matrizendivision mit Zahlen:
-//            /// field_div := self_field / b;
-//            class function operator / (self_field:field; b:Real): field;
-//            
-//            /// Matrizendivision mit Zahlen:
-//            /// field_div /= b;
-//            class procedure operator /= (var self_field:field; const b:Real);
-//
+            /// Matrizendivision mit Zahlen:
+            /// field_div := self_field / b;
+            class function operator/(self_field: field; number: integer): field;
+            
+            /// Matrizendivision mit Zahlen:
+            /// field_div /= b;
+            class procedure operator/=(var self_field:field; number: integer);
+
 //            /// Exponentiation vom jeden Matrizenelements:
 //            /// field_exp := self_field ** b
 //            class function operator ** (var self_field:field; const b:real): field;
@@ -376,21 +376,24 @@ implementation
       end;
         
 
-//    // field.operator / () and field.operator /= () - Implementierung
-//    class function field.operator / (self_field:field; b:Real): field;
-//        begin
+    // field.operator / () and field.operator /= () - Implementierung
+    class function field.operator/(self_field: field; number: integer): field;
+        begin
 //         if b = 0 then
 //             raise new System.ArithmeticException('ZeroDivisionError');
-//         Result := self_field * (1/b);
-//        end;
-//    
-//
-//    class procedure field.operator /= (var self_field:field; const b:Real);
-//        begin
-//         self_field := self_field / b;
-//        end;
-//    
-//
+        var tmp_result := new integer[self_field.length];
+        for var index := 0 to self_field.length-1 do
+          tmp_result[index] := self_field.value[index] div number; 
+        Result := new field(self_field, tmp_result);
+        end;
+    
+
+    class procedure field.operator/=(var self_field: field; number: integer);
+        begin
+         self_field := self_field / number;
+        end;
+    
+
 //    // field.operator ** () - Implementierung
 //    class function field.operator ** (var self_field:field; const b:real): field;
 //        begin
