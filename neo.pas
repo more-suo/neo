@@ -2,10 +2,6 @@
 
 interface
         
-//    type
-//        float_func = System.Func<real, real>;
-//        int_func = System.Func<real, integer>;
-//        
     type
         field = class
       
@@ -94,12 +90,12 @@ interface
 //            /// Exponentiation vom jeden Matrizenelements:
 //            /// field_exp := self_field ** b
 //            class function operator**(var self_field: field; number: real): field;
-//                
-//            /// Summe aller Elemente der Matrize
-//            function sum(): integer;
-//            
-//            /// wenn axis = 0, Summe aller Spalten; wenn axis = 1, Summe aller Zeilen
-//            function sum(axis: integer): field;
+                
+            /// Summe aller Elemente der Matrize
+            function sum(): integer;
+            
+            /// wenn axis = 0, Summe aller Spalten; wenn axis = 1, Summe aller Zeilen
+            function sum(axis: integer): field;
 
             /// das Werte der Matrize
             function get(params index: array of integer): integer;
@@ -399,20 +395,75 @@ implementation
 //                 tmp_result[i, j] :=  self_field.values[i, j] ** b;
 //         Result := new field(tmp_result);
 //        end;
-//        
-//
-//    // field.sum() - Implementierung
-//    function field.sum(): integer;
-//    begin
-//      Result := self.value.sum();
-//    end;
-//    
-//
-//    function field.sum(axis: integer): field;
-//    begin
-//      println('*', axis, self.shape);
-//      result := nil;
-//    end;
+        
+
+    // field.sum() - Implementierung
+    function field.sum(): integer;
+    begin
+      Result := self.value.sum();
+    end;
+    
+
+    function field.sum(axis: integer): field;
+    begin
+      if self.rank = 1 then
+        begin
+        var tmp_result: array of integer := (self.sum());
+        result := new field(@tmp_result, tmp_result.Rank);
+        end
+      else
+      begin
+        var new_shape := new integer[self.rank-1]; var cnt := 0;
+        for var index := 0 to self.rank-1 do
+          if index = axis then
+            continue
+          else
+            begin
+            new_shape[cnt] := self.shape[index];
+            cnt += 1;
+            end;
+        var sum_arr := new integer[self.shape.Product div self.shape[axis]];
+        var sum_iter_array := new integer[self.rank-1];
+        sum_iter_array[self.rank-2] := 1;
+        for var i := 1 to rank-2 do
+          sum_iter_array[self.rank-1-i-1] := sum_iter_array[self.rank-1-i] * new_shape[self.rank-1-i];
+//        println(sum_iter_array, new_shape);
+        for var global_index := 0 to self.shape[axis] do
+          begin
+            var arr := new integer[self.rank];
+            for var index := 0 to self.length-1 do
+            begin
+            if arr.Length > 1 then 
+              for var i := self.rank-1 downto 0 do
+                if arr[i] = self.shape[i] then
+                begin
+                  arr[i-1] += 1;
+                  arr[i] := 0;
+                  end;
+            if arr[axis] = global_index then
+              begin
+              var acc := 0;
+              var new_arr := new integer[self.rank-1]; var sum_cnt := 0;
+              for var i := 0 to self.rank-1 do
+                if i = axis then
+                  continue
+                else
+                begin
+                  new_arr[sum_cnt] := arr[i];
+                  sum_cnt += 1;
+                  end;
+              for var i := 0 to self.rank-2 do
+                acc += sum_iter_array[i] * new_arr[i];
+              sum_arr[acc] += self.value[index];  
+              end;
+            arr[self.rank-1] += 1;
+            end;
+          end;
+      println('Result:', sum_arr);
+      result := new field(@sum_arr, sum_arr.Rank);
+      
+      end;
+    end;
 
       
     // field.get() - Implementierung
