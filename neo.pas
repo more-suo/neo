@@ -29,39 +29,39 @@ interface
     
             /// Matrizenaddition:
             /// field_sum := self_field + b;
-            class function operator + (self_field: field; number: integer): field;
+            class function operator+(self_field: field; number: integer): field;
            
             /// Matrizenaddition:
             /// field_sum := a + other_field;
-            class function operator + (number: integer; other_field: field): field;
+            class function operator+(number: integer; other_field: field): field;
            
             /// Matrizenaddition:
             /// field_sum := self_field + other_field;
-            class function operator + (self_field, other_field:field): field;
+            class function operator+(self_field, other_field:field): field;
            
             /// Matrizenaddition:
             /// field_sum += other_field; 
-            class procedure operator += (var self_field, other_field: field);
+            class procedure operator+=(var self_field, other_field: field);
             
             /// Matrizenaddition:
             /// field_sum += b; 
-            class procedure operator += (var self_field: field; number: integer);
+            class procedure operator+=(var self_field: field; number: integer);
                         
             /// Matrizensubtraktion:
             /// field_sum := self_field - b;
-            class function operator - (self_field: field; number: integer): field;
+            class function operator-(self_field: field; number: integer): field;
                 
             /// Matrizensubtraktion:
             /// field_difference := self_field - other_field;
-            class function operator - (self_field, other_field: field): field;
+            class function operator-(self_field, other_field: field): field;
             
-//            /// Matrizensubtraktion:
-//            /// field_difference -= other_field;    
-//            class procedure operator -= (var self_field:field; const other_field:field);
-//            
-//            /// Matrizensubtraktion:
-//            /// field_sum -= b; 
-//            class procedure operator -= (var self_field:field; const b:Real);
+            /// Matrizensubtraktion:
+            /// field_difference -= other_field;    
+            class procedure operator-=(var self_field: field; other_field: field);
+            
+            /// Matrizensubtraktion:
+            /// field_sum -= b; 
+            class procedure operator-=(var self_field: field; number: integer);
                 
             /// Matrizenmultiplikation mit Zahlen:
             /// field_mult := self_field * b;
@@ -234,162 +234,162 @@ implementation
     
     // field.ToString() - Implementierung
     function field.ToString: string;
-      begin
-        var cnt := 0;
-        write('['*self.rank);
-        var arr := new integer[self.rank];
-        for var index := 0 to self.length-1 do
-          begin
-          if arr.Length > 1 then 
-            for var i := self.rank-1 downto 0 do
+    begin
+      var cnt := 0;
+      write('['*self.rank);
+      var arr := new integer[self.rank];
+      for var index := 0 to self.length-1 do
+        begin
+        if arr.Length > 1 then 
+          for var i := self.rank-1 downto 0 do
+            begin
+            if arr[i] = self.shape[i] then
               begin
-              if arr[i] = self.shape[i] then
-                begin
-                arr[i-1] += 1;
-                arr[i] := 0;
-                write('], ');
-                cnt += 1;
-                end
-              end;
-          write('['*cnt); cnt := 0;
-          arr[self.rank-1] += 1;
-          write(self.value[index], ', ');
-          end;
-        write(']'*self.rank);
-      end;
+              arr[i-1] += 1;
+              arr[i] := 0;
+              write('], ');
+              cnt += 1;
+              end
+            end;
+        write('['*cnt); cnt := 0;
+        arr[self.rank-1] += 1;
+        write(self.value[index], ', ');
+        end;
+      write(']'*self.rank);
+    end;
         
         
     // field.operator + () and field.operator += () - Implementierung
     class function field.operator+(self_field: field; number: integer): field;
-      begin
-        var tmp_result := new integer[self_field.length];
-        for var index := 0 to self_field.length-1 do
-          tmp_result[index] := self_field.value[index] + number;
-        result := new field(self_field, tmp_result);    
-      end;
+    begin
+      var tmp_result := new integer[self_field.length];
+      for var index := 0 to self_field.length-1 do
+        tmp_result[index] := self_field.value[index] + number;
+      result := new field(self_field, tmp_result);    
+    end;
         
         
     class function field.operator+(number: integer; other_field: field): field;
-      begin
-        Result := other_field + number;    
-      end;
+    begin
+      Result := other_field + number;    
+    end;
         
         
     class function field.operator+(self_field, other_field: field): field;
-      begin
+    begin
 //         if not compare(self_field.shape, other_field.shape) then
 //           raise new System.ArithmeticException('Wrong array sizes');
-        var tmp_result := new integer[self_field.length];
-        for var index := 0 to self_field.length-1 do
-          tmp_result[index] := self_field.value[index] + other_field.value[index]; 
-        Result := new field(self_field, tmp_result);    
-      end;
+      var tmp_result := new integer[self_field.length];
+      for var index := 0 to self_field.length-1 do
+        tmp_result[index] := self_field.value[index] + other_field.value[index]; 
+      Result := new field(self_field, tmp_result);    
+    end;
         
         
     class procedure field.operator+=(var self_field, other_field: field);
-      begin
+    begin
 //         if not compare(self_field.shape, other_field.shape) then
 //                raise new Exception('Wrong array sizes');
-        self_field := self_field + other_field;
-      end;
+      self_field := self_field + other_field;
+    end;
     
     
     class procedure field.operator+=(var self_field:field; number: integer);
-      begin
-       self_field := self_field + number;
-      end;
+    begin
+      self_field := self_field + number;
+    end;
         
         
     // field.operator - () and field.operator -= () - Implementierung        
     class function field.operator-(self_field: field; number: integer): field;
-        begin
-        var tmp_result := new integer[self_field.length];
-        for var index := 0 to self_field.length-1 do
-          tmp_result[index] := self_field.value[index] - number; 
-        Result := new field(self_field, tmp_result);        
-        end;
+    begin
+      var tmp_result := new integer[self_field.length];
+      for var index := 0 to self_field.length-1 do
+        tmp_result[index] := self_field.value[index] - number; 
+      Result := new field(self_field, tmp_result);        
+    end;
         
 
     class function field.operator-(self_field, other_field: field): field;
-        begin
+    begin
 //         if not compare(self_field.shape, other_field.shape) then
 //                raise new System.ArithmeticException('Wrong array sizes');
-        var tmp_result := new integer[self_field.length];
-        for var index := 0 to self_field.length-1 do
-          tmp_result[index] := self_field.value[index] - other_field.value[index]; 
-        Result := new field(self_field, tmp_result);    
-        end;       
+      var tmp_result := new integer[self_field.length];
+      for var index := 0 to self_field.length-1 do
+        tmp_result[index] := self_field.value[index] - other_field.value[index]; 
+      Result := new field(self_field, tmp_result);    
+    end;       
 
     
-//    class procedure field.operator -= (var self_field:field; const other_field:field);
-//        begin
+    class procedure field.operator-=(var self_field:field; other_field: field);
+    begin
 //         if not compare(self_field.shape, other_field.shape) then
 //                raise new Exception('Wrong array sizes');
-//         self_field := self_field - other_field;
-//        end;
-//
-//    
-//    class procedure field.operator -= (var self_field:field; const b:Real);
-//        begin
-//         self_field := self_field - b;
-//        end;
+      self_field := self_field - other_field;
+    end;
+
+    
+    class procedure field.operator-=(var self_field: field; number: integer);
+    begin
+      self_field := self_field - number;
+    end;
 
         
     // field.operator * () and field.operator *= () - Implementierung
     class function field.operator*(self_field: field; number: integer): field;
-      begin
-        var tmp_result := new integer[self_field.length];
-        for var index := 0 to self_field.length-1 do
-          tmp_result[index] := self_field.value[index] * number; 
-        Result := new field(self_field, tmp_result);
-      end;
+    begin
+      var tmp_result := new integer[self_field.length];
+      for var index := 0 to self_field.length-1 do
+        tmp_result[index] := self_field.value[index] * number; 
+      Result := new field(self_field, tmp_result);
+    end;
 
 
     class function field.operator*(number: integer; other_field: field): field;
-      begin
-        Result := other_field * number;
-      end;
+    begin
+      Result := other_field * number;
+    end;
                   
                   
     class function field.operator*(self_field, other_field:field): field;
-      begin
+    begin
 //         if not compare(self_field.shape, other_field.shape) then
 //                raise new System.ArithmeticException('Wrong array sizes');
-        var tmp_result := new integer[self_field.length];
-        for var index := 0 to self_field.length-1 do
-          tmp_result[index] := self_field.value[index] * other_field.value[index]; 
-        Result := new field(self_field, tmp_result);
-      end;
+      var tmp_result := new integer[self_field.length];
+      for var index := 0 to self_field.length-1 do
+        tmp_result[index] := self_field.value[index] * other_field.value[index]; 
+      Result := new field(self_field, tmp_result);
+    end;
             
             
     class procedure field.operator*=(var self_field: field; number: integer);
-      begin
-        self_field := self_field * number;
-      end;
+    begin
+      self_field := self_field * number;
+    end;
           
       
     class procedure field.operator*=(var self_field: field; other_field: field);
-      begin
-        self_field := self_field * other_field;
-      end;
+    begin
+      self_field := self_field * other_field;
+    end;
         
 
     // field.operator / () and field.operator /= () - Implementierung
     class function field.operator/(self_field: field; number: integer): field;
-        begin
+    begin
 //         if b = 0 then
 //             raise new System.ArithmeticException('ZeroDivisionError');
-        var tmp_result := new integer[self_field.length];
-        for var index := 0 to self_field.length-1 do
-          tmp_result[index] := self_field.value[index] div number; 
-        Result := new field(self_field, tmp_result);
-        end;
+      var tmp_result := new integer[self_field.length];
+      for var index := 0 to self_field.length-1 do
+        tmp_result[index] := self_field.value[index] div number; 
+      Result := new field(self_field, tmp_result);
+    end;
     
 
     class procedure field.operator/=(var self_field: field; number: integer);
-        begin
-         self_field := self_field / number;
-        end;
+    begin
+      self_field := self_field / number;
+    end;
     
 
 //    // field.operator ** () - Implementierung
@@ -448,12 +448,12 @@ implementation
       
     // field.get() - Implementierung
     function field.get(params index: array of integer): integer;
-      begin
-        var acc := 0;
-        for var i := 0 to self.rank-1 do
-          acc += self.iter_array[i] * index[i];
-        Result := self.value[acc];
-      end;
+    begin
+      var acc := 0;
+      for var i := 0 to self.rank-1 do
+        acc += self.iter_array[i] * index[i];
+      Result := self.value[acc];
+    end;
     
     
 //    // field.get_max() - Implementierung
@@ -503,9 +503,9 @@ implementation
     
     // field.copy() - Implementierung
     function field.copy(): field;
-      begin
-        Result := new field(self, self.value);
-      end;
+    begin
+      Result := new field(self, self.value);
+    end;
       
       
 //    // sum() - Implementierung
