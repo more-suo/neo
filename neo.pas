@@ -22,7 +22,7 @@ interface
             
             constructor Create(array_ptr: pointer; rank: integer);
             
-            constructor (shape: array of integer);
+            constructor Create(shape: array of integer);
             
             /// konvertiert Matriz zu String
             function ToString: string; override;
@@ -96,16 +96,15 @@ interface
 //            class function operator**(var self_field: field; number: real): field;
 //                
 //            /// Summe aller Elemente der Matrize
-//            function sum(): real;
+//            function sum(): integer;
 //            
 //            /// wenn axis = 0, Summe aller Spalten; wenn axis = 1, Summe aller Zeilen
-//            function sum(axis:integer): field;
-//                
-//            /// Dimensionen der Matrize
-//            function shape(): array of integer;
-              
+//            function sum(axis: integer): field;
+
             /// das Werte der Matrize
             function get(params index: array of integer): integer;
+            
+            procedure map(func: System.Func<integer, integer>);
             
 //            /// kehrt den groeßten Wert der Matrize zurueck
 //            function get_max(): real;
@@ -213,6 +212,7 @@ implementation
         end;
       
       self.iter_array := new integer[rank];
+      self.iter_array[rank-1] := 1;
       for var i := 1 to rank-1 do
         self.iter_array[rank-i-1] := self.iter_array[rank-i] * self.shape[rank-i];
       
@@ -242,15 +242,13 @@ implementation
         begin
         if arr.Length > 1 then 
           for var i := self.rank-1 downto 0 do
-            begin
             if arr[i] = self.shape[i] then
               begin
               arr[i-1] += 1;
               arr[i] := 0;
               write('], ');
               cnt += 1;
-              end
-            end;
+              end;
         write('['*cnt); cnt := 0;
         arr[self.rank-1] += 1;
         write(self.value[index], ', ');
@@ -404,47 +402,18 @@ implementation
 //        
 //
 //    // field.sum() - Implementierung
-//    function field.sum(): real;
-//        begin
-//         var s := 0.0;
-//         for var i:= 0 to row_number - 1 do
-//             for var j:= 0 to column_number - 1 do
-//                 begin
-//                  s += values[i,j];
-//                 end;
-//         Result := s;
-//        end;
+//    function field.sum(): integer;
+//    begin
+//      Result := self.value.sum();
+//    end;
 //    
 //
-//    function field.sum(axis:integer): field;
-//        begin
-//         var return_array := new Real[1];
-//         if axis = 0 then
-//             begin
-//              setlength(return_array, column_number);
-//              for var column:= 0 to column_number-1 do
-//                  for var row:= 0 to row_number-1 do
-//                      return_array[column] += values[row,column];
-//             end
-//         else if axis = 1 then
-//             begin
-//              setlength(return_array, row_number);
-//              for var row:= 0 to row_number-1 do
-//                  for var column:= 0 to column_number-1 do
-//                      return_array[row] += values[row,column];
-//             end
-//         else
-//             raise new Exception('No third dimension');
-//         Result := new field(return_array);
-//        end;
-//        
-//
-//    // field.shape() - Implementierung
-//    function field.shape(): array of integer;
-//        begin
-//         Result := Arr(row_number, column_number);
-//        end;
-      
+//    function field.sum(axis: integer): field;
+//    begin
+//      println('*', axis, self.shape);
+//      result := nil;
+//    end;
+
       
     // field.get() - Implementierung
     function field.get(params index: array of integer): integer;
@@ -453,6 +422,12 @@ implementation
       for var i := 0 to self.rank-1 do
         acc += self.iter_array[i] * index[i];
       Result := self.value[acc];
+    end;
+    
+    procedure field.map(func: System.Func<integer, integer>);
+    begin
+      for var index := 0 to self.length-1 do
+        self.value[index] := func(self.value[index]); 
     end;
     
     
@@ -508,32 +483,6 @@ implementation
     end;
       
       
-//    // sum() - Implementierung
-//    function sum(a:field): real;
-//        begin
-//         Result := a.sum();
-//        end;
-//    
-//    function sum(a:field; axis:integer): field;
-//        begin
-//         Result := a.sum(axis);
-//        end;
-//      
-//      
-//    // shape() - Implementierung
-//    function shape(a:field): array of integer;
-//        begin
-//         Result := a.shape();
-//        end;
-//      
-//      
-//    // get_value() - Implementierung
-//    function get_value(a:field): array[,] of real;
-//        begin
-//         Result := a.get_value();
-//        end;
-//    
-//    
 //    // get_max() - Implementierung
 //    function get_max(a:field): real;
 //        begin
@@ -551,36 +500,8 @@ implementation
 //        begin
 //         Result := a.get_longest(axis, num);
 //        end;
-//   
-//   
-//    // copy() - Implementierung
-//    function copy(a: field): field;
-//        begin
-//         Result := a.copy();
-//        end;
-// 
-//        
-//    // map() - Implementierung
-//    function map(func: float_func; self_field: field): field;
-//        begin
-//         var return_array := new Real[self_field.row_number, self_field.column_number];
-//         for var i:= 0 to self_field.row_number - 1 do
-//            for var j:= 0 to self_field.column_number - 1 do
-//                return_array[i,j] := func(self_field.values[i,j]);
-//         Result := new field(return_array);
-//        end;
-//    
 //
-//    function map(func: int_func; self_field: field): field;
-//        begin
-//         var return_array := new Real[self_field.row_number, self_field.column_number];
-//         for var i:= 0 to self_field.row_number - 1 do
-//            for var j:= 0 to self_field.column_number - 1 do
-//                return_array[i,j] := func(self_field.values[i,j]);
-//         Result := new field(return_array);
-//        end;
-//        
-//        
+//     
 //    // random_field() - Implementierung
 //    function random_field(rows, columns:integer): field;
 //        begin
