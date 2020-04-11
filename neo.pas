@@ -496,8 +496,7 @@ implementation
           var acc := 0;
           for var i := 0 to self.rank-2 do
             acc += sum_iter_array[i] * new_arr[i];
-//          println(arr, acc, new_arr);
-//            sum_arr[acc] += self.value[index];  
+          sum_arr[acc] += self.value[index];
           end;
       result := new field(sum_arr, sum_array_shape);
       end;
