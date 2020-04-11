@@ -9,8 +9,10 @@ interface
             value: array of integer;      
             iter_array: array of integer;
             
-            constructor Create(new_field: field; value: array of integer);
-
+            constructor Create(value: array of integer; shape: array of integer);
+            
+            function __get_iter_array(shape: array of integer): array of integer;
+            
         public
             length: integer;
             rank: integer;
@@ -172,13 +174,27 @@ implementation
         
         
     // field.Create() - Implementierung
-    constructor field.Create(new_field: field; value: array of integer);
+    constructor field.Create(value: array of integer; shape: array of integer);
     begin
       self.value := value;
-      self.shape := new_field.shape;
-      self.rank := new_field.rank;
-      self.length := new_field.length;
-      self.iter_array := new_field.iter_array;
+      self.shape := shape;
+      self.rank := shape.Length;
+      self.length := shape.Product;
+      self.iter_array := new integer[self.rank];
+      self.iter_array[self.rank-1] := 1;
+      for var i := 1 to self.rank-1 do
+        self.iter_array[self.rank-i-1] := self.iter_array[self.rank-i] * self.shape[self.rank-i];
+    end;
+    
+
+    function field.__get_iter_array(shape: array of integer): array of integer;
+    begin
+      var rank := shape.Length;
+      var iter_array := new integer[rank];
+      iter_array[rank-1] := 1;
+      for var index := 1 to rank-1 do
+        iter_array[rank-index-1] := iter_array[rank-index] * shape[rank-index];
+      result := iter_array;
     end;
     
     
@@ -201,10 +217,7 @@ implementation
         self.shape[index] := element_ptr^;
         end;
       
-      self.iter_array := new integer[rank];
-      self.iter_array[rank-1] := 1;
-      for var i := 1 to rank-1 do
-        self.iter_array[rank-i-1] := self.iter_array[rank-i] * self.shape[rank-i];
+      self.iter_array := self.__get_iter_array(self.shape);
       
       self.value := new integer[size^];
       for var index := 0 to size^-1 do
@@ -253,7 +266,7 @@ implementation
       var tmp_result := new integer[self_field.length];
       for var index := 0 to self_field.length-1 do
         tmp_result[index] := self_field.value[index] + number;
-      result := new field(self_field, tmp_result);    
+      result := new field(tmp_result, self_field.shape);    
     end;
         
         
@@ -270,7 +283,7 @@ implementation
       var tmp_result := new integer[self_field.length];
       for var index := 0 to self_field.length-1 do
         tmp_result[index] := self_field.value[index] + other_field.value[index]; 
-      Result := new field(self_field, tmp_result);    
+      Result := new field(tmp_result, self_field.shape);    
     end;
         
         
@@ -294,7 +307,7 @@ implementation
       var tmp_result := new integer[self_field.length];
       for var index := 0 to self_field.length-1 do
         tmp_result[index] := self_field.value[index] - number; 
-      Result := new field(self_field, tmp_result);        
+      Result := new field(tmp_result, self_field.shape);        
     end;
         
 
@@ -305,7 +318,7 @@ implementation
       var tmp_result := new integer[self_field.length];
       for var index := 0 to self_field.length-1 do
         tmp_result[index] := self_field.value[index] - other_field.value[index]; 
-      Result := new field(self_field, tmp_result);    
+      Result := new field(tmp_result, self_field.shape);    
     end;       
 
     
@@ -329,7 +342,7 @@ implementation
       var tmp_result := new integer[self_field.length];
       for var index := 0 to self_field.length-1 do
         tmp_result[index] := self_field.value[index] * number; 
-      Result := new field(self_field, tmp_result);
+      Result := new field(tmp_result, self_field.shape);
     end;
 
 
@@ -346,7 +359,7 @@ implementation
       var tmp_result := new integer[self_field.length];
       for var index := 0 to self_field.length-1 do
         tmp_result[index] := self_field.value[index] * other_field.value[index]; 
-      Result := new field(self_field, tmp_result);
+      Result := new field(tmp_result, self_field.shape);
     end;
             
             
@@ -370,7 +383,7 @@ implementation
       var tmp_result := new integer[self_field.length];
       for var index := 0 to self_field.length-1 do
         tmp_result[index] := self_field.value[index] div number; 
-      Result := new field(self_field, tmp_result);
+      Result := new field(tmp_result, self_field.shape);
     end;
     
 
@@ -417,11 +430,8 @@ implementation
             cnt += 1;
             end;
         var sum_arr := new integer[self.shape.Product div self.shape[axis]];
-        var sum_iter_array := new integer[self.rank-1];
-        sum_iter_array[self.rank-2] := 1;
-        for var i := 1 to rank-2 do
-          sum_iter_array[self.rank-1-i-1] := sum_iter_array[self.rank-1-i] * new_shape[self.rank-1-i];
-//        println(sum_iter_array, new_shape);
+        var sum_iter_array := self.__get_iter_array(new_shape);
+
         for var global_index := 0 to self.shape[axis] do
           begin
             var arr := new integer[self.rank];
@@ -453,8 +463,7 @@ implementation
             arr[self.rank-1] += 1;
             end;
           end;
-      println('Result:', sum_arr);
-      result := new field(@sum_arr, sum_arr.Rank);
+      result := new field(sum_arr, new_shape);
       
       end;
     end;
@@ -520,7 +529,7 @@ implementation
     // field.copy() - Implementierung
     function field.copy(): field;
     begin
-      Result := new field(self, self.value);
+      Result := new field(self.value, self.shape);
     end;
 
    
