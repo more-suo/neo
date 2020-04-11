@@ -108,15 +108,11 @@ interface
             /// kehrt den groeßten Wert der Matrize zurueck
             function max(): integer;
                 
-//            /// kehrt den laengsten Wert der Matrize zurueck
-//            function get_longest(): real;
-//            
-//            /// Wenn axis = 0 laengster Wert in der Spaltennummer num,
-//            /// wenn axis = 1 laengster Wert in der Zeile
-//            function get_longest(axis, num:integer): real;
-//                     
             /// Erstellt eine Kopie der Matrize
             function copy(): field;
+            
+            /// Umformung der Matrize in eine andere Matrize mit Groeße size
+            function reshape(shape: array of integer): field;
     end;
 
 //    /// Vergleich von zwei arrays of integer
@@ -128,14 +124,7 @@ interface
 //    function random_field(rows, columns, max:integer): field;
 //    /// Matrizengenerator mit rows*colums, (min, max)
 //    function random_field(rows, columns, min, max:integer): field;
-//
-//    
-//    /// Umformung der Matrize in einen eindemensionalen Vektor mit Laenge size
-//    function reshape(a:field; size:integer): field;
-//    /// Umformung der Matrize in eine andere Matrize mit Groeße size
-//    function reshape(a:field; size:array of integer): field;
-//    
-//    
+//   
 //    /// Erweiterung der Matrize a mit b, zeilenweise
 //    function concatenate(a,b:field): field;
 //    /// Erweiterung der Matrize a mit b, axis == 0 - zeilenweise, axis == 1 - spaltenweise
@@ -574,19 +563,12 @@ implementation
       Result := new field(self.value, self.shape);
     end;
 
+
+    function field.reshape(shape: array of integer): field;
+    begin
+      Result := new field(self.value, shape);
+    end;
    
-//    // get_longest() - Implementierung
-//    function get_longest(a:field): real;
-//        begin
-//         Result := a.get_longest();
-//        end;
-//    
-//    function get_longest(a:field; axis, num:integer): real;
-//        begin
-//         Result := a.get_longest(axis, num);
-//        end;
-//
-//     
 //    // random_field() - Implementierung
 //    function random_field(rows, columns:integer): field;
 //        begin
@@ -616,53 +598,8 @@ implementation
 //                return_array[i,j] := Random + Random(min, max);
 //         Result := new field(return_array);
 //        end;    
-//    
-//    
-//    // reshape() - Implementierung
-//    function reshape(a:field; size:integer): field;
-//        begin
-//         if a.column_number * a.row_number <> size then
-//            raise new Exception('Wrong size');
-//         var counter := 0;
-//         var return_array := new Real[size];
-//         foreach var element in a.get_value do
-//                begin
-//                 return_array[counter] := element;
-//                 counter += 1;
-//                end;
-//         Result := new field(return_array);
-//        end;
-//        
 //
-//    function reshape(a:field; size:array of integer): field;
-//        begin
-//         var rows := 0;
-//         var columns := 0;
-//         var elements_needed := 1;
-//         if size.Length < 1 then
-//             raise new Exception('Size must contain at least 1 argument');
-//         foreach x: integer in size do
-//              elements_needed *= x;
-//         if size.Length = 1 then
-//            (rows, columns) := (size[0], 1)
-//         else if size.Length = 2 then
-//            (rows, columns) := (size[0], size[1]);
-//         var elements_given := a.column_number * a.row_number;
-//         if elements_given <> elements_needed then
-//             raise new Exception('Wrong size');
-//         var return_array := new Real[rows, columns];
-//         var tmp := reshape(a, elements_given).values;
-//         var counter := 0;
-//         for var i:= 0 to rows-1 do
-//            for var j:= 0 to columns-1 do
-//                begin
-//                 return_array[i,j] := tmp[0, counter];
-//                 counter += 1;
-//                end;
-//         Result := new field(return_array);
-//        end;
-//    
-//    
+//  
 //    // concatenate() - Implementierung
 //    function concatenate(a,b:field): field;
 //        begin
