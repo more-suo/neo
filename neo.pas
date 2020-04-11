@@ -115,16 +115,9 @@ interface
             function reshape(shape: array of integer): field;
     end;
 
-//    /// Vergleich von zwei arrays of integer
-//    function compare(a,b:array of integer): boolean;
-//       
-//    /// Matrizengenerator mit rows*colums, (0, 1)
-//    function random_field(rows, columns:integer): field;
-//    /// Matrizengenerator mit rows*colums, (0, max)
-//    function random_field(rows, columns, max:integer): field;
-//    /// Matrizengenerator mit rows*colums, (min, max)
-//    function random_field(rows, columns, min, max:integer): field;
-//   
+    /// Matrizengenerator mit rows*colums, (0, 1)
+    function random_field(shape: array of integer): field;
+   
 //    /// Erweiterung der Matrize a mit b, zeilenweise
 //    function concatenate(a,b:field): field;
 //    /// Erweiterung der Matrize a mit b, axis == 0 - zeilenweise, axis == 1 - spaltenweise
@@ -151,18 +144,6 @@ interface
         
 implementation
     
-//   function compare(a, b:array of integer): boolean;
-//        begin 
-//         Result := False;
-//         if a.Length <> b.Length then
-//             exit;
-//         for var i:= 0 to a.Length-1 do
-//             if a[i] <> b[i] then
-//                  exit;
-//         Result := True;
-//        end;  
-        
-        
     // field.Create() - Implementierung
     constructor field.Create(value: array of integer; shape: array of integer);
     begin
@@ -569,37 +550,16 @@ implementation
       Result := new field(self.value, shape);
     end;
    
-//    // random_field() - Implementierung
-//    function random_field(rows, columns:integer): field;
-//        begin
-//         var return_array := new Real[rows, columns];
-//         for var i:= 0 to rows - 1 do
-//             for var j:= 0 to columns - 1 do
-//                return_array[i,j] := Random;
-//         Result := new field(return_array);   
-//        end;
-// 
-//
-//    function random_field(rows, columns, max:integer): field;
-//        begin
-//         var return_array := new Real[rows, columns];
-//         for var i:= 0 to rows - 1 do
-//             for var j:= 0 to columns - 1 do
-//                return_array[i,j] := Random + Random(max);
-//         Result := new field(return_array);
-//        end;
-//    
-//
-//    function random_field(rows, columns, min, max:integer): field;
-//        begin
-//         var return_array := new Real[rows, columns];
-//         for var i:= 0 to rows - 1 do
-//             for var j:= 0 to columns - 1 do
-//                return_array[i,j] := Random + Random(min, max);
-//         Result := new field(return_array);
-//        end;    
-//
-//  
+    // random_field() - Implementierung
+    function random_field(shape: array of integer): field;
+    begin
+      var tmp_result := new integer[shape.Product];
+      for var index := 0 to shape.Product-1 do
+        tmp_result[index] := random(2);
+      Result := new field(tmp_result, shape);   
+    end;
+ 
+  
 //    // concatenate() - Implementierung
 //    function concatenate(a,b:field): field;
 //        begin
