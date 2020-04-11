@@ -11,6 +11,8 @@ interface
             
             constructor Create(value: array of integer; shape: array of integer);
             
+            function __get_index(self_field: field): function(): array of integer;
+            
             function __get_iter_array(shape: array of integer): array of integer;
             
         public
@@ -93,11 +95,8 @@ interface
 //            /// field_exp := self_field ** b
 //            class function operator**(var self_field: field; number: real): field;
                 
-            /// Summe aller Elemente der Matrize
-            function sum(): integer;
-            
             /// wenn axis = 0, Summe aller Spalten; wenn axis = 1, Summe aller Zeilen
-            function sum(axis: integer): field;
+            function sum(axis: integer := -1): field;
 
             /// das Werte der Matrize
             function get(params index: array of integer): integer;
@@ -186,6 +185,58 @@ implementation
         self.iter_array[self.rank-i-1] := self.iter_array[self.rank-i] * self.shape[self.rank-i];
     end;
     
+    
+    type Generator = class
+    
+      self_field: field;
+      index: array of integer;
+      index_1: array of integer;
+      
+      function next_1(): array of integer;
+      begin
+        if index_1[0] = self.self_field.length-1 then
+          index_1[0] := 0
+        else
+          index_1[0] += 1;
+        result := index_1;
+      end;
+      
+      function next(): array of integer;
+      begin
+        index[index.Length-1] += 1;
+        for var i := index.Length-1 downto 0 do
+          if index[i] = self_field.shape[i] then
+            if i = 0 then
+              begin
+              index := ArrFill(index.Length, 0);
+              end
+            else
+              begin
+              index[i-1] += 1;
+              index[i] := 0;
+              end;
+        result := index;
+      end;
+    end;
+    
+
+    function field.__get_index(self_field: field): function(): array of integer;
+    begin
+      var obj := new Generator;
+      obj.self_field := self_field;
+      if self_field.rank <> 1 then
+        begin
+        obj.index := ArrFill(self_field.rank, 0);
+        obj.index[self_field.rank-1] := -1;
+        result := obj.next;
+        end
+      else
+        begin
+        obj.index_1 := ArrFill(1, -1);
+        result := obj.next_1;
+        end;
+    end;
+
 
     function field.__get_iter_array(shape: array of integer): array of integer;
     begin
@@ -404,67 +455,51 @@ implementation
 //        end;
         
 
-    // field.sum() - Implementierung
-    function field.sum(): integer;
-    begin
-      Result := self.value.sum();
-    end;
-    
-
     function field.sum(axis: integer): field;
     begin
-      if self.rank = 1 then
+      if (self.rank = 1) or (axis = -1) then
         begin
-        var tmp_result: array of integer := (self.sum());
-        result := new field(@tmp_result, tmp_result.Rank);
+        var tmp_result: array of integer := (self.value.Sum);
+        var tmp_result_shape: array of integer := (1);
+        result := new field(tmp_result, tmp_result_shape);
         end
       else
       begin
-        var new_shape := new integer[self.rank-1]; var cnt := 0;
+        var sum_array_shape := new integer[self.rank-1]; var cnt := 0;
         for var index := 0 to self.rank-1 do
-          if index = axis then
-            continue
-          else
+          if index <> axis then
             begin
-            new_shape[cnt] := self.shape[index];
+            sum_array_shape[cnt] := self.shape[index];
             cnt += 1;
-            end;
-        var sum_arr := new integer[self.shape.Product div self.shape[axis]];
-        var sum_iter_array := self.__get_iter_array(new_shape);
+            end
+          else  
+            continue;
+            
+        var sum_arr := new integer[sum_array_shape.Product];
+        var sum_iter_array := self.__get_iter_array(sum_array_shape);
 
-        for var global_index := 0 to self.shape[axis] do
-          begin
-            var arr := new integer[self.rank];
-            for var index := 0 to self.length-1 do
-            begin
-            if arr.Length > 1 then 
-              for var i := self.rank-1 downto 0 do
-                if arr[i] = self.shape[i] then
-                begin
-                  arr[i-1] += 1;
-                  arr[i] := 0;
-                  end;
-            if arr[axis] = global_index then
-              begin
-              var acc := 0;
-              var new_arr := new integer[self.rank-1]; var sum_cnt := 0;
-              for var i := 0 to self.rank-1 do
-                if i = axis then
-                  continue
-                else
-                begin
-                  new_arr[sum_cnt] := arr[i];
-                  sum_cnt += 1;
-                  end;
-              for var i := 0 to self.rank-2 do
-                acc += sum_iter_array[i] * new_arr[i];
-              sum_arr[acc] += self.value[index];  
+        var gen := self.__get_index(self);
+        for var index := 0 to self.length-1 do
+          begin 
+          var arr := gen();
+           
+          var new_arr := new integer[self.rank-1]; var sum_cnt := 0;
+          for var i := 0 to self.rank-1 do
+            if i = axis then
+              continue
+            else
+             begin
+              new_arr[sum_cnt] := arr[i];
+              sum_cnt += 1;
               end;
-            arr[self.rank-1] += 1;
-            end;
+              
+          var acc := 0;
+          for var i := 0 to self.rank-2 do
+            acc += sum_iter_array[i] * new_arr[i];
+//          println(arr, acc, new_arr);
+//            sum_arr[acc] += self.value[index];  
           end;
-      result := new field(sum_arr, new_shape);
-      
+      result := new field(sum_arr, sum_array_shape);
       end;
     end;
 
