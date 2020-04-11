@@ -102,9 +102,9 @@ interface
             
             procedure map(func: System.Func<integer, integer>);
             
-//            /// kehrt den groeßten Wert der Matrize zurueck
-//            function get_max(): real;
-//                
+            /// kehrt den groeßten Wert der Matrize zurueck
+            function max(): integer;
+                
 //            /// kehrt den laengsten Wert der Matrize zurueck
 //            function get_longest(): real;
 //            
@@ -117,14 +117,8 @@ interface
     end;
 
 //    /// Vergleich von zwei arrays of integer
-////    function compare(a,b:array of integer): boolean;
-//    
-//    /// Anwendung einer Funktion an alle Elemente einer Neo
-//    function map(func: float_func; self_field: field): field;
-//    /// Anwendung einer Funktion an alle Elemente einer Neo
-//    function map(func: int_func; self_field: field): field;
-//    
-//        
+//    function compare(a,b:array of integer): boolean;
+//       
 //    /// Matrizengenerator mit rows*colums, (0, 1)
 //    function random_field(rows, columns:integer): field;
 //    /// Matrizengenerator mit rows*colums, (0, max)
@@ -475,6 +469,7 @@ implementation
       Result := self.value[acc];
     end;
     
+    
     procedure field.map(func: System.Func<integer, integer>);
     begin
       for var index := 0 to self.length-1 do
@@ -482,18 +477,13 @@ implementation
     end;
     
     
-//    // field.get_max() - Implementierung
-//    function field.get_max(): real;
-//        begin
-//         var max := values[0,0];
-//         for var row:= 0 to row_number-1 do
-//             for var column:= 0 to column_number-1 do
-//                 if values[row, column] >  max then
-//                     max := values[row, column];
-//         Result := max;
-//        end;
-//        
-//
+    // field.max() - Implementierung
+    function field.max(): integer;
+    begin
+      result := self.value.Max;
+    end;
+        
+
 //    // field.get_longest() - Implementierung
 //    function field.get_longest(): real;
 //        begin
@@ -532,15 +522,8 @@ implementation
     begin
       Result := new field(self, self.value);
     end;
-      
-      
-//    // get_max() - Implementierung
-//    function get_max(a:field): real;
-//        begin
-//         Result := a.get_max();
-//        end;
-//    
-//    
+
+   
 //    // get_longest() - Implementierung
 //    function get_longest(a:field): real;
 //        begin
