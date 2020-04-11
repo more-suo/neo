@@ -13,6 +13,8 @@ interface
             
             function __get_index(self_field: field): function(): array of integer;
             
+            function __get_item(index: array of integer): integer;
+            
             function __get_iter_array(shape: array of integer): array of integer;
             
         public
@@ -235,6 +237,15 @@ implementation
         obj.index_1 := ArrFill(1, -1);
         result := obj.next_1;
         end;
+    end;
+    
+    
+    function field.__get_item(index: array of integer): integer;
+    begin
+      var acc := 0;
+      for var i := 0 to index.Length-1 do
+        acc += self.iter_array[i] * index[i];
+      Result := self.value[acc];
     end;
 
 
@@ -493,10 +504,10 @@ implementation
               sum_cnt += 1;
               end;
               
-          var acc := 0;
+          var sum_acc := 0;
           for var i := 0 to self.rank-2 do
-            acc += sum_iter_array[i] * new_arr[i];
-          sum_arr[acc] += self.value[index];
+            sum_acc += sum_iter_array[i] * new_arr[i];
+          sum_arr[sum_acc] += self.value[index];
           end;
       result := new field(sum_arr, sum_array_shape);
       end;
@@ -506,10 +517,7 @@ implementation
     // field.get() - Implementierung
     function field.get(params index: array of integer): integer;
     begin
-      var acc := 0;
-      for var i := 0 to self.rank-1 do
-        acc += self.iter_array[i] * index[i];
-      Result := self.value[acc];
+      result := self.__get_item(index);
     end;
     
     
