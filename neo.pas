@@ -128,16 +128,16 @@ interface
 //    function concatenate(a,b:field): field;
 //    /// Erweiterung der Matrize a mit b, axis == 0 - zeilenweise, axis == 1 - spaltenweise
 //    function concatenate(a,b:field; axis:integer): field;
-//    
-//    
-//    /// Multiplikation von zwei Skalaren
-//    function multiply(a, b: real): real;
-//    /// Multiplikation von Skalar und Matrize
-//    function multiply(a:real; b:field): field;
-//    /// Multiplikation von Matrize und Skalar
-//    function multiply(a:field; b:real): field;
-//    /// Multiplikation von zwei Matrizen
-//    function multiply(a,b:field): field;
+    
+    
+    /// Multiplikation von zwei Skalaren
+    function multiply(a, b: real): real;
+    /// Multiplikation von Skalar und Matrize
+    function multiply(a:real; b:field): field;
+    /// Multiplikation von Matrize und Skalar
+    function multiply(a:field; b:real): field;
+    /// Multiplikation von zwei Matrizen
+    function multiply(a,b:field): field;
          
         
 implementation
@@ -626,43 +626,53 @@ implementation
 //              Result := new field(return_array);
 //             end;
 //        end;
-//        
-//        
-//    // multiply() - Implementierung
-//    function multiply(a,b:real): real;
-//        begin
-//         Result := a * b;
-//        end;
-//    
-//
-//    function multiply(a:real; b:field): field;
-//        begin
-//         Result := a * b;
-//        end;
-//        
-//
-//    function multiply(a:field; b:real): field;
-//        begin
-//         Result := a * b;
-//        end;
-//
-//
-//    function multiply(a,b:field): field;
-//        begin
-//         var (big_field, small_field) := a.shape.Product > b.shape.Product?
-//                                            (a.copy, b.copy) : (b.copy, a.copy);
-//         var row_mod := big_field.row_number mod small_field.row_number;
-//         var column_mod := big_field.column_number mod small_field.column_number;
-//         if (row_mod <> 0) or (column_mod <> 0) then
-//             raise new Exception('Fields could not be broadcast together');
-//         var row_div := big_field.row_number div small_field.row_number;
-//         var column_div := big_field.column_number div small_field.column_number;
-//         for var row_block:= 0 to row_div-1 do
-//             for var column_block:= 0 to column_div-1 do
-//                 for var row:= 0 to small_field.row_number-1 do
-//                    for var column:= 0 to small_field.column_number-1 do
-//                        big_field[row+row_block*small_field.row_number,column+column_block*small_field.column_number] *= 
-//                            small_field[row,column];
-//         Result := big_field;
-//        end;
+        
+        
+    // multiply() - Implementierung
+    function multiply(a, b: real): real;
+    begin
+      Result := a * b;
+    end;
+    
+
+    function multiply(a: real; b: field): field;
+    begin
+      Result := b * a;
+    end;
+        
+
+    function multiply(a: field; b: real): field;
+    begin
+      Result := a * b;
+    end;
+
+
+    function multiply(a, b: field): field;
+    var 
+      max_len: integer;
+      max_shape: array of integer;
+    begin
+      if a.length > b.length then
+        begin
+        max_len := a.length;
+        max_shape := a.shape;
+        end
+      else
+        begin
+        max_len := b.length;
+        max_shape := b.shape;  
+        end;
+      
+      var gen_a := a.__get_index(a);
+      var gen_b := b.__get_index(b);
+        
+      var tmp_result := new real[max_len];  
+      for var index := 0 to max_len-1 do
+        begin
+        var arr_a := gen_a();
+        var arr_b := gen_b();
+        tmp_result[index] := a.get(arr_a)*b.get(arr_b);
+        end;
+      result := new field(tmp_result, max_shape);
+    end;
 end.
