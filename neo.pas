@@ -93,9 +93,9 @@ interface
             /// field_div /= b;
             class procedure operator/=(var self_field: field; number: real);
 
-//            /// Exponentiation vom jeden Matrizenelements:
-//            /// field_exp := self_field ** b
-//            class function operator**(var self_field: field; number: real): field;
+            /// Exponentiation vom jeden Matrizenelements:
+            /// field_exp := self_field ** b
+            class function operator**(var self_field: field; number: real): field;
                 
             /// wenn axis = 0, Summe aller Spalten; wenn axis = 1, Summe aller Zeilen
             function sum(axis: integer := -1): field;
@@ -428,15 +428,14 @@ implementation
     end;
     
 
-//    // field.operator ** () - Implementierung
-//    class function field.operator**(var self_field: field; number: real): field;
-//        begin
-//         var tmp_result := new Real[self_field.row_number, self_field.column_number];
-//         for var i:= 0 to self_field.row_number - 1 do
-//             for var j:= 0 to self_field.column_number - 1 do
-//                 tmp_result[i, j] :=  self_field.values[i, j] ** b;
-//         Result := new field(tmp_result);
-//        end;
+    // field.operator ** () - Implementierung
+    class function field.operator**(var self_field: field; number: real): field;
+    begin
+      var tmp_result := new real[self_field.length];
+      for var index := 0 to self_field.length-1 do
+        tmp_result[index] := self_field.value[index] ** number; 
+      Result := new field(tmp_result, self_field.shape);
+    end;
         
 
     function field.sum(axis: integer): field;
