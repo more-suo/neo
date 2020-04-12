@@ -6,14 +6,14 @@ interface
         field = class
       
         private
-            value: array of integer;      
+            value: array of real;      
             iter_array: array of integer;
             
-            constructor Create(value: array of integer; shape: array of integer);
+            constructor Create(value: array of real; shape: array of integer);
             
             function __get_index(self_field: field): function(): array of integer;
             
-            function __get_item(index: array of integer): integer;
+            function __get_item(index: array of integer): real;
             
             static function __get_iter_array(shape: array of integer): array of integer;
             
@@ -31,11 +31,11 @@ interface
     
             /// Matrizenaddition:
             /// field_sum := self_field + b;
-            class function operator+(self_field: field; number: integer): field;
+            class function operator+(self_field: field; number: real): field;
            
             /// Matrizenaddition:
             /// field_sum := a + other_field;
-            class function operator+(number: integer; other_field: field): field;
+            class function operator+(number: real; other_field: field): field;
            
             /// Matrizenaddition:
             /// field_sum := self_field + other_field;
@@ -47,11 +47,11 @@ interface
             
             /// Matrizenaddition:
             /// field_sum += b; 
-            class procedure operator+=(var self_field: field; number: integer);
+            class procedure operator+=(var self_field: field; number: real);
                         
             /// Matrizensubtraktion:
             /// field_sum := self_field - b;
-            class function operator-(self_field: field; number: integer): field;
+            class function operator-(self_field: field; number: real): field;
                 
             /// Matrizensubtraktion:
             /// field_difference := self_field - other_field;
@@ -63,15 +63,15 @@ interface
             
             /// Matrizensubtraktion:
             /// field_sum -= b; 
-            class procedure operator-=(var self_field: field; number: integer);
+            class procedure operator-=(var self_field: field; number: real);
                 
             /// Matrizenmultiplikation mit Zahlen:
             /// field_mult := self_field * b;
-            class function operator*(self_field: field; number: integer): field;
+            class function operator*(self_field: field; number: real): field;
 
             /// Matrizenmultiplikation mit Zahlen:
             /// field_mult := a * other_field;
-            class function operator*(number: integer; other_field: field): field;
+            class function operator*(number: real; other_field: field): field;
             
             /// Matrizenmultiplikation:
             /// field_mult := self_field * other_field;                  
@@ -79,7 +79,7 @@ interface
             
             /// Matrizenmultiplikation mit Zahlen:
             /// field_mult *= b;
-            class procedure operator*=(var self_field: field; const number: integer);
+            class procedure operator*=(var self_field: field; const number: real);
 
             /// Matrizenmultiplikation:
             /// field_mult *= other_field;                  
@@ -87,11 +87,11 @@ interface
                 
             /// Matrizendivision mit Zahlen:
             /// field_div := self_field / b;
-            class function operator/(self_field: field; number: integer): field;
+            class function operator/(self_field: field; number: real): field;
             
             /// Matrizendivision mit Zahlen:
             /// field_div /= b;
-            class procedure operator/=(var self_field: field; number: integer);
+            class procedure operator/=(var self_field: field; number: real);
 
 //            /// Exponentiation vom jeden Matrizenelements:
 //            /// field_exp := self_field ** b
@@ -101,12 +101,12 @@ interface
             function sum(axis: integer := -1): field;
 
             /// das Werte der Matrize
-            function get(params index: array of integer): integer;
+            function get(params index: array of integer): real;
             
-            procedure map(func: System.Func<integer, integer>);
+            procedure map(func: System.Func<real, real>);
             
             /// kehrt den groeßten Wert der Matrize zurueck
-            function max(): integer;
+            function max(): real;
                 
             /// Erstellt eine Kopie der Matrize
             function copy(): field;
@@ -131,7 +131,7 @@ interface
 //    
 //    
 //    /// Multiplikation von zwei Skalaren
-//    function multiply(a,b:real): real;
+//    function multiply(a, b: real): real;
 //    /// Multiplikation von Skalar und Matrize
 //    function multiply(a:real; b:field): field;
 //    /// Multiplikation von Matrize und Skalar
@@ -143,7 +143,7 @@ interface
 implementation
     
     // field.Create() - Implementierung
-    constructor field.Create(value: array of integer; shape: array of integer);
+    constructor field.Create(value: array of real; shape: array of integer);
     begin
       self.value := value;
       self.shape := shape;
@@ -208,7 +208,7 @@ implementation
     end;
     
     
-    function field.__get_item(index: array of integer): integer;
+    function field.__get_item(index: array of integer): real;
     begin
       var acc := 0;
       for var i := 0 to index.Length-1 do
@@ -249,7 +249,7 @@ implementation
       
       self.iter_array := field.__get_iter_array(self.shape);
       
-      self.value := new integer[size^];
+      self.value := new real[size^];
       for var index := 0 to size^-1 do
         begin
         element_ptr := pointer(integer(array_ptr) + 16 + 2*4*(rank-(rank=1?1:0)) + index*sizeof(integer));
@@ -261,7 +261,7 @@ implementation
     constructor field.Create(shape: array of integer);
     begin
       self.shape := shape;
-      self.value := new integer[shape.Product]; 
+      self.value := new real[shape.Product]; 
     end;  
     
     
@@ -291,16 +291,16 @@ implementation
         
         
     // field.operator + () and field.operator += () - Implementierung
-    class function field.operator+(self_field: field; number: integer): field;
+    class function field.operator+(self_field: field; number: real): field;
     begin
-      var tmp_result := new integer[self_field.length];
+      var tmp_result := new real[self_field.length];
       for var index := 0 to self_field.length-1 do
         tmp_result[index] := self_field.value[index] + number;
       result := new field(tmp_result, self_field.shape);    
     end;
         
         
-    class function field.operator+(number: integer; other_field: field): field;
+    class function field.operator+(number: real; other_field: field): field;
     begin
       Result := other_field + number;    
     end;
@@ -310,7 +310,7 @@ implementation
     begin
 //         if not compare(self_field.shape, other_field.shape) then
 //           raise new System.ArithmeticException('Wrong array sizes');
-      var tmp_result := new integer[self_field.length];
+      var tmp_result := new real[self_field.length];
       for var index := 0 to self_field.length-1 do
         tmp_result[index] := self_field.value[index] + other_field.value[index]; 
       Result := new field(tmp_result, self_field.shape);    
@@ -325,16 +325,16 @@ implementation
     end;
     
     
-    class procedure field.operator+=(var self_field:field; number: integer);
+    class procedure field.operator+=(var self_field:field; number: real);
     begin
       self_field := self_field + number;
     end;
         
         
     // field.operator - () and field.operator -= () - Implementierung        
-    class function field.operator-(self_field: field; number: integer): field;
+    class function field.operator-(self_field: field; number: real): field;
     begin
-      var tmp_result := new integer[self_field.length];
+      var tmp_result := new real[self_field.length];
       for var index := 0 to self_field.length-1 do
         tmp_result[index] := self_field.value[index] - number; 
       Result := new field(tmp_result, self_field.shape);        
@@ -345,7 +345,7 @@ implementation
     begin
 //         if not compare(self_field.shape, other_field.shape) then
 //                raise new System.ArithmeticException('Wrong array sizes');
-      var tmp_result := new integer[self_field.length];
+      var tmp_result := new real[self_field.length];
       for var index := 0 to self_field.length-1 do
         tmp_result[index] := self_field.value[index] - other_field.value[index]; 
       Result := new field(tmp_result, self_field.shape);    
@@ -360,23 +360,23 @@ implementation
     end;
 
     
-    class procedure field.operator-=(var self_field: field; number: integer);
+    class procedure field.operator-=(var self_field: field; number: real);
     begin
       self_field := self_field - number;
     end;
 
         
     // field.operator * () and field.operator *= () - Implementierung
-    class function field.operator*(self_field: field; number: integer): field;
+    class function field.operator*(self_field: field; number: real): field;
     begin
-      var tmp_result := new integer[self_field.length];
+      var tmp_result := new real[self_field.length];
       for var index := 0 to self_field.length-1 do
         tmp_result[index] := self_field.value[index] * number; 
       Result := new field(tmp_result, self_field.shape);
     end;
 
 
-    class function field.operator*(number: integer; other_field: field): field;
+    class function field.operator*(number: real; other_field: field): field;
     begin
       Result := other_field * number;
     end;
@@ -386,14 +386,14 @@ implementation
     begin
 //         if not compare(self_field.shape, other_field.shape) then
 //                raise new System.ArithmeticException('Wrong array sizes');
-      var tmp_result := new integer[self_field.length];
+      var tmp_result := new real[self_field.length];
       for var index := 0 to self_field.length-1 do
         tmp_result[index] := self_field.value[index] * other_field.value[index]; 
       Result := new field(tmp_result, self_field.shape);
     end;
             
             
-    class procedure field.operator*=(var self_field: field; number: integer);
+    class procedure field.operator*=(var self_field: field; number: real);
     begin
       self_field := self_field * number;
     end;
@@ -406,18 +406,18 @@ implementation
         
 
     // field.operator / () and field.operator /= () - Implementierung
-    class function field.operator/(self_field: field; number: integer): field;
+    class function field.operator/(self_field: field; number: real): field;
     begin
 //         if b = 0 then
 //             raise new System.ArithmeticException('ZeroDivisionError');
-      var tmp_result := new integer[self_field.length];
+      var tmp_result := new real[self_field.length];
       for var index := 0 to self_field.length-1 do
-        tmp_result[index] := self_field.value[index] div number; 
+        tmp_result[index] := self_field.value[index] / number; 
       Result := new field(tmp_result, self_field.shape);
     end;
     
 
-    class procedure field.operator/=(var self_field: field; number: integer);
+    class procedure field.operator/=(var self_field: field; number: real);
     begin
       self_field := self_field / number;
     end;
@@ -438,7 +438,7 @@ implementation
     begin
       if (self.rank = 1) or (axis = -1) then
         begin
-        var tmp_result: array of integer := (self.value.Sum);
+        var tmp_result: array of real := (self.value.Sum);
         var tmp_result_shape: array of integer := (1);
         result := new field(tmp_result, tmp_result_shape);
         end
@@ -454,7 +454,7 @@ implementation
           else  
             continue;
             
-        var sum_arr := new integer[sum_array_shape.Product];
+        var sum_arr := new real[sum_array_shape.Product];
         var sum_iter_array := field.__get_iter_array(sum_array_shape);
 
         var gen := self.__get_index(self);
@@ -483,13 +483,13 @@ implementation
 
       
     // field.get() - Implementierung
-    function field.get(params index: array of integer): integer;
+    function field.get(params index: array of integer): real;
     begin
       result := self.__get_item(index);
     end;
     
     
-    procedure field.map(func: System.Func<integer, integer>);
+    procedure field.map(func: System.Func<real, real>);
     begin
       for var index := 0 to self.length-1 do
         self.value[index] := func(self.value[index]); 
@@ -497,44 +497,11 @@ implementation
     
     
     // field.max() - Implementierung
-    function field.max(): integer;
+    function field.max(): real;
     begin
       result := self.value.Max;
     end;
-        
 
-//    // field.get_longest() - Implementierung
-//    function field.get_longest(): real;
-//        begin
-//         var max := values[0,0];
-//         for var row:= 0 to row_number-1 do
-//             for var column:= 0 to column_number-1 do
-//                 if values[row, column].ToString.Length >  max.ToString.Length then
-//                     max := values[row, column];
-//         Result := max;
-//        end;
-//    
-//
-//    function field.get_longest(axis, num:integer): real;
-//        begin
-//         if axis = 0 then
-//             begin
-//              var max := values[0, num];
-//              for var row:= 0 to row_number-1 do
-//                      if values[row, num].ToString.Length >  max.ToString.Length then
-//                          max := values[row, num];
-//              Result := max;
-//             end
-//         else if axis = 1 then
-//            begin
-//             var max := values[num,0];
-//             for var column:= 0 to column_number-1 do
-//                     if values[num, column].ToString.Length >  max.ToString.Length then
-//                         max := values[num, column];
-//             Result := max;
-//            end
-//        end;
-    
     
     // field.copy() - Implementierung
     function field.copy(): field;
@@ -557,9 +524,8 @@ implementation
         for var index := 0 to self.rank-1 do
           axes[index] := self.rank-index-1;
         end;
-      println(axes);
       var gen := self.__get_index(self);
-      var tmp_value := new integer[self.length];
+      var tmp_value := new real[self.length];
       var tmp_shape := new integer[self.rank];
       for var index := 0 to self.rank-1 do
         tmp_shape[index] := self.shape[axes[index]];
@@ -584,10 +550,27 @@ implementation
     begin
       if (self.rank = 1) and (other_field.rank = 1) then
         begin
-        var sum: array of integer := (0);
+        var sum: array of real := (0);
         for var index := 0 to self.length-1 do
           sum[0] += self.get(index) * other_field.get(index);
         result := new field(sum, ArrFill(1, 1));
+        end
+      else if (self.rank = 2) and (other_field.rank = 2) then
+        begin
+          var other_field_T := other_field.transpose();
+          var gen := self.__get_index(self);          
+          var tmp_result := new real[self.shape[0]*other_field.shape[1]];
+          var new_shape: array of integer := (self.shape[0], other_field.shape[1]);
+          println(self.shape, other_field.shape);
+          for var i:=0 to self.shape[0]-1 do
+            for var j:=0 to other_field.shape[1]-1 do
+            begin  
+              var cc := 0.0;
+              for var l:=0 to self.shape[1]-1 do
+                 cc += self.get(i, l)*other_field_T.get(j, l);
+              tmp_result[i*self.shape[0]+j] := cc;   
+            end;
+          result := new field(tmp_result, new_shape);
         end;
     end;
    
@@ -595,7 +578,7 @@ implementation
     // random_field() - Implementierung
     function random_field(shape: array of integer): field;
     begin
-      var tmp_result := new integer[shape.Product];
+      var tmp_result := new real[shape.Product];
       for var index := 0 to shape.Product-1 do
         tmp_result[index] := random(2);
       Result := new field(tmp_result, shape);   
