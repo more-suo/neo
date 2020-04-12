@@ -116,6 +116,9 @@ interface
 
             /// Transponierung der Matrize
             function transpose(axes: array of integer := nil): field;
+            
+            /// Summe des Skalarproduktes von zwei Vektoren
+            function dot(other_field: field): field;
     end;
 
     /// Matrizengenerator mit rows*colums, (0, 1)
@@ -135,11 +138,7 @@ interface
 //    function multiply(a:field; b:real): field;
 //    /// Multiplikation von zwei Matrizen
 //    function multiply(a,b:field): field;
-//    
-//    
-//    /// Summe des Skalarproduktes von zwei Vektoren
-//    function dot(self_field, other_field: field): field;
-        
+         
         
 implementation
     
@@ -580,6 +579,18 @@ implementation
       result := new field(tmp_value, tmp_shape);
     end;  
    
+    // dot() - Implementierung
+    function field.dot(other_field: field): field;
+    begin
+      if (self.rank = 1) and (other_field.rank = 1) then
+        begin
+        var sum: array of integer := (0);
+        for var index := 0 to self.length-1 do
+          sum[0] += self.get(index) * other_field.get(index);
+        result := new field(sum, ArrFill(1, 1));
+        end;
+    end;
+   
    
     // random_field() - Implementierung
     function random_field(shape: array of integer): field;
@@ -666,36 +677,5 @@ implementation
 //                        big_field[row+row_block*small_field.row_number,column+column_block*small_field.column_number] *= 
 //                            small_field[row,column];
 //         Result := big_field;
-//        end;
-//        
-//        
-//    // transpose() - Implementierung    
-//    function transpose(self_field:field): field;
-//        begin
-//         var return_array := new Real[self_field.column_number, self_field.row_number];
-//         for var i:= 0 to self_field.row_number-1 do
-//             for var j:= 0 to self_field.column_number-1 do
-//                 return_array[j,i] := self_field[i,j];
-//         Result := new field(return_array);
-//        end;
-//        
-//    
-//    // dot() - Implementierung
-//    function dot(self_field, other_field: field): field;
-//        begin
-//         if ((self_field.row_number, other_field.row_number) = (1, 1)) and
-//            (self_field.column_number = other_field.column_number) then
-//             Result := self_field * other_field
-//         else if (self_field.column_number = other_field.row_number) then
-//            begin
-//            var tmp_result := new field(self_field.row_number, other_field.column_number);
-//             for var i:= 0 to tmp_result.row_number - 1 do
-//                 for var j:= 0 to tmp_result.column_number - 1 do
-//                     for var k:= 0 to self_field.column_number - 1 do
-//                         tmp_result.values[i,j]+= self_field.values[i, k] * other_field.values[k, j];
-//             Result := tmp_result;
-//            end
-//         else
-//            raise new Exception('Wrong array sizes');
 //        end;
 end.
