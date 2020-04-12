@@ -557,7 +557,6 @@ implementation
         for var index := 0 to self.rank-1 do
           axes[index] := self.rank-index-1;
         end;
-      println(axes);
       var gen := self.__get_index(self);
       var tmp_value := new integer[self.length];
       var tmp_shape := new integer[self.rank];
@@ -588,6 +587,23 @@ implementation
         for var index := 0 to self.length-1 do
           sum[0] += self.get(index) * other_field.get(index);
         result := new field(sum, ArrFill(1, 1));
+        end
+      else if (self.rank = 2) and (other_field.rank = 2) then
+        begin
+          var other_field_T := other_field.transpose();
+          var gen := self.__get_index(self);          
+          var tmp_result := new integer[self.shape[0]*other_field.shape[1]];
+          var new_shape: array of integer := (self.shape[0], other_field.shape[1]);
+          println(self.shape, other_field.shape);
+          for var i:=0 to self.shape[0]-1 do
+            for var j:=0 to other_field.shape[1]-1 do
+            begin  
+              var cc := 0;
+              for var l:=0 to self.shape[1]-1 do
+                 cc += self.get(i, l)*other_field_T.get(j, l);
+              tmp_result[i*self.shape[0]+j] := cc;   
+            end;
+          result := new field(tmp_result, new_shape);
         end;
     end;
    
