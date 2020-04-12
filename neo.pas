@@ -147,12 +147,17 @@ implementation
     begin
       self.value := value;
       self.shape := shape;
-      self.rank := shape.Length;
-      self.length := shape.Product;
-      self.iter_array := new integer[self.rank];
-      self.iter_array[self.rank-1] := 1;
-      for var i := 1 to self.rank-1 do
-        self.iter_array[self.rank-i-1] := self.iter_array[self.rank-i] * self.shape[self.rank-i];
+      if shape.Length = 1 then
+        begin
+        self.rank := 1;
+        self.length := value.length;
+        end
+      else
+        begin
+        self.rank := shape.Length;
+        self.length := shape.Product;
+        end;
+      self.iter_array := field.__get_iter_array(shape);
     end;
     
     
