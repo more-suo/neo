@@ -15,7 +15,7 @@ interface
             
             function __get_item(index: array of integer): integer;
             
-            function __get_iter_array(shape: array of integer): array of integer;
+            static function __get_iter_array(shape: array of integer): array of integer;
             
         public
             length: integer;
@@ -113,6 +113,9 @@ interface
             
             /// Umformung der Matrize in eine andere Matrize mit Groeße size
             function reshape(shape: array of integer): field;
+
+            /// Transponierung der Matrize
+            function transpose(axes: array of integer := nil): field;
     end;
 
     /// Matrizengenerator mit rows*colums, (0, 1)
@@ -132,10 +135,6 @@ interface
 //    function multiply(a:field; b:real): field;
 //    /// Multiplikation von zwei Matrizen
 //    function multiply(a,b:field): field;
-//    
-//    
-//    /// Transponierung der Matrize
-//    function transpose(self_field:field): field;
 //    
 //    
 //    /// Summe des Skalarproduktes von zwei Vektoren
@@ -219,7 +218,7 @@ implementation
     end;
 
 
-    function field.__get_iter_array(shape: array of integer): array of integer;
+    static function field.__get_iter_array(shape: array of integer): array of integer;
     begin
       var rank := shape.Length;
       var iter_array := new integer[rank];
@@ -249,7 +248,7 @@ implementation
         self.shape[index] := element_ptr^;
         end;
       
-      self.iter_array := self.__get_iter_array(self.shape);
+      self.iter_array := field.__get_iter_array(self.shape);
       
       self.value := new integer[size^];
       for var index := 0 to size^-1 do
@@ -457,7 +456,7 @@ implementation
             continue;
             
         var sum_arr := new integer[sum_array_shape.Product];
-        var sum_iter_array := self.__get_iter_array(sum_array_shape);
+        var sum_iter_array := field.__get_iter_array(sum_array_shape);
 
         var gen := self.__get_index(self);
         for var index := 0 to self.length-1 do
@@ -549,6 +548,38 @@ implementation
     begin
       Result := new field(self.value, shape);
     end;
+   
+   
+    function field.transpose(axes: array of integer): field;
+    begin
+      if axes = nil then
+        begin
+        axes := new integer[self.rank];
+        for var index := 0 to self.rank-1 do
+          axes[index] := self.rank-index-1;
+        end;
+      println(axes);
+      var gen := self.__get_index(self);
+      var tmp_value := new integer[self.length];
+      var tmp_shape := new integer[self.rank];
+      for var index := 0 to self.rank-1 do
+        tmp_shape[index] := self.shape[axes[index]];
+      var tmp_iter_array := field.__get_iter_array(tmp_shape);
+      for var index := 0 to self.length-1 do
+        begin
+        var arr := gen(); 
+        var new_arr := new integer[self.rank];
+        for var i := 0 to self.rank-1 do
+          new_arr[i] := arr[axes[i]];
+        
+        var acc := 0;
+        for var i := 0 to self.rank-1 do
+          acc += tmp_iter_array[i] * new_arr[i];
+        tmp_value[acc] := self.value[index];
+        end;
+      result := new field(tmp_value, tmp_shape);
+    end;  
+   
    
     // random_field() - Implementierung
     function random_field(shape: array of integer): field;
