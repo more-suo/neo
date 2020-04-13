@@ -124,10 +124,8 @@ interface
     /// Matrizengenerator mit rows*colums, (0, 1)
     function random_field(shape: array of integer): field;
    
-//    /// Erweiterung der Matrize a mit b, zeilenweise
-//    function concatenate(a,b:field): field;
-//    /// Erweiterung der Matrize a mit b, axis == 0 - zeilenweise, axis == 1 - spaltenweise
-//    function concatenate(a,b:field; axis:integer): field;
+    /// Erweiterung der Matrize a mit b, axis == 0 - zeilenweise, axis == 1 - spaltenweise
+    function concatenate(a,b:field; axis: integer := -1): field;
     
     
     /// Multiplikation von zwei Skalaren
@@ -565,7 +563,6 @@ implementation
           var gen := self.__get_index(self);          
           var tmp_result := new real[self.shape[0]*other_field.shape[1]];
           var new_shape: array of integer := (self.shape[0], other_field.shape[1]);
-          println(self.shape, other_field.shape);
           for var i:=0 to self.shape[0]-1 do
             for var j:=0 to other_field.shape[1]-1 do
             begin  
@@ -588,44 +585,42 @@ implementation
       Result := new field(tmp_result, shape);   
     end;
  
-  
-//    // concatenate() - Implementierung
-//    function concatenate(a,b:field): field;
-//        begin
-//         if a.column_number <> b.column_number then
+
+    function concatenate(a, b: field; axis: integer): field;
+    begin
+      var tmp_result := new Real[a.length+b.length];
+      if axis = -1 then
+      begin
+        var gen_a := a.__get_index(a);
+        for var index := 0 to a.length-1 do
+          tmp_result[index] := a.get(gen_a());
+        var gen_b := b.__get_index(b);
+        for var index := a.length to a.length+b.length-1 do
+          tmp_result[index] := b.get(gen_b());
+        var tmp_shape: array of integer := (1); 
+        Result := new field(tmp_result, tmp_shape)
+        end
+      else
+        begin
+//        if a.row_number <> b.row_number then
 //            raise new Exception('Fields couldn not be broadcast together');
-//         var return_array := new Real[1,1];
-//         SetLength(return_array, a.row_number+b.row_number, a.column_number);
-//         for var column:= 0 to a.column_number-1 do
-//             begin
-//              for var row:= 0 to a.row_number-1 do
-//                  return_array[row,column] := a.values[row,column];
-//              for var row:= 0 to b.row_number-1 do
-//                  return_array[row+a.row_number,column] := b.values[row, column];
-//             end;
-//         Result := new field(return_array); 
-//        end;
-//    
-//    function concatenate(a,b:field; axis:integer): field;
-//        begin
-//         if axis = 0 then
-//             Result:= concatenate(a,b)
-//         else if axis = 1 then
-//             begin
-//              if a.row_number <> b.row_number then
-//                  raise new Exception('Fields couldn not be broadcast together');
-//              var return_array := new Real[1,1];
-//              SetLength(return_array, a.column_number+b.column_number, a.row_number);
-//              for var row:= 0 to a.row_number-1 do
-//                  begin
-//                   for var column:= 0 to a.column_number-1 do
-//                       return_array[row,column] := a.values[row,column];
-//                   for var column:= 0 to b.column_number-1 do
-//                       return_array[row,column+a.column_number] := b.values[row, column];
-//                  end;
-//              Result := new field(return_array);
-//             end;
-//        end;
+        var gen_a := a.__get_index(a);
+        var gen_b := b.__get_index(b);
+        for var index := 0 to a.length-1 do
+          begin
+          var arr := gen_a();
+          var new_arr := new integer[a.rank];
+          for var i := 0 to a.rank-1 do
+            new_arr[i] := arr[a.rank-i-1]; 
+          if arr[axis] = a.shape[axis]-1 then
+            tmp_result[index] := b.get(gen_b())
+          else
+            tmp_result[index] := a.get(arr);
+          var tmp_shape: array of integer := (1); 
+          Result := new field(tmp_result, tmp_shape)
+          end;
+        end;
+    end;
         
         
     // multiply() - Implementierung
