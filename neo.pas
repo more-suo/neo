@@ -583,7 +583,6 @@ implementation
       else if (self.rank = 2) and (other_field.rank = 2) then
         begin
           var other_field_T := other_field.transpose();
-          var gen := self.__get_index(self);          
           var tmp_result := new real[self.shape[0]*other_field.shape[1]];
           var new_shape: array of integer := (self.shape[0], other_field.shape[1]);
           for var i:=0 to self.shape[0]-1 do
@@ -611,17 +610,17 @@ implementation
 
     function concatenate(a, b: field; axis: integer): field;
     begin
-      var tmp_result := new Real[a.length+b.length];
       if axis = -1 then
       begin
+        var tmp_shape: array of integer := (a.length+b.length-1); 
+        var tmp_field := new field(tmp_shape);
         var gen_a := a.__get_index(a);
         for var index := 0 to a.length-1 do
-          tmp_result[index] := a.get(gen_a());
+          tmp_field.assign(a.get(gen_a()), index);
         var gen_b := b.__get_index(b);
         for var index := a.length to a.length+b.length-1 do
-          tmp_result[index] := b.get(gen_b());
-        var tmp_shape: array of integer := (1); 
-        Result := new field(tmp_result, tmp_shape)
+          tmp_field.assign(b.get(gen_b()), index);
+        Result := tmp_field;
         end
       else
         begin
@@ -638,11 +637,10 @@ implementation
             tmp_shape[index] += b.shape[axis];
           end;
           
-        var tmp_result_index := 0;
         var tmp_field := new field(tmp_shape);
         var gen_c := tmp_field.__get_index(tmp_field);
         
-        while True do
+        for var index := 0 to a.length+b.length-2 do
           begin
           var arr := gen_c();
           
@@ -651,12 +649,8 @@ implementation
             tmp_field.assign(b.get(gen_b()), arr);  
             arr := gen_c();
             end;
-
-          if tmp_result_index > a.length+b.length-2 then
-            break;
           
           tmp_field.assign(a.get(gen_a()), arr);
-          
           end;
         Result := tmp_field;
         end;
