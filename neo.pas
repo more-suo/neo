@@ -10,7 +10,7 @@ interface
             
             constructor Create(value: array of real; shape: array of integer);
             
-            function __get_index(self_field: field): function(): array of integer;
+            function __get_index(): function(): array of integer;
             
             function __get_item(index: array of integer): real;
             
@@ -149,6 +149,7 @@ implementation
     begin
       self.value := value;
       self.shape := shape;
+      println('s', shape);
       if shape.Length = 1 then
         begin
         self.rank := 1;
@@ -160,58 +161,39 @@ implementation
         self.length := shape.Product;
         end;
       self.iter_array := field.__get_iter_array(shape);
-    end;
+      end;
     
     
     type Generator = class
-    
-      self_field: field;
+      rank: integer;
+      shape: array of integer;
       index: array of integer;
-      index_1: array of integer;
-      
-      function next_1(): array of integer;
-      begin
-        if index_1[0] = self.self_field.length-1 then
-          index_1[0] := 0
-        else
-          index_1[0] += 1;
-        result := index_1;
-      end;
-      
+
       function next(): array of integer;
       begin
-        index[index.Length-1] += 1;
-        for var i := index.Length-1 downto 0 do
-          if index[i] = self_field.shape[i] then
+        self.index[self.rank-1] += 1;
+        for var i := self.rank-1 downto 0 do
+          if self.index[i] = self.shape[i] then
             if i = 0 then
-              begin
-              index := ArrFill(index.Length, 0);
-              end
+              self.index := ArrFill(self.rank, 0)
             else
               begin
-              index[i-1] += 1;
-              index[i] := 0;
+              self.index[i-1] += 1;
+              self.index[i] := 0;
               end;
-        result := index;
+        result := self.index;
       end;
     end;
     
 
-    function field.__get_index(self_field: field): function(): array of integer;
+    function field.__get_index(): function(): array of integer;
     begin
       var obj := new Generator;
-      obj.self_field := self_field;
-      if self_field.rank <> 1 then
-        begin
-        obj.index := ArrFill(self_field.rank, 0);
-        obj.index[self_field.rank-1] := -1;
-        result := obj.next;
-        end
-      else
-        begin
-        obj.index_1 := ArrFill(1, -1);
-        result := obj.next_1;
-        end;
+      obj.rank := self.rank;
+      obj.shape := self.shape;
+      obj.index := ArrFill(self.rank, 0);
+      obj.index[self.rank-1] := -1;
+      result := obj.next;
     end;
     
     
@@ -257,20 +239,23 @@ implementation
       self.length := size^;
       self.rank := rank;
       self.shape := new integer[rank];
-      for var index := 0 to rank-1 do
-        begin
-        element_ptr := pointer(integer(array_ptr) + 16 + index*4);
-        self.shape[index] := element_ptr^;
-        end;
-      
+      if rank = 1 then
+        self.shape[0] := self.length
+      else
+        for var index := 0 to rank-1 do
+          begin
+          element_ptr := pointer(integer(array_ptr) + 16 + index*4);
+          self.shape[index] := element_ptr^;
+          end;
       self.iter_array := field.__get_iter_array(self.shape);
-      
+
       self.value := new real[size^];
       for var index := 0 to size^-1 do
         begin
         element_ptr := pointer(integer(array_ptr) + 16 + 2*4*(rank-(rank=1?1:0)) + index*sizeof(integer));
         self.value[index] := element_ptr^;
         end;
+        
     end;
     
     
@@ -475,7 +460,7 @@ implementation
         var sum_arr := new real[sum_array_shape.Product];
         var sum_iter_array := field.__get_iter_array(sum_array_shape);
 
-        var gen := self.__get_index(self);
+        var gen := self.__get_index();
         for var index := 0 to self.length-1 do
           begin 
           var arr := gen();
@@ -548,7 +533,7 @@ implementation
         for var index := 0 to self.rank-1 do
           axes[index] := self.rank-index-1;
         end;
-      var gen := self.__get_index(self);
+      var gen := self.__get_index();
       var tmp_value := new real[self.length];
       var tmp_shape := new integer[self.rank];
       for var index := 0 to self.rank-1 do
@@ -614,10 +599,10 @@ implementation
       begin
         var tmp_shape: array of integer := (a.length+b.length-1); 
         var tmp_field := new field(tmp_shape);
-        var gen_a := a.__get_index(a);
+        var gen_a := a.__get_index();
         for var index := 0 to a.length-1 do
           tmp_field.assign(a.get(gen_a()), index);
-        var gen_b := b.__get_index(b);
+        var gen_b := b.__get_index();
         for var index := a.length to a.length+b.length-1 do
           tmp_field.assign(b.get(gen_b()), index);
         Result := tmp_field;
@@ -626,8 +611,8 @@ implementation
         begin
 //        if a.row_number <> b.row_number then
 //            raise new Exception('Fields couldn not be broadcast together');
-        var gen_a := a.__get_index(a);
-        var gen_b := b.__get_index(b);
+        var gen_a := a.__get_index();
+        var gen_b := b.__get_index();
         
         var tmp_shape := new integer[a.rank];
         for var index := 0 to a.rank-1 do
@@ -638,7 +623,7 @@ implementation
           end;
           
         var tmp_field := new field(tmp_shape);
-        var gen_c := tmp_field.__get_index(tmp_field);
+        var gen_c := tmp_field.__get_index();
         
         for var index := 0 to a.length+b.length-2 do
           begin
@@ -692,8 +677,8 @@ implementation
         max_shape := b.shape;  
         end;
       
-      var gen_a := a.__get_index(a);
-      var gen_b := b.__get_index(b);
+      var gen_a := a.__get_index();
+      var gen_b := b.__get_index();
         
       var tmp_result := new real[max_len];  
       for var index := 0 to max_len-1 do
