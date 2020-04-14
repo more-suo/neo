@@ -14,6 +14,8 @@ interface
             
             function __get_item(index: array of integer): real;
             
+            procedure __set_item(val: real; index: array of integer);
+            
             static function __get_iter_array(shape: array of integer): array of integer;
             
         public
@@ -102,6 +104,8 @@ interface
 
             /// das Werte der Matrize
             function get(params index: array of integer): real;
+   
+            procedure assign(val: real; params index: array of integer);
             
             procedure map(func: System.Func<real, real>);
             
@@ -217,6 +221,15 @@ implementation
       for var i := 0 to index.Length-1 do
         acc += self.iter_array[i] * index[i];
       Result := self.value[acc];
+    end;
+    
+    
+    procedure field.__set_item(val: real; index: array of integer);
+    begin
+      var acc := 0;
+      for var i := 0 to index.Length-1 do
+        acc += self.iter_array[i] * index[i];
+      self.value[acc] := val;
     end;
 
 
@@ -494,6 +507,12 @@ implementation
     end;
     
     
+    procedure field.assign(val: real; params index: array of integer);
+    begin
+      self.__set_item(val, index);
+    end;
+    
+    
     procedure field.map(func: System.Func<real, real>);
     begin
       for var index := 0 to self.length-1 do
@@ -549,6 +568,7 @@ implementation
         end;
       result := new field(tmp_value, tmp_shape);
     end;  
+   
    
     // dot() - Implementierung
     function field.dot(other_field: field): field;
@@ -617,32 +637,25 @@ implementation
           if index = axis then
             tmp_shape[index] += b.shape[axis];
           end;
-        println(tmp_shape);
           
         var tmp_result_index := 0;
         var tmp_field := new field(tmp_shape);
         var gen_c := tmp_field.__get_index(tmp_field);
-        println(tmp_field.length);
+        
         while True do
           begin
           var arr := gen_c();
-             
           
-          println(tmp_result_index, tmp_field, arr, a.shape);
           while arr[axis] > a.shape[axis]-1 do
             begin
-            var gen_out := gen_b(); 
-            println(arr, tmp_field, tmp_result_index, gen_out);
-            tmp_field.value[tmp_result_index] := b.get(gen_out);  
-            tmp_result_index += 1;
+            tmp_field.assign(b.get(gen_b()), arr);  
             arr := gen_c();
             end;
 
           if tmp_result_index > a.length+b.length-2 then
             break;
           
-          tmp_field.value[tmp_result_index] := a.get(gen_a());
-          tmp_result_index += 1;
+          tmp_field.assign(a.get(gen_a()), arr);
           
           end;
         Result := tmp_field;
