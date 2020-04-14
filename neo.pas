@@ -6,7 +6,6 @@ interface
         field = class
       
         private
-            value: array of real;      
             iter_array: array of integer;
             
             constructor Create(value: array of real; shape: array of integer);
@@ -18,6 +17,7 @@ interface
             static function __get_iter_array(shape: array of integer): array of integer;
             
         public
+            value: array of real;      
             length: integer;
             rank: integer;
             shape: array of integer;
@@ -264,6 +264,9 @@ implementation
     constructor field.Create(shape: array of integer);
     begin
       self.shape := shape;
+      self.rank := shape.Length;
+      self.length := shape.Product;
+      self.iter_array := field.__get_iter_array(shape);
       self.value := new real[shape.Product]; 
     end;  
     
@@ -606,19 +609,43 @@ implementation
 //            raise new Exception('Fields couldn not be broadcast together');
         var gen_a := a.__get_index(a);
         var gen_b := b.__get_index(b);
-        for var index := 0 to a.length-1 do
+        
+        var tmp_shape := new integer[a.rank];
+        for var index := 0 to a.rank-1 do
           begin
-          var arr := gen_a();
-          var new_arr := new integer[a.rank];
-          for var i := 0 to a.rank-1 do
-            new_arr[i] := arr[a.rank-i-1]; 
-          if arr[axis] = a.shape[axis]-1 then
-            tmp_result[index] := b.get(gen_b())
-          else
-            tmp_result[index] := a.get(arr);
-          var tmp_shape: array of integer := (1); 
-          Result := new field(tmp_result, tmp_shape)
+          tmp_shape[index] := a.shape[index];
+          if index = axis then
+            tmp_shape[index] += b.shape[axis];
           end;
+        println(tmp_shape);
+          
+        var tmp_result_index := 0;
+        var tmp_field := new field(tmp_shape);
+        var gen_c := tmp_field.__get_index(tmp_field);
+        println(tmp_field.length);
+        while True do
+          begin
+          var arr := gen_c();
+             
+          
+          println(tmp_result_index, tmp_field, arr, a.shape);
+          while arr[axis] > a.shape[axis]-1 do
+            begin
+            var gen_out := gen_b(); 
+            println(arr, tmp_field, tmp_result_index, gen_out);
+            tmp_field.value[tmp_result_index] := b.get(gen_out);  
+            tmp_result_index += 1;
+            arr := gen_c();
+            end;
+
+          if tmp_result_index > a.length+b.length-2 then
+            break;
+          
+          tmp_field.value[tmp_result_index] := a.get(gen_a());
+          tmp_result_index += 1;
+          
+          end;
+        Result := tmp_field;
         end;
     end;
         
