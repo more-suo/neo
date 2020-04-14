@@ -6,11 +6,12 @@ interface
         field = class
       
         private
+            value: array of real;      
             iter_array: array of integer;
             
             constructor Create(value: array of real; shape: array of integer);
             
-            function __get_index(): function(): array of integer;
+            function __generate_index(): function(): array of integer;
             
             function __get_item(index: array of integer): real;
             
@@ -19,8 +20,6 @@ interface
             static function __get_iter_array(shape: array of integer): array of integer;
             
         public
-        
-            value: array of real;      
             length: integer;
             rank: integer;
             shape: array of integer;
@@ -179,7 +178,7 @@ implementation
     end;
     
 
-    function field.__get_index(): function(): array of integer;
+    function field.__generate_index(): function(): array of integer;
     begin
       var obj := new Generator;
       obj.rank := self.rank;
@@ -188,7 +187,7 @@ implementation
       obj.index[self.rank-1] := -1;
       result := obj.next;
     end;
-    
+
     
     function field.__get_item(index: array of integer): real;
     begin
@@ -235,20 +234,19 @@ implementation
       if rank = 1 then
         self.shape[0] := self.length
       else
-        for var index := 0 to rank-1 do
+        for var i := 0 to rank-1 do
           begin
-          element_ptr := pointer(integer(array_ptr) + 16 + index*4);
-          self.shape[index] := element_ptr^;
+          element_ptr := pointer(integer(array_ptr) + 16 + i*4);
+          self.shape[i] := element_ptr^;
           end;
       self.iter_array := field.__get_iter_array(self.shape);
 
       self.value := new real[size^];
-      for var index := 0 to size^-1 do
+      for var i := 0 to size^-1 do
         begin
-        element_ptr := pointer(integer(array_ptr) + 16 + 2*4*(rank-(rank=1?1:0)) + index*sizeof(integer));
-        self.value[index] := element_ptr^;
-        end;
-        
+        element_ptr := pointer(integer(array_ptr) + 16 + 2*4*(rank-(rank=1?1:0)) + i*sizeof(integer));
+        self.value[i] := element_ptr^;
+        end;       
     end;
     
     
@@ -266,7 +264,7 @@ implementation
     function field.ToString: string;
     begin
       var cnt := 0;
-      write('['*self.rank);
+      result += '['*self.rank;
       var arr := new integer[self.rank];
       for var index := 0 to self.length-1 do
         begin
@@ -276,14 +274,16 @@ implementation
               begin
               arr[i-1] += 1;
               arr[i] := 0;
-              write('], ');
+              result := result.Remove(result.Length-2, 2);
+              result += '], ';
               cnt += 1;
               end;
-        write('['*cnt); cnt := 0;
+        result += '['*cnt; cnt := 0;
         arr[self.rank-1] += 1;
-        write(self.value[index], ', ');
+        result += self.value[index]+', ';
         end;
-      write(']'*self.rank);
+      result := result.Remove(result.Length-2, 2);
+      result += ']'*self.rank;
     end;
         
         
@@ -453,7 +453,7 @@ implementation
         var sum_arr := new real[sum_array_shape.Product];
         var sum_iter_array := field.__get_iter_array(sum_array_shape);
 
-        var gen := self.__get_index();
+        var gen := self.__generate_index();
         for var index := 0 to self.length-1 do
           begin 
           var arr := gen();
@@ -526,7 +526,7 @@ implementation
         for var index := 0 to self.rank-1 do
           axes[index] := self.rank-index-1;
         end;
-      var gen := self.__get_index();
+      var gen := self.__generate_index();
       var tmp_value := new real[self.length];
       var tmp_shape := new integer[self.rank];
       for var index := 0 to self.rank-1 do
@@ -592,10 +592,10 @@ implementation
       begin
         var tmp_shape: array of integer := (a.length+b.length-1); 
         var tmp_field := new field(tmp_shape);
-        var gen_a := a.__get_index();
+        var gen_a := a.__generate_index();
         for var index := 0 to a.length-1 do
           tmp_field.assign(a.get(gen_a()), index);
-        var gen_b := b.__get_index();
+        var gen_b := b.__generate_index();
         for var index := a.length to a.length+b.length-1 do
           tmp_field.assign(b.get(gen_b()), index);
         Result := tmp_field;
@@ -604,8 +604,8 @@ implementation
         begin
 //        if a.row_number <> b.row_number then
 //            raise new Exception('Fields couldn not be broadcast together');
-        var gen_a := a.__get_index();
-        var gen_b := b.__get_index();
+        var gen_a := a.__generate_index();
+        var gen_b := b.__generate_index();
         
         var tmp_shape := new integer[a.rank];
         for var index := 0 to a.rank-1 do
@@ -616,7 +616,7 @@ implementation
           end;
           
         var tmp_field := new field(tmp_shape);
-        var gen_c := tmp_field.__get_index();
+        var gen_c := tmp_field.__generate_index();
         
         for var index := 0 to a.length+b.length-2 do
           begin
@@ -670,8 +670,8 @@ implementation
         max_shape := b.shape;  
         end;
       
-      var gen_a := a.__get_index();
-      var gen_b := b.__get_index();
+      var gen_a := a.__generate_index();
+      var gen_b := b.__generate_index();
         
       var tmp_result := new real[max_len];  
       for var index := 0 to max_len-1 do
