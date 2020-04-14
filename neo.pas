@@ -144,6 +144,21 @@ interface
         
 implementation
     
+    function areEqual(a, b: array of integer): boolean;
+    begin
+      result := true;
+      if a.length <> b.length then
+        result := false
+      else
+        for var i := 0 to a.length-1 do
+          if a[i] <> b[i] then
+            begin
+            result := false;
+            break;
+            end;
+    end;
+    
+    
     // field.Create() - Implementierung
     constructor field.Create(value: array of real; shape: array of integer);
     begin
@@ -305,8 +320,8 @@ implementation
         
     class function field.operator+(self_field, other_field: field): field;
     begin
-//         if not compare(self_field.shape, other_field.shape) then
-//           raise new System.ArithmeticException('Wrong array sizes');
+      if not areEqual(self_field.shape, other_field.shape) then
+        raise new System.ArithmeticException('Wrong array sizes');
       var tmp_result := new real[self_field.length];
       for var index := 0 to self_field.length-1 do
         tmp_result[index] := self_field.value[index] + other_field.value[index]; 
@@ -316,8 +331,6 @@ implementation
         
     class procedure field.operator+=(var self_field, other_field: field);
     begin
-//         if not compare(self_field.shape, other_field.shape) then
-//                raise new Exception('Wrong array sizes');
       self_field := self_field + other_field;
     end;
     
@@ -340,8 +353,8 @@ implementation
 
     class function field.operator-(self_field, other_field: field): field;
     begin
-//         if not compare(self_field.shape, other_field.shape) then
-//                raise new System.ArithmeticException('Wrong array sizes');
+      if not areEqual(self_field.shape, other_field.shape) then
+        raise new System.ArithmeticException('Wrong array sizes');
       var tmp_result := new real[self_field.length];
       for var index := 0 to self_field.length-1 do
         tmp_result[index] := self_field.value[index] - other_field.value[index]; 
@@ -351,8 +364,6 @@ implementation
     
     class procedure field.operator-=(var self_field:field; other_field: field);
     begin
-//         if not compare(self_field.shape, other_field.shape) then
-//                raise new Exception('Wrong array sizes');
       self_field := self_field - other_field;
     end;
 
@@ -381,8 +392,8 @@ implementation
                   
     class function field.operator*(self_field, other_field:field): field;
     begin
-//         if not compare(self_field.shape, other_field.shape) then
-//                raise new System.ArithmeticException('Wrong array sizes');
+      if not areEqual(self_field.shape, other_field.shape) then
+        raise new System.ArithmeticException('Wrong array sizes');
       var tmp_result := new real[self_field.length];
       for var index := 0 to self_field.length-1 do
         tmp_result[index] := self_field.value[index] * other_field.value[index]; 
@@ -405,8 +416,8 @@ implementation
     // field.operator / () and field.operator /= () - Implementierung
     class function field.operator/(self_field: field; number: real): field;
     begin
-//         if b = 0 then
-//             raise new System.ArithmeticException('ZeroDivisionError');
+      if number = 0 then
+        raise new System.ArithmeticException('ZeroDivisionError');
       var tmp_result := new real[self_field.length];
       for var index := 0 to self_field.length-1 do
         tmp_result[index] := self_field.value[index] / number; 
