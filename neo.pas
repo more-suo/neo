@@ -19,6 +19,7 @@ interface
             static function __get_iter_array(shape: array of integer): array of integer;
             
         public
+        
             value: array of real;      
             length: integer;
             rank: integer;
@@ -149,19 +150,11 @@ implementation
     begin
       self.value := value;
       self.shape := shape;
-      println('s', shape);
-      if shape.Length = 1 then
-        begin
-        self.rank := 1;
-        self.length := value.length;
-        end
-      else
-        begin
-        self.rank := shape.Length;
-        self.length := shape.Product;
-        end;
+      self.rank := shape.Length;
+      self.length := shape.Product;
       self.iter_array := field.__get_iter_array(shape);
-      end;
+      println(shape, rank, length);
+    end;
     
     
     type Generator = class
