@@ -577,6 +577,7 @@ implementation
     end;
     
     
+    // TODO: Нахождение максимальных элементов по осям
     function field.max(): real;
     begin
       var tmp_result := 0.0;
@@ -666,27 +667,18 @@ implementation
           tmp_shape[i-1] := max_field.shape[i]; 
         
         var tmp_arr := new real[tmp_shape.Product];
-        var tmp_iter_array := field.__get_iter_array(tmp_shape);
 
         var max_index_gen := max_field.__get_index_generator();
         var max_item_gen := max_field.__get_item_generator();
-        var min_item_gen := min_field.__get_item_generator();
+        
+        var cnt_limit := max_field.length div max_field.shape[0]; var cnt := 0;
         for var i := 0 to max_field.length-1 do
         begin
-          var arr := max_index_gen();
-          
-           
-          var new_arr := new integer[max_field.rank-1];
-          for var j := 1 to max_field.rank-1 do
-            new_arr[j-1] := arr[j];
-              
-          var tmp_acc := 0;
-          for var j := 0 to max_field.rank-2 do
-            tmp_acc += tmp_iter_array[j] * new_arr[j];
-          println(tmp_acc, new_arr, arr);
-//          println(, );
-          tmp_arr[tmp_acc] += max_item_gen()*min_field.value[arr[0]];
-          end;
+          tmp_arr[cnt] += max_item_gen() * min_field.value[max_index_gen()[0]];
+          cnt += 1;
+          if cnt = cnt_limit then
+            cnt := 0;
+        end;
         result := new field(tmp_arr, tmp_shape);
         end
       else if (self.rank = 2) and (other_field.rank = 2) then
