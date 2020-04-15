@@ -1,7 +1,6 @@
 ﻿unit neo;
 
 interface
-uses dump;
         
     type
         field = class
@@ -31,117 +30,68 @@ uses dump;
             
             constructor Create(shape: array of integer);
             
-            /// konvertiert Matriz zu String
             function ToString: string; override;
     
-            /// Matrizenaddition:
-            /// field_sum := self_field + b;
             class function operator+(self_field: field; number: real): field;
            
-            /// Matrizenaddition:
-            /// field_sum := a + other_field;
             class function operator+(number: real; other_field: field): field;
            
-            /// Matrizenaddition:
-            /// field_sum := self_field + other_field;
             class function operator+(self_field, other_field:field): field;
            
-            /// Matrizenaddition:
-            /// field_sum += other_field; 
             class procedure operator+=(var self_field, other_field: field);
             
-            /// Matrizenaddition:
-            /// field_sum += b; 
             class procedure operator+=(var self_field: field; number: real);
                         
-            /// Matrizensubtraktion:
-            /// field_sum := self_field - b;
             class function operator-(self_field: field; number: real): field;
                 
-            /// Matrizensubtraktion:
-            /// field_difference := self_field - other_field;
             class function operator-(self_field, other_field: field): field;
             
-            /// Matrizensubtraktion:
-            /// field_difference -= other_field;    
             class procedure operator-=(var self_field: field; other_field: field);
             
-            /// Matrizensubtraktion:
-            /// field_sum -= b; 
             class procedure operator-=(var self_field: field; number: real);
                 
-            /// Matrizenmultiplikation mit Zahlen:
-            /// field_mult := self_field * b;
             class function operator*(self_field: field; number: real): field;
 
-            /// Matrizenmultiplikation mit Zahlen:
-            /// field_mult := a * other_field;
             class function operator*(number: real; other_field: field): field;
             
-            /// Matrizenmultiplikation:
-            /// field_mult := self_field * other_field;                  
             class function operator*(self_field, other_field: field): field;
             
-            /// Matrizenmultiplikation mit Zahlen:
-            /// field_mult *= b;
             class procedure operator*=(var self_field: field; const number: real);
 
-            /// Matrizenmultiplikation:
-            /// field_mult *= other_field;                  
             class procedure operator*=(var self_field: field; const other_field: field);
                 
-            /// Matrizendivision mit Zahlen:
-            /// field_div := self_field / b;
             class function operator/(self_field: field; number: real): field;
             
-            /// Matrizendivision mit Zahlen:
-            /// field_div /= b;
             class procedure operator/=(var self_field: field; number: real);
 
-            /// Exponentiation vom jeden Matrizenelements:
-            /// field_exp := self_field ** b
             class function operator**(var self_field: field; number: real): field;
                 
-            /// wenn axis = 0, Summe aller Spalten; wenn axis = 1, Summe aller Zeilen
             function sum(axis: integer := -1): field;
 
-            /// das Werte der Matrize
             function get(params index: array of integer): real;
    
             procedure assign(val: real; params index: array of integer);
             
             procedure map(func: System.Func<real, real>);
             
-            /// kehrt den groeßten Wert der Matrize zurueck
             function max(): real;
                 
-            /// Erstellt eine Kopie der Matrize
             function copy(): field;
             
-            /// Umformung der Matrize in eine andere Matrize mit Groeße size
             function reshape(shape: array of integer): field;
 
-            /// Transponierung der Matrize
             function transpose(axes: array of integer := nil): field;
             
-            /// Summe des Skalarproduktes von zwei Vektoren
             function dot(other_field: field): field;
     end;
 
-    /// Matrizengenerator mit rows*colums, (0, 1)
     function random_field(shape: array of integer): field;
    
-    /// Erweiterung der Matrize a mit b, axis == 0 - zeilenweise, axis == 1 - spaltenweise
     function concatenate(a,b:field; axis: integer := -1): field;
     
-    
-    /// Multiplikation von zwei Skalaren
     function multiply(a, b: real): real;
-    /// Multiplikation von Skalar und Matrize
     function multiply(a:real; b:field): field;
-    /// Multiplikation von Matrize und Skalar
     function multiply(a:field; b:real): field;
-    /// Multiplikation von zwei Matrizen
     function multiply(a,b:field): field;
          
         
@@ -159,18 +109,6 @@ implementation
             result := false;
             break;
             end;
-    end;
-    
-    
-    // field.Create() - Implementierung
-    constructor field.Create(value: array of real; shape: array of integer);
-    begin
-      self.value := value;
-      self.shape := shape;
-      self.rank := shape.Length;
-      self.length := shape.Product;
-      self.iter_array := field.__get_iter_array(shape);
-      println(shape, rank, length);
     end;
     
     
@@ -258,6 +196,18 @@ implementation
       result := iter_array;
     end;
     
+        
+    {$region Конструкторы}
+    constructor field.Create(value: array of real; shape: array of integer);
+    begin
+      self.value := value;
+      self.shape := shape;
+      self.rank := shape.Length;
+      self.length := shape.Product;
+      self.iter_array := field.__get_iter_array(shape);
+      println(shape, rank, length);
+    end;
+    
     
     constructor field.Create(array_ptr: pointer; rank: integer);
     var tmp_ptr : ^^integer;
@@ -267,7 +217,6 @@ implementation
     begin
       tmp_ptr := array_ptr;
       array_ptr := tmp_ptr^;
-      dump.get_dump(array_ptr, 128);
       
       size := pointer(integer(array_ptr)+8);
 
@@ -299,7 +248,7 @@ implementation
       self.rank := shape.Length;
       self.length := shape.Product;
       self.iter_array := field.__get_iter_array(shape);
-      self.value := new real[shape.Product]; 
+      self.value := new real[self.length]; 
     end;  
     
     
@@ -328,14 +277,16 @@ implementation
       result := result.Remove(result.Length-2, 2);
       result += ']'*self.rank;
     end;
+    {$endregion}
+    
         
-        
-    // field.operator + () and field.operator += () - Implementierung
+    {$region Арифметические операции}    
     class function field.operator+(self_field: field; number: real): field;
     begin
       var tmp_result := new real[self_field.length];
+      var item_gen_a := self_field.__get_item_generator();
       for var index := 0 to self_field.length-1 do
-        tmp_result[index] := self_field.value[index] + number;
+        tmp_result[index] := item_gen_a() + number;
       result := new field(tmp_result, self_field.shape);    
     end;
         
@@ -351,8 +302,10 @@ implementation
       if not areEqual(self_field.shape, other_field.shape) then
         raise new System.ArithmeticException('Wrong array sizes');
       var tmp_result := new real[self_field.length];
+      var item_gen_a := self_field.__get_item_generator();
+      var item_gen_b := other_field.__get_item_generator();
       for var index := 0 to self_field.length-1 do
-        tmp_result[index] := self_field.value[index] + other_field.value[index]; 
+        tmp_result[index] := item_gen_a() + item_gen_b(); 
       Result := new field(tmp_result, self_field.shape);    
     end;
         
@@ -369,12 +322,12 @@ implementation
     end;
         
         
-    // field.operator - () and field.operator -= () - Implementierung        
     class function field.operator-(self_field: field; number: real): field;
     begin
       var tmp_result := new real[self_field.length];
+      var item_gen_a := self_field.__get_item_generator();
       for var index := 0 to self_field.length-1 do
-        tmp_result[index] := self_field.value[index] - number; 
+        tmp_result[index] := item_gen_a() - number; 
       Result := new field(tmp_result, self_field.shape);        
     end;
         
@@ -384,8 +337,10 @@ implementation
       if not areEqual(self_field.shape, other_field.shape) then
         raise new System.ArithmeticException('Wrong array sizes');
       var tmp_result := new real[self_field.length];
+      var item_gen_a := self_field.__get_item_generator();
+      var item_gen_b := other_field.__get_item_generator();
       for var index := 0 to self_field.length-1 do
-        tmp_result[index] := self_field.value[index] - other_field.value[index]; 
+        tmp_result[index] := item_gen_a() - item_gen_b(); 
       Result := new field(tmp_result, self_field.shape);    
     end;       
 
@@ -402,12 +357,12 @@ implementation
     end;
 
         
-    // field.operator * () and field.operator *= () - Implementierung
     class function field.operator*(self_field: field; number: real): field;
     begin
       var tmp_result := new real[self_field.length];
+      var item_gen_a := self_field.__get_item_generator();
       for var index := 0 to self_field.length-1 do
-        tmp_result[index] := self_field.value[index] * number; 
+        tmp_result[index] := item_gen_a() * number; 
       Result := new field(tmp_result, self_field.shape);
     end;
 
@@ -423,8 +378,10 @@ implementation
       if not areEqual(self_field.shape, other_field.shape) then
         raise new System.ArithmeticException('Wrong array sizes');
       var tmp_result := new real[self_field.length];
+      var item_gen_a := self_field.__get_item_generator();
+      var item_gen_b := other_field.__get_item_generator();
       for var index := 0 to self_field.length-1 do
-        tmp_result[index] := self_field.value[index] * other_field.value[index]; 
+        tmp_result[index] := item_gen_a() * item_gen_b(); 
       Result := new field(tmp_result, self_field.shape);
     end;
             
@@ -439,16 +396,16 @@ implementation
     begin
       self_field := self_field * other_field;
     end;
-        
 
-    // field.operator / () and field.operator /= () - Implementierung
+
     class function field.operator/(self_field: field; number: real): field;
     begin
       if number = 0 then
         raise new System.ArithmeticException('ZeroDivisionError');
       var tmp_result := new real[self_field.length];
+      var item_gen_a := self_field.__get_item_generator();
       for var index := 0 to self_field.length-1 do
-        tmp_result[index] := self_field.value[index] / number; 
+        tmp_result[index] := item_gen_a() / number; 
       Result := new field(tmp_result, self_field.shape);
     end;
     
@@ -463,10 +420,12 @@ implementation
     class function field.operator**(var self_field: field; number: real): field;
     begin
       var tmp_result := new real[self_field.length];
+      var item_gen_a := self_field.__get_item_generator();
       for var index := 0 to self_field.length-1 do
-        tmp_result[index] := self_field.value[index] ** number; 
+        tmp_result[index] := item_gen_a() ** number; 
       Result := new field(tmp_result, self_field.shape);
     end;
+    {$endregion}
         
 
     function field.sum(axis: integer): field;
@@ -492,32 +451,32 @@ implementation
         var sum_arr := new real[sum_array_shape.Product];
         var sum_iter_array := field.__get_iter_array(sum_array_shape);
 
-        var gen := self.__get_index_generator();
-        for var index := 0 to self.length-1 do
+        var index_gen := self.__get_index_generator();
+        var item_gen := self.__get_item_generator();
+        for var i := 0 to self.length-1 do
           begin 
-          var arr := gen();
+          var arr := index_gen();
            
           var new_arr := new integer[self.rank-1]; var sum_cnt := 0;
-          for var i := 0 to self.rank-1 do
-            if i = axis then
+          for var j := 0 to self.rank-1 do
+            if j = axis then
               continue
             else
              begin
-              new_arr[sum_cnt] := arr[i];
+              new_arr[sum_cnt] := arr[j];
               sum_cnt += 1;
               end;
               
           var sum_acc := 0;
-          for var i := 0 to self.rank-2 do
-            sum_acc += sum_iter_array[i] * new_arr[i];
-          sum_arr[sum_acc] += self.value[index];
+          for var j := 0 to self.rank-2 do
+            sum_acc += sum_iter_array[j] * new_arr[j];
+          sum_arr[sum_acc] += item_gen();
           end;
       result := new field(sum_arr, sum_array_shape);
       end;
     end;
 
       
-    // field.get() - Implementierung
     function field.get(params index: array of integer): real;
     begin
       result := self.__get_item(index);
@@ -532,19 +491,22 @@ implementation
     
     procedure field.map(func: System.Func<real, real>);
     begin
-      for var index := 0 to self.length-1 do
-        self.value[index] := func(self.value[index]); 
+      var item_gen := self.__get_item_generator();
+      for var i := 0 to self.length-1 do
+        self.value[i] := func(item_gen()); 
     end;
     
     
-    // field.max() - Implementierung
     function field.max(): real;
     begin
-      result := self.value.Max;
+      var tmp_result := 0.0;
+      var item_gen := self.__get_item_generator();
+      for var i := 0 to self.length-1 do
+        tmp_result += item_gen();  
+      result := tmp_result;
     end;
 
     
-    // field.copy() - Implementierung
     function field.copy(): field;
     begin
       Result := new field(self.value, self.shape);
@@ -565,29 +527,33 @@ implementation
         for var index := 0 to self.rank-1 do
           axes[index] := self.rank-index-1;
         end;
-      var gen := self.__get_index_generator();
+      
       var tmp_value := new real[self.length];
       var tmp_shape := new integer[self.rank];
       for var index := 0 to self.rank-1 do
         tmp_shape[index] := self.shape[axes[index]];
+      
       var tmp_iter_array := field.__get_iter_array(tmp_shape);
-      for var index := 0 to self.length-1 do
+      var index_gen := self.__get_index_generator();
+      var item_gen := self.__get_item_generator();
+      
+      for var i := 0 to self.length-1 do
         begin
-        var arr := gen(); 
+        var arr := index_gen();
+        
         var new_arr := new integer[self.rank];
-        for var i := 0 to self.rank-1 do
-          new_arr[i] := arr[axes[i]];
+        for var j := 0 to self.rank-1 do
+          new_arr[j] := arr[axes[j]];
         
         var acc := 0;
-        for var i := 0 to self.rank-1 do
-          acc += tmp_iter_array[i] * new_arr[i];
-        tmp_value[acc] := self.value[index];
+        for var j := 0 to self.rank-1 do
+          acc += tmp_iter_array[j] * new_arr[j];
+        tmp_value[acc] := item_gen();
         end;
       result := new field(tmp_value, tmp_shape);
     end;  
    
    
-    // dot() - Implementierung
     function field.dot(other_field: field): field;
     begin
       if (self.rank = 1) and (other_field.rank = 1) then
@@ -615,12 +581,11 @@ implementation
     end;
    
    
-    // random_field() - Implementierung
     function random_field(shape: array of integer): field;
     begin
       var tmp_result := new real[shape.Product];
       for var index := 0 to shape.Product-1 do
-        tmp_result[index] := random(2);
+        tmp_result[index] := random;
       Result := new field(tmp_result, shape);   
     end;
  
@@ -630,21 +595,21 @@ implementation
       if axis = -1 then
       begin
         var tmp_shape: array of integer := (a.length+b.length-1); 
-        var tmp_field := new field(tmp_shape);
-        var gen_a := a.__get_index_generator();
+        var tmp_field := new real[a.length+b.length-1];
+        var item_gen_a := a.__get_item_generator();
+        var item_gen_b := b.__get_item_generator();
+        
         for var index := 0 to a.length-1 do
-          tmp_field.assign(a.get(gen_a()), index);
-        var gen_b := b.__get_index_generator();
+          tmp_field[index] := item_gen_a();
         for var index := a.length to a.length+b.length-1 do
-          tmp_field.assign(b.get(gen_b()), index);
-        Result := tmp_field;
+          tmp_field[index] := item_gen_b();
+        
+        Result := new field(tmp_field, tmp_shape);
         end
       else
         begin
-//        if a.row_number <> b.row_number then
-//            raise new Exception('Fields couldn not be broadcast together');
-        var gen_a := a.__get_index_generator();
-        var gen_b := b.__get_index_generator();
+        if a.shape[axis] <> b.shape[axis] then
+          raise new Exception('Fields couldn not be broadcast together');
         
         var tmp_shape := new integer[a.rank];
         for var index := 0 to a.rank-1 do
@@ -655,26 +620,27 @@ implementation
           end;
           
         var tmp_field := new field(tmp_shape);
-        var gen_c := tmp_field.__get_index_generator();
+        var item_gen_a := a.__get_item_generator();
+        var item_gen_b := b.__get_item_generator();
+        var index_gen_c := tmp_field.__get_index_generator();
         
         for var index := 0 to a.length+b.length-2 do
           begin
-          var arr := gen_c();
+          var arr := index_gen_c();
           
           while arr[axis] > a.shape[axis]-1 do
             begin
-            tmp_field.assign(b.get(gen_b()), arr);  
-            arr := gen_c();
+            tmp_field.assign(item_gen_b(), arr);  
+            arr := index_gen_c();
             end;
           
-          tmp_field.assign(a.get(gen_a()), arr);
+          tmp_field.assign(item_gen_a(), arr);
           end;
         Result := tmp_field;
         end;
     end;
         
         
-    // multiply() - Implementierung
     function multiply(a, b: real): real;
     begin
       Result := a * b;
@@ -709,16 +675,12 @@ implementation
         max_shape := b.shape;  
         end;
       
-      var gen_a := a.__get_index_generator();
-      var gen_b := b.__get_index_generator();
+      var item_gen_a := a.__get_item_generator();
+      var item_gen_b := b.__get_item_generator();
         
       var tmp_result := new real[max_len];  
       for var index := 0 to max_len-1 do
-        begin
-        var arr_a := gen_a();
-        var arr_b := gen_b();
-        tmp_result[index] := a.get(arr_a)*b.get(arr_b);
-        end;
+        tmp_result[index] := item_gen_a() * item_gen_b();
       result := new field(tmp_result, max_shape);
     end;
 end.
