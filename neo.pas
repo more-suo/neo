@@ -219,7 +219,6 @@ implementation
       self.rank := shape.Length;
       self.length := shape.Product;
       self.iter_array := field.__get_iter_array(shape);
-      println(shape, rank, length);
     end;
     
     
@@ -637,43 +636,76 @@ implementation
    
     function field.dot(other_field: field; axis: integer): field;
     begin
-      println(self, other_field, axis);
-      var index_gen_a := self.__get_index_generator();
-      var item_gen_a := self.__get_item_generator();
-      var item_gen_b := other_field.__get_item_generator();
-      
-      var tmp_result := new real[self.shape[axis]];
-      var tmp_shape: array of integer := (self.shape[axis]);
-      for var i := 0 to self.length-1 do
+      if (self.rank = 1) and (other_field.rank = 1) then
         begin
-        var arr := index_gen_a();
-        tmp_result[arr[axis]] += item_gen_a()*item_gen_b();
+        var sum: array of real := (0);
+        for var index := 0 to self.length-1 do
+          sum[0] += self.get(index) * other_field.get(index);
+        result := new field(sum, ArrFill(1, 1));
+        end
+      else if (self.rank = 1) or (other_field.rank = 1) then
+      begin
+        if self.shape[0] <> other_field.shape[0] then
+          raise new Exception('Fields couldn not be broadcast together');
+        
+        var max_field: field;
+        var min_field: field;
+        if self.rank > other_field.rank then
+          begin
+          max_field := self;
+          min_field := other_field;
+          end
+        else
+          begin
+          max_field := other_field;
+          min_field := self;
+          end;
+        
+        var tmp_shape := new integer[max_field.rank-1];
+        for var i := 1 to max_field.rank-1 do
+          tmp_shape[i-1] := max_field.shape[i]; 
+        
+        var tmp_arr := new real[tmp_shape.Product];
+        var tmp_iter_array := field.__get_iter_array(tmp_shape);
+
+        var max_index_gen := max_field.__get_index_generator();
+        var max_item_gen := max_field.__get_item_generator();
+        var min_item_gen := min_field.__get_item_generator();
+        for var i := 0 to max_field.length-1 do
+        begin
+          var arr := max_index_gen();
+          
+           
+          var new_arr := new integer[max_field.rank-1];
+          for var j := 1 to max_field.rank-1 do
+            new_arr[j-1] := arr[j];
+              
+          var tmp_acc := 0;
+          for var j := 0 to max_field.rank-2 do
+            tmp_acc += tmp_iter_array[j] * new_arr[j];
+          println(tmp_acc, new_arr, arr);
+//          println(, );
+          tmp_arr[tmp_acc] += max_item_gen()*min_field.value[arr[0]];
+          end;
+        result := new field(tmp_arr, tmp_shape);
+        end
+      else if (self.rank = 2) and (other_field.rank = 2) then
+        begin
+          var other_field_T := other_field.transpose();
+          var tmp_result := new real[self.shape[0]*other_field.shape[1]];
+          var new_shape: array of integer := (self.shape[0], other_field.shape[1]);
+          for var i:=0 to self.shape[0]-1 do
+            for var j:=0 to other_field.shape[1]-1 do
+            begin  
+              var cc := 0.0;
+              for var l:=0 to self.shape[1]-1 do
+                 cc += self.get(i, l)*other_field_T.get(j, l);
+              tmp_result[i*self.shape[0]+j] := cc;   
+            end;
+          result := new field(tmp_result, new_shape);
         end;
-      result := new field(tmp_result, tmp_shape);
     end;
-//      if (self.rank = 1) and (other_field.rank = 1) then
-//        begin
-//        var sum: array of real := (0);
-//        for var index := 0 to self.length-1 do
-//          sum[0] += self.get(index) * other_field.get(index);
-//        result := new field(sum, ArrFill(1, 1));
-//        end
-//      else if (self.rank = 2) and (other_field.rank = 2) then
-//        begin
-//          var other_field_T := other_field.transpose();
-//          var tmp_result := new real[self.shape[0]*other_field.shape[1]];
-//          var new_shape: array of integer := (self.shape[0], other_field.shape[1]);
-//          for var i:=0 to self.shape[0]-1 do
-//            for var j:=0 to other_field.shape[1]-1 do
-//            begin  
-//              var cc := 0.0;
-//              for var l:=0 to self.shape[1]-1 do
-//                 cc += self.get(i, l)*other_field_T.get(j, l);
-//              tmp_result[i*self.shape[0]+j] := cc;   
-//            end;
-//          result := new field(tmp_result, new_shape);
-//        end;
-   
+ 
    
     function random_field(shape: array of integer): field;
     begin
