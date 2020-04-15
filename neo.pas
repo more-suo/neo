@@ -101,6 +101,12 @@ interface
 
     function random_field(shape: array of integer): field;
    
+    function arange(stop: integer): field;
+    
+    function arange(start, stop: integer): field;
+    
+    function arange(start, stop, step: integer): field;
+   
     function concatenate(a,b:field; axis: integer := -1): field;
     
     function multiply(a, b: real): real;
@@ -695,10 +701,16 @@ implementation
               tmp_result[i*self.shape[0]+j] := cc;   
             end;
           result := new field(tmp_result, new_shape);
+        end
+      else
+        begin
+//        var tmp_shape := new integer[self.rank+other_field.rank-2];
+//        println(tmp_shape);
+        
         end;
     end;
  
-   
+     
     function random_field(shape: array of integer): field;
     begin
       var tmp_result := new real[shape.Product];
@@ -707,6 +719,49 @@ implementation
       Result := new field(tmp_result, shape);   
     end;
  
+ 
+    function arange(stop: integer): field;
+    begin
+      var tmp_result := new real[stop];
+      var tmp_shape: array of integer := (stop);
+      for var i := 0 to stop-1 do
+        tmp_result[i] := i;
+      result := new field(tmp_result, tmp_shape);
+    end;
+    
+    
+    function arange(start, stop: integer): field;
+    begin
+      var tmp_result := new real[stop-start];
+      var tmp_shape: array of integer := (stop-start);
+      for var i := start to stop-1 do
+        tmp_result[i-start] := i;
+      result := new field(tmp_result, tmp_shape);  
+    end;
+    
+    
+    function arange(start, stop, step: integer): field;
+    begin
+      var tmp_result := new real[(stop-start) div step];
+      var tmp_shape: array of integer := ((stop-start) div step);
+      var i := start-1; var cnt := 0; 
+      if step < 0 then
+        while i > stop do
+          begin
+          tmp_result[cnt] := i;
+          cnt += 1;
+          i += step;
+          end
+      else
+        while i < stop do
+          begin
+          tmp_result[cnt] := i;
+          cnt += 1;
+          i += step;
+          end;
+      result := new field(tmp_result, tmp_shape);  
+    end;
+
 
     function concatenate(a, b: field; axis: integer): field;
     begin
