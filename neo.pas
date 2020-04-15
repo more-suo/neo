@@ -704,9 +704,59 @@ implementation
         end
       else
         begin
-//        var tmp_shape := new integer[self.rank+other_field.rank-2];
-//        println(tmp_shape);
+        var tmp_shape := new integer[self.rank+other_field.rank-2];
+        for var i := 0 to self.rank-2 do
+          tmp_shape[i] := self.shape[i];
+        for var i := 0 to other_field.rank-3 do
+          tmp_shape[self.rank+i-1] := other_field.shape[i];
+        tmp_shape[self.rank+other_field.rank-3] := other_field.shape[other_field.rank-1];
         
+        var index_gen_a := self.__get_index_generator();
+//        var index_gen_b := other_field.__get_index_generator();
+//       
+        var tmp_field := new field(tmp_shape);
+        var index_gen := tmp_field.__get_index_generator();
+        
+        for var i := 0 to tmp_shape.Product-1 do
+          begin
+            var arr := index_gen();
+            var arr_a := new integer[self.rank-1];
+            for var j := 0 to self.rank-2 do
+              arr_a[j] := arr[j];
+            
+            var a_matrix := new real[self.shape[self.rank-1]];
+            var cnt_a := 0;
+            for var j := 0 to self.shape[self.rank-1]-1 do
+            begin
+              var tmp_arr := new integer[arr_a.length+1];
+              for var k := 0 to arr_a.Length-1 do
+                tmp_arr[k] := arr_a[k];
+              tmp_arr[arr_a.length] := j;
+              a_matrix[j] := self.get(tmp_arr);
+              end;
+              
+            var arr_b := new integer[other_field.rank-1];
+            for var j := 0 to other_field.rank-2 do
+              arr_b[j] := arr[self.rank+j-1];
+                        
+            var b_matrix := new real[other_field.shape[other_field.rank-2]];
+            var cnt_b := 0;
+            for var j := 0 to other_field.shape[other_field.rank-2]-1 do
+            begin
+              var tmp_arr := new integer[arr_b.length+1];
+              for var k := 0 to arr_b.Length-2 do
+                tmp_arr[k] := arr_b[k];
+              tmp_arr[arr_b.length-1] := j;
+              tmp_arr[arr_b.length] := arr_b[arr_b.Length-1];
+              b_matrix[j] := other_field.get(tmp_arr);
+              end;
+              
+            var acc := 0.0;
+            for var j := 0 to a_matrix.Length-1 do
+              acc += a_matrix[j] * b_matrix[j];
+            tmp_field.assign(acc, arr);
+          end;
+        result := tmp_field; 
         end;
     end;
  
