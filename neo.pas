@@ -68,9 +68,17 @@ interface
             
             class function operator/(number: real; self_field: field): field;
             
+            class function operator/(self_field: field; other_field: field): field;
+            
             class procedure operator/=(var self_field: field; number: real);
+            
+            class procedure operator/=(var self_field: field; other_field: field);
 
-            class function operator**(var self_field: field; number: real): field;
+            class function operator**(self_field: field; number: real): field;
+                
+            class function operator**(number: real; self_field: field): field;
+                
+            class function operator**(self_field: field; other_field: field): field;
                 
             function sum(axis: integer := -1): field;
 
@@ -442,20 +450,61 @@ implementation
     end;
 
 
+    class function field.operator/(self_field: field; other_field: field): field;
+    begin
+      if not areEqual(self_field.shape, other_field.shape) and (self_field.rank <> 1) and (other_field.rank <> 1) then
+        raise new System.ArithmeticException('Wrong array sizes');
+      var tmp_result := new real[self_field.length];
+      var item_gen_a := self_field.__get_item_generator();
+      var item_gen_b := other_field.__get_item_generator();
+      for var index := 0 to self_field.length-1 do
+        tmp_result[index] := item_gen_a() / item_gen_b(); 
+      Result := new field(tmp_result, self_field.shape);  
+    end;
+
+
     class procedure field.operator/=(var self_field: field; number: real);
     begin
       self_field := self_field / number;
     end;
     
 
-    // field.operator ** () - Implementierung
-    class function field.operator**(var self_field: field; number: real): field;
+    class procedure field.operator/=(var self_field: field; other_field: field);
+    begin
+      self_field := self_field / other_field;      
+    end;
+
+
+    class function field.operator**(self_field: field; number: real): field;
     begin
       var tmp_result := new real[self_field.length];
       var item_gen_a := self_field.__get_item_generator();
       for var index := 0 to self_field.length-1 do
         tmp_result[index] := item_gen_a() ** number; 
       Result := new field(tmp_result, self_field.shape);
+    end;
+    
+            
+    class function field.operator**(number: real; self_field: field): field;
+    begin
+      var tmp_result := new real[self_field.length];
+      var item_gen_a := self_field.__get_item_generator();
+      for var index := 0 to self_field.length-1 do
+        tmp_result[index] := number ** item_gen_a(); 
+      Result := new field(tmp_result, self_field.shape); 
+    end;
+    
+    
+    class function field.operator**(self_field: field; other_field: field): field;
+    begin
+      if not areEqual(self_field.shape, other_field.shape) and (self_field.rank <> 1) and (other_field.rank <> 1) then
+        raise new System.ArithmeticException('Wrong array sizes');
+      var tmp_result := new real[self_field.length];
+      var item_gen_a := self_field.__get_item_generator();
+      var item_gen_b := other_field.__get_item_generator();
+      for var index := 0 to self_field.length-1 do
+        tmp_result[index] := item_gen_a() ** item_gen_b(); 
+      Result := new field(tmp_result, self_field.shape);   
     end;
     {$endregion}
         
