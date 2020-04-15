@@ -41,8 +41,12 @@ interface
             class procedure operator+=(var self_field, other_field: field);
             
             class procedure operator+=(var self_field: field; number: real);
+            
+            class function operator-(self_field: field): field;
                         
             class function operator-(self_field: field; number: real): field;
+            
+            class function operator-(number: real; self_field: field): field;
                 
             class function operator-(self_field, other_field: field): field;
             
@@ -61,6 +65,8 @@ interface
             class procedure operator*=(var self_field: field; const other_field: field);
                 
             class function operator/(self_field: field; number: real): field;
+            
+            class function operator/(number: real; self_field: field): field;
             
             class procedure operator/=(var self_field: field; number: real);
 
@@ -82,7 +88,7 @@ interface
 
             function transpose(axes: array of integer := nil): field;
             
-            function dot(other_field: field): field;
+            function dot(other_field: field; axis: integer := 0): field;
     end;
 
     function random_field(shape: array of integer): field;
@@ -299,7 +305,7 @@ implementation
         
     class function field.operator+(self_field, other_field: field): field;
     begin
-      if not areEqual(self_field.shape, other_field.shape) then
+      if not areEqual(self_field.shape, other_field.shape) and (self_field.rank <> 1) and (other_field.rank <> 1) then
         raise new System.ArithmeticException('Wrong array sizes');
       var tmp_result := new real[self_field.length];
       var item_gen_a := self_field.__get_item_generator();
@@ -320,8 +326,18 @@ implementation
     begin
       self_field := self_field + number;
     end;
-        
-        
+    
+    
+    class function field.operator-(self_field: field): field;
+    begin
+      var tmp_result := new real[self_field.length];
+      var item_gen_a := self_field.__get_item_generator();
+      for var index := 0 to self_field.length-1 do
+        tmp_result[index] := -item_gen_a(); 
+      Result := new field(tmp_result, self_field.shape);        
+    end;
+    
+    
     class function field.operator-(self_field: field; number: real): field;
     begin
       var tmp_result := new real[self_field.length];
@@ -331,10 +347,16 @@ implementation
       Result := new field(tmp_result, self_field.shape);        
     end;
         
+            
+    class function field.operator-(number: real; self_field: field): field;
+    begin
+      result := -self_field + number;
+    end;    
+
 
     class function field.operator-(self_field, other_field: field): field;
     begin
-      if not areEqual(self_field.shape, other_field.shape) then
+      if not areEqual(self_field.shape, other_field.shape) and (self_field.rank <> 1) and (other_field.rank <> 1) then
         raise new System.ArithmeticException('Wrong array sizes');
       var tmp_result := new real[self_field.length];
       var item_gen_a := self_field.__get_item_generator();
@@ -375,7 +397,7 @@ implementation
                   
     class function field.operator*(self_field, other_field:field): field;
     begin
-      if not areEqual(self_field.shape, other_field.shape) then
+      if not areEqual(self_field.shape, other_field.shape) and (self_field.rank <> 1) and (other_field.rank <> 1) then
         raise new System.ArithmeticException('Wrong array sizes');
       var tmp_result := new real[self_field.length];
       var item_gen_a := self_field.__get_item_generator();
@@ -408,7 +430,17 @@ implementation
         tmp_result[index] := item_gen_a() / number; 
       Result := new field(tmp_result, self_field.shape);
     end;
+
     
+    class function field.operator/(number: real; self_field: field): field;
+    begin
+      var tmp_result := new real[self_field.length];
+      var item_gen_a := self_field.__get_item_generator();
+      for var index := 0 to self_field.length-1 do
+        tmp_result[index] := number / item_gen_a(); 
+      Result := new field(tmp_result, self_field.shape);
+    end;
+
 
     class procedure field.operator/=(var self_field: field; number: real);
     begin
@@ -554,31 +586,44 @@ implementation
     end;  
    
    
-    function field.dot(other_field: field): field;
+    function field.dot(other_field: field; axis: integer): field;
     begin
-      if (self.rank = 1) and (other_field.rank = 1) then
+      println(self, other_field, axis);
+      var index_gen_a := self.__get_index_generator();
+      var item_gen_a := self.__get_item_generator();
+      var item_gen_b := other_field.__get_item_generator();
+      
+      var tmp_result := new real[self.shape[axis]];
+      var tmp_shape: array of integer := (self.shape[axis]);
+      for var i := 0 to self.length-1 do
         begin
-        var sum: array of real := (0);
-        for var index := 0 to self.length-1 do
-          sum[0] += self.get(index) * other_field.get(index);
-        result := new field(sum, ArrFill(1, 1));
-        end
-      else if (self.rank = 2) and (other_field.rank = 2) then
-        begin
-          var other_field_T := other_field.transpose();
-          var tmp_result := new real[self.shape[0]*other_field.shape[1]];
-          var new_shape: array of integer := (self.shape[0], other_field.shape[1]);
-          for var i:=0 to self.shape[0]-1 do
-            for var j:=0 to other_field.shape[1]-1 do
-            begin  
-              var cc := 0.0;
-              for var l:=0 to self.shape[1]-1 do
-                 cc += self.get(i, l)*other_field_T.get(j, l);
-              tmp_result[i*self.shape[0]+j] := cc;   
-            end;
-          result := new field(tmp_result, new_shape);
+        var arr := index_gen_a();
+        tmp_result[arr[axis]] += item_gen_a()*item_gen_b();
         end;
+      result := new field(tmp_result, tmp_shape);
     end;
+//      if (self.rank = 1) and (other_field.rank = 1) then
+//        begin
+//        var sum: array of real := (0);
+//        for var index := 0 to self.length-1 do
+//          sum[0] += self.get(index) * other_field.get(index);
+//        result := new field(sum, ArrFill(1, 1));
+//        end
+//      else if (self.rank = 2) and (other_field.rank = 2) then
+//        begin
+//          var other_field_T := other_field.transpose();
+//          var tmp_result := new real[self.shape[0]*other_field.shape[1]];
+//          var new_shape: array of integer := (self.shape[0], other_field.shape[1]);
+//          for var i:=0 to self.shape[0]-1 do
+//            for var j:=0 to other_field.shape[1]-1 do
+//            begin  
+//              var cc := 0.0;
+//              for var l:=0 to self.shape[1]-1 do
+//                 cc += self.get(i, l)*other_field_T.get(j, l);
+//              tmp_result[i*self.shape[0]+j] := cc;   
+//            end;
+//          result := new field(tmp_result, new_shape);
+//        end;
    
    
     function random_field(shape: array of integer): field;
