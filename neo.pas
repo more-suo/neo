@@ -8,6 +8,9 @@ interface
         private
             value: array of real;      
             iter_array: array of integer;
+            shape: array of integer;
+            length: integer;
+            rank: integer;
             
             constructor Create(value: array of real; shape: array of integer);
             
@@ -21,11 +24,7 @@ interface
             
             static function __get_iter_array(shape: array of integer): array of integer;
             
-        public
-            length: integer;
-            rank: integer;
-            shape: array of integer;
-            
+        public            
             constructor Create(array_ptr: pointer; rank: integer);
             
             constructor Create(shape: array of integer);
@@ -83,6 +82,8 @@ interface
             function get(params index: array of integer): real;
    
             procedure assign(val: real; params index: array of integer);
+            
+            function get_shape(): array of integer;
             
             function copy(): ndarray;
             
@@ -543,6 +544,12 @@ implementation
     procedure ndarray.assign(val: real; params index: array of integer);
     begin
       self.__set_item(val, index);
+    end;
+    
+    
+    function ndarray.get_shape(): array of integer;
+    begin
+      result := self.shape;  
     end;
     
     
