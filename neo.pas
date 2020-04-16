@@ -1,874 +1,962 @@
 ﻿unit neo;
 
 interface
-
         
     type
-        float_func = System.Func<real, real>;
-        int_func = System.Func<real, integer>;
-        
-    type
-        field = class
+        ndarray = class
       
         private
-            row_number: integer;
-            column_number: integer;
-            values: array[,] of real;
-
+            value: array of real;      
+            iter_array: array of integer;
+            
+            constructor Create(value: array of real; shape: array of integer);
+            
+            function __get_index_generator(): function(): array of integer;
+            
+            function __get_item_generator(): function(): real;
+            
+            function __get_item(index: array of integer): real;
+            
+            procedure __set_item(val: real; index: array of integer);
+            
+            static function __get_iter_array(shape: array of integer): array of integer;
+            
         public
-        
-            /// Zugriff auf Elemente einer Matrize
-            property element[row, column: integer]: real
-                read values[row, column]
-                write values[row, column] := value;
-                default;
+            length: integer;
+            rank: integer;
+            shape: array of integer;
             
-            /// Deklaration einer Matrize durch Massiv:  
-            /// m := new Matrix(arr[,]);    
-            constructor (existing_arr:array[,] of real);
-                
-            /// Deklaration einer Matrize durch Massiv:  
-            /// m := new Matrix(arr[]);          
-            constructor (existing_arr:array of real);
-                
-            /// Deklaration einer Nullmatrize durch Zeilen- & Spaltenanzahl:  
-            /// m := new Matrix(7, 31);  
-            constructor (rows, columns:integer);
+            constructor Create(array_ptr: pointer; rank: integer);
             
-            /// konvertiert Matriz zu String
+            constructor Create(shape: array of integer);
+            
             function ToString: string; override;
     
-            /// Matrizenaddition:
-            /// field_sum := field_a + b;
-            class function operator + (field_a:field; b:Real): field;
+            class function operator+(self_ndarray: ndarray; number: real): ndarray;
            
-            /// Matrizenaddition:
-            /// field_sum := a + field_b;
-            class function operator + (a:Real; field_b:field): field;
+            class function operator+(number: real; other_ndarray: ndarray): ndarray;
            
-            /// Matrizenaddition:
-            /// field_sum := field_a + field_b;
-            class function operator + (field_a, field_b:field): field;
+            class function operator+(self_ndarray, other_ndarray:ndarray): ndarray;
            
-            /// Matrizenaddition:
-            /// field_sum += field_b; 
-            class procedure operator += (var field_a:field; const field_b:field);
+            class procedure operator+=(var self_ndarray, other_ndarray: ndarray);
             
-            /// Matrizenaddition:
-            /// field_sum += b; 
-            class procedure operator += (var field_a:field; const b:Real);
+            class procedure operator+=(var self_ndarray: ndarray; number: real);
+            
+            class function operator-(self_ndarray: ndarray): ndarray;
                         
-            /// Matrizensubtraktion:
-            /// field_sum := field_a - b;
-            class function operator - (field_a:field; b:Real): field;
+            class function operator-(self_ndarray: ndarray; number: real): ndarray;
+            
+            class function operator-(number: real; self_ndarray: ndarray): ndarray;
                 
-            /// Matrizensubtraktion:
-            /// field_difference := field_a - field_b;
-            class function operator - (field_a, field_b:field): field;
+            class function operator-(self_ndarray, other_ndarray: ndarray): ndarray;
             
-            /// Matrizensubtraktion:
-            /// field_difference -= field_b;    
-            class procedure operator -= (var field_a:field; const field_b:field);
+            class procedure operator-=(var self_ndarray: ndarray; other_ndarray: ndarray);
             
-            /// Matrizensubtraktion:
-            /// field_sum -= b; 
-            class procedure operator -= (var field_a:field; const b:Real);
+            class procedure operator-=(var self_ndarray: ndarray; number: real);
                 
-            /// Matrizenmultiplikation mit Zahlen:
-            /// field_mult := field_a * b;
-            class function operator * (field_a:field; b:Real): field;
-            
-            /// Matrizenmultiplikation mit Zahlen:
-            /// field_mult *= b;
-            class procedure operator *= (var field_a:field; const b:Real);
-            
-            /// Matrizenmultiplikation mit Zahlen:
-            /// field_mult := a * field_b;
-            class function operator * (a:Real; field_b:field): field;
-                
-            /// Matrizendivision mit Zahlen:
-            /// field_div := field_a / b;
-            class function operator / (field_a:field; b:Real): field;
-            
-            /// Matrizendivision mit Zahlen:
-            /// field_div /= b;
-            class procedure operator /= (var field_a:field; const b:Real);
-            
-            /// Matrizenmultiplikation:
-            /// field_mult := field_a * field_b;                  
-            class function operator * (field_a, field_b:field): field;
-                
-            /// Matrizenmultiplikation:
-            /// field_mult *= field_b;                  
-            class procedure operator *= (var field_a:field; const field_b:field);
-                
-            /// Exponentiation vom jeden Matrizenelements:
-            /// field_exp := field_a ** b
-            class function operator ** (var field_a:field; const b:real): field;
-                
-            /// Summe aller Elemente der Matrize
-            function sum(): real;
-            
-            /// wenn axis = 0, Summe aller Spalten; wenn axis = 1, Summe aller Zeilen
-            function sum(axis:integer): field;
-                
-            /// Dimensionen der Matrize
-            function shape(): array of integer;
-            
-            /// Umformung der Matrize in einen eindemensionalen Vektor mit Laenge size    
-            function reshape(size:integer): field;
-            
-            /// Umformung der Matrize in eine andere Matrize mit Groeße size
-            function reshape(size:array of integer): field;
-            
-            /// Transpoierung einer Matrize
-            function transpose(): field;
-            
-            /// das Werte der Matrize
-            function get_value(): array[,] of real;
-            
-            /// kehrt den groeßten Wert der Matrize zurueck
-            function get_max(): real;
-                
-            /// kehrt den laengsten Wert der Matrize zurueck
-            function get_longest(): real;
-            
-            /// Wenn axis = 0 laengster Wert in der Spaltennummer num,
-            /// wenn axis = 1 laengster Wert in der Zeile
-            function get_longest(axis, num:integer): real;
-                     
-            /// Erstellt eine Kopie der Matrize
-            function copy(): field;
-            
-            /// Verlaengert die Matrize um rep in Richtung (0, 1) = (waagerecht, senkrecht)
-            function recurrence(rep, axis:integer): field;
-            
-            /// Verlaengert die Matrize um zwei in Richtung (0, 1) = (waagerecht, senkrecht)
-            function recurrence(rep:integer): field;
-            
-            /// Verlaengert die Matrize um zwei waagerecht
-            function recurrence(): field;
-    end;
-    
-    
-    /// Summe aller Elemente der Matrize
-    function sum(a:field): real;
-    
-    /// wenn axis = 0, Summe aller Spalten; wenn axis = 1, Summe aller Zeilen
-    function sum(a:field; axis:integer): field;
-        
-    
-    /// Dimensionen der Matrize
-    function shape(a:field): array of integer;
-      
-      
-    /// das Werte der Matrize
-    function get_value(a:field): array[,] of real;
-    
-    
-    /// kehrt den groeßten Wert der Matrize zurueck
-    function get_max(a:field): real;
-      
-      
-    /// kehrt den laengsten Wert der Matrize zurueck
-    function get_longest(a:field): real;
-    
-    /// Wenn axis = 0 laengster Wert in der Spaltennummer num,
-    /// wenn axis = 1 laengster Wert in der Zeile
-    function get_longest(a:field; axis, num:integer): real;
-      
-      
-    /// Erstellt eine Kopie der Matrize
-    function copy(a:field): field;
-    
-    
-    /// Verlaengert die Matrize um rep in Richtung (0, 1) = (waagerecht, senkrecht)
-    function recurrence(a:field; rep, axis:integer): field;
-    
-    /// Verlaengert die Matrize um zwei in Richtung (0, 1) = (waagerecht, senkrecht)
-    function recurrence(a:field; rep:integer): field;
-    
-    /// Verlaengert die Matrize um zwei waagerecht
-    function recurrence(a:field): field;
-    
-    
-    /// Anwendung einer Funktion an alle Elemente einer Neo
-    function map(func: float_func; field_a: field): field;
-    /// Anwendung einer Funktion an alle Elemente einer Neo
-    function map(func: int_func; field_a: field): field;
-    
-        
-    /// Matrizengenerator mit rows*colums, (0, 1)
-    function random_field(rows, columns:integer): field;
-    /// Matrizengenerator mit rows*colums, (0, max)
-    function random_field(rows, columns, max:integer): field;
-    /// Matrizengenerator mit rows*colums, (min, max)
-    function random_field(rows, columns, min, max:integer): field;
+            class function operator*(self_ndarray: ndarray; number: real): ndarray;
 
+            class function operator*(number: real; other_ndarray: ndarray): ndarray;
+            
+            class function operator*(self_ndarray, other_ndarray: ndarray): ndarray;
+            
+            class procedure operator*=(var self_ndarray: ndarray; const number: real);
+
+            class procedure operator*=(var self_ndarray: ndarray; const other_ndarray: ndarray);
+                
+            class function operator/(self_ndarray: ndarray; number: real): ndarray;
+            
+            class function operator/(number: real; self_ndarray: ndarray): ndarray;
+            
+            class function operator/(self_ndarray: ndarray; other_ndarray: ndarray): ndarray;
+            
+            class procedure operator/=(var self_ndarray: ndarray; number: real);
+            
+            class procedure operator/=(var self_ndarray: ndarray; other_ndarray: ndarray);
+
+            class function operator**(self_ndarray: ndarray; number: real): ndarray;
+                
+            class function operator**(number: real; self_ndarray: ndarray): ndarray;
+                
+            class function operator**(self_ndarray: ndarray; other_ndarray: ndarray): ndarray;
+                
+            function get(params index: array of integer): real;
+   
+            procedure assign(val: real; params index: array of integer);
+            
+            function copy(): ndarray;
+            
+            function dot(other_ndarray: ndarray; axis: integer := 0): ndarray;
+            
+            procedure map(func: System.Func<real, real>);
+            
+            function max(): real;
+            
+            function reshape(shape: array of integer): ndarray;
+            
+            function sum(axis: integer := -1): ndarray;
+
+            function transpose(axes: array of integer := nil): ndarray;
+    end;
+   
+    function arange(stop: integer): ndarray;
     
-    /// Umformung der Matrize in einen eindemensionalen Vektor mit Laenge size
-    function reshape(a:field; size:integer): field;
-    /// Umformung der Matrize in eine andere Matrize mit Groeße size
-    function reshape(a:field; size:array of integer): field;
+    function arange(start, stop: integer): ndarray;
     
+    function arange(start, stop, step: integer): ndarray;
+   
+    function concatenate(a,b:ndarray; axis: integer := -1): ndarray;
+   
+    function copy(self: ndarray): ndarray;
+   
+    function dot(self_ndarray: ndarray; other_ndarray: ndarray; axis: integer := 0): ndarray;
+   
+    procedure map(self: ndarray; func: System.Func<real, real>);
     
-    /// Erweiterung der Matrize a mit b, zeilenweise
-    function concatenate(a,b:field): field;
-    /// Erweiterung der Matrize a mit b, axis == 0 - zeilenweise, axis == 1 - spaltenweise
-    function concatenate(a,b:field; axis:integer): field;
+    function max(self: ndarray): real;
     
+    function multiply(a, b: real): real;
+    function multiply(a:real; b:ndarray): ndarray;
+    function multiply(a:ndarray; b:real): ndarray;
+    function multiply(a,b:ndarray): ndarray;
     
-    /// Multiplikation von zwei Skalaren
-    function multiply(a,b:real): real;
-    /// Multiplikation von Skalar und Matrize
-    function multiply(a:real; b:field): field;
-    /// Multiplikation von Matrize und Skalar
-    function multiply(a:field; b:real): field;
-    /// Multiplikation von zwei Matrizen
-    function multiply(a,b:field): field;
-    
-    
-    /// Transponierung der Matrize
-    function transpose(field_a:field): field;
-    
-    
-    /// Summe des Skalarproduktes von zwei Vektoren
-    function dot(field_a, field_b: field): field;
-        
+    function random_ndarray(shape: array of integer): ndarray;
+         
+    function reshape(self: ndarray; shape: array of integer): ndarray;
+         
+    function sum(self: ndarray; axis: integer := -1): ndarray;
+         
+    function transpose(self: ndarray; axes: array of integer := nil): ndarray;
+         
         
 implementation
     
-    function compare(a, b:array of integer): boolean;
-        begin 
-         Result := False;
-         if a.Length <> b.Length then
-             exit;
-         for var i:= 0 to a.Length-1 do
-             if a[i] <> b[i] then
-                  exit;
-         Result := True;
-        end;
-        
-        
-    // field.Create() - Implementierung
-    constructor field.Create(existing_arr:array[,] of real);
-        begin
-         (row_number, column_number) := 
-          (existing_arr.RowCount, existing_arr.ColCount);
-         values := new Real[row_number, column_number];
-         for var i:= 0 to row_number - 1 do
-             for var j:= 0 to column_number - 1 do 
-                 values[i, j] := existing_arr[i, j];
-        end;
-    
-    constructor field.Create(existing_arr:array of real);
-        begin
-         (row_number, column_number) := (1, existing_arr.Length);
-         values := new Real[row_number, column_number];
-         for var i:= 0 to column_number - 1 do
-                 values[0, i] := existing_arr[i];
-        end;
-    
-    constructor field.Create(rows, columns:integer);
-        begin
-         (row_number, column_number) := (rows, columns);
-         values := new Real[row_number, column_number];
-        end;  
-    
-    // field.ToString() - Implementierung
-    function field.ToString: string;
-        begin
-         var return_string := '';
-         var newline := chr(13) + chr(10);
-         var spaces := '';
-         
-         if (row_number > 1) and (column_number <> 1) then
-              for var row:= 0 to row_number-1 do
-                   for var column := 0 to column_number-1 do
-                       begin
-                        spaces := ' ' * (self.get_longest(0, column).ToString.Length - values[row,column].ToString.Length);
-                        if (column, row) = (0, 0) then
-                            return_string += '[[' + spaces + values[row,column].ToString + ', '
-                        else if (column = 0) then
-                            return_string += ' ' * 7 + '[' + spaces + values[row,column].ToString + ', '
-                        else if (row, column) = (row_number-1, column_number-1) then
-                            return_string += spaces + values[row,column].ToString + ']]'
-                        else if column = column_number-1 then
-                            return_string += spaces + values[row,column].ToString + '], ' + newline
-                        else
-                            return_string += spaces + values[row,column].ToString + ', ';
-                       end
-         else if (row_number > 1) and (column_number = 1) then
-              for var row:= 0 to row_number-1 do
-                  begin
-                   spaces := ' ' * (self.get_longest().ToString.Length - values[row,0].ToString.Length);
-                   if row = 0 then
-                       return_string += '[[' +  spaces + values[row, 0].ToString +'],' + newline
-                   else if row = row_number - 1 then
-                       return_string += 7 * ' ' + '[' +  spaces + values[row, 0].ToString + ']]'
-                   else
-                       return_string += 7 * ' ' + '[' +  spaces + values[row, 0].ToString +'],' + newline;
-                  end
-         else if (row_number = 1) and (column_number > 1) then
-             for var column:= 0 to column_number-1 do
-                 if column = 0 then
-                     return_string += '[' + values[0, column].ToString + ', '
-                 else if column = column_number-1 then
-                     return_string += values[0, column].ToString + ']'
-                 else
-                     return_string += values[0, column].ToString + ', '
-         else
-            return_string := '[' + values[0, 0] + ']';
-         Result := 'Array(' + return_string + ')';
-        end;
-        
-    // field.operator + () and field.operator += () - Implementierung
-    class function field.operator + (field_a:field; b:Real): field;
-        begin
-         var return_field := new Real[field_a.row_number, field_a.column_number];
-         for var i:= 0 to return_field.RowCount-1 do
-             for var j:= 0 to return_field.ColCount-1 do
-                 return_field[i, j] := field_a.values[i, j] + b;
-         Result := new field(return_field);    
-        end;
-        
-    class function field.operator + (a:Real; field_b:field): field;
-        begin
-         Result := field_b + a;    
-        end;
-        
-    class function field.operator + (field_a, field_b:field): field;
-        begin
-         if not compare(field_a.shape, field_b.shape) then
-                raise new System.ArithmeticException('Wrong array sizes');
-         var return_field := new Real[field_a.row_number, field_a.column_number];
-         for var i:= 0 to return_field.RowCount-1 do
-             for var j:= 0 to return_field.ColCount-1 do
-                 return_field[i, j] := field_a.values[i, j] + field_b.values[i, j];
-         Result := new field(return_field);    
-        end;
-        
-    class procedure field.operator += (var field_a:field; const field_b:field);
-        begin
-         if not compare(field_a.shape, field_b.shape) then
-                raise new Exception('Wrong array sizes');
-         field_a := field_a + field_b;
-        end;
-    
-    class procedure field.operator += (var field_a:field; const b:Real);
-        begin
-         field_a := field_a + b;
-        end;
-        
-    // field.operator - () and field.operator -= () - Implementierung        
-    class function field.operator - (field_a:field; b:Real): field;
-        begin
-         var return_field := new Real[field_a.row_number, field_a.column_number];
-         for var i:= 0 to return_field.RowCount-1 do
-             for var j:= 0 to return_field.ColCount-1 do
-                 return_field[i, j] := field_a.values[i, j] - b;
-         Result := new field(return_field);    
-        end;
-        
-    class function field.operator - (field_a, field_b:field): field;
-        begin
-         if not compare(field_a.shape, field_b.shape) then
-                raise new System.ArithmeticException('Wrong array sizes');
-         var return_field := new Real[field_a.row_number, field_a.column_number];
-         for var i:= 0 to return_field.RowCount-1 do
-             for var j:= 0 to return_field.ColCount-1 do
-                 return_field[i, j] := field_a.values[i, j] - field_b.values[i, j];
-         Result := new field(return_field);
-        end;       
-    
-    class procedure field.operator -= (var field_a:field; const field_b:field);
-        begin
-         if not compare(field_a.shape, field_b.shape) then
-                raise new Exception('Wrong array sizes');
-         field_a := field_a - field_b;
-        end;
-    
-    class procedure field.operator -= (var field_a:field; const b:Real);
-        begin
-         field_a := field_a - b;
-        end;
-        
-    // field.operator * () and field.operator *= () - Implementierung
-    class function field.operator * (field_a:field; b:Real): field;
-        begin
-         var return_field := new Real[field_a.row_number, field_a.column_number];
-         for var i:= 0 to field_a.values.RowCount - 1 do
-             for var j:= 0 to field_a.values.ColCount - 1 do
-                 return_field[i, j] :=  field_a.values[i, j] * b;
-         Result := new field(return_field);
-        end;
-    
-    class procedure field.operator *= (var field_a:field; const b:Real);
-        begin
-         field_a := field_a * b;
-        end;
-    
-    class function field.operator * (a:Real; field_b:field): field;
-        begin
-         Result := field_b * a;
-        end;
-                          
-    class function field.operator * (field_a, field_b:field): field;
-        begin
-         if not compare(field_a.shape, field_b.shape) then
-                raise new System.ArithmeticException('Wrong array sizes');
-         var return_field := new Real[field_a.row_number, field_a.column_number];
-         for var i:= 0 to return_field.RowCount-1 do
-             for var j:= 0 to return_field.ColCount-1 do
-                 return_field[i, j] := field_a.values[i, j] * field_b.values[i, j];
-         Result := new field(return_field);
-        end;
-                
-    class procedure field.operator *= (var field_a:field; const field_b:field);
-        begin
-         field_a := field_a * field_b;
-        end;
-        
-    // field.operator / () and field.operator /= () - Implementierung
-    class function field.operator / (field_a:field; b:Real): field;
-        begin
-         if b = 0 then
-             raise new System.ArithmeticException('ZeroDivisionError');
-         Result := field_a * (1/b);
-        end;
-    
-    class procedure field.operator /= (var field_a:field; const b:Real);
-        begin
-         field_a := field_a / b;
-        end;
-    
-    // field.operator ** () - Implementierung
-    class function field.operator ** (var field_a:field; const b:real): field;
-        begin
-         var return_field := new Real[field_a.row_number, field_a.column_number];
-         for var i:= 0 to field_a.row_number - 1 do
-             for var j:= 0 to field_a.column_number - 1 do
-                 return_field[i, j] :=  field_a.values[i, j] ** b;
-         Result := new field(return_field);
-        end;
-        
-    // field.sum() - Implementierung
-    function field.sum(): real;
-        begin
-         var s := 0.0;
-         for var i:= 0 to row_number - 1 do
-             for var j:= 0 to column_number - 1 do
-                 begin
-                  s += values[i,j];
-                 end;
-         Result := s;
-        end;
-    
-    function field.sum(axis:integer): field;
-        begin
-         var return_array := new Real[1];
-         if axis = 0 then
-             begin
-              setlength(return_array, column_number);
-              for var column:= 0 to column_number-1 do
-                  for var row:= 0 to row_number-1 do
-                      return_array[column] += values[row,column];
-             end
-         else if axis = 1 then
-             begin
-              setlength(return_array, row_number);
-              for var row:= 0 to row_number-1 do
-                  for var column:= 0 to column_number-1 do
-                      return_array[row] += values[row,column];
-             end
-         else
-             raise new Exception('No third dimension');
-         Result := new field(return_array);
-        end;
-        
-    // field.shape() - Implementierung
-    function field.shape(): array of integer;
-        begin
-         Result := Arr(row_number, column_number);
-        end;
-    
-    // field.reshape() - Implementierung
-    function field.reshape(size:integer): field;
-        begin
-         if column_number * row_number <> size then
-             raise new Exception('Wrong size');
-         var counter := 0;
-         var return_array := new Real[size];
-         foreach var element in get_value do
-                begin
-                 return_array[counter] := element;
-                 counter += 1;
-                end;
-         Result := new field(return_array);
-        end;
-      
-    function field.reshape(size:array of integer): field;
-        begin
-         var rows := 0;
-         var columns := 0;
-         var elements_needed := 1;
-         if size.Length < 1 then
-             raise new Exception('Size must contain at least 1 argument');
-         foreach x: integer in size do
-             elements_needed *= x;
-         if size.Length = 1 then
-             (rows, columns) := (size[0], 1)
-         else if size.Length = 2 then
-             (rows, columns) := (size[0], size[1]);
-         var elements_given := column_number * row_number;
-         if elements_given <> elements_needed then
-             raise new Exception('Wrong size');
-         var return_array := new Real[rows, columns];
-         var tmp := self.reshape(elements_given).values;
-         var counter := 0;
-         for var i:= 0 to rows-1 do
-             for var j:= 0 to columns-1 do
-                 begin
-                  return_array[i,j] := tmp[0, counter];
-                  counter += 1;
-                 end;
-         Result := new field(return_array);
-        end;
-    
-    
-    // field.transpose() - Implementierung
-    function field.transpose(): field;
-        begin       
-         var return_array := new Real[column_number, row_number];
-         for var i:= 0 to row_number-1 do
-             for var j:= 0 to column_number-1 do
-                 return_array[j,i] := self[i,j];
-         Result := new field(return_array);
-        end;
-    
-    // field.get_value() - Implementierung
-    function field.get_value(): array[,] of real;
-        begin
-         Result := values;
-        end;
-    
-    // field.get_max() - Implementierung
-    function field.get_max(): real;
-        begin
-         var max := values[0,0];
-         for var row:= 0 to row_number-1 do
-             for var column:= 0 to column_number-1 do
-                 if values[row, column] >  max then
-                     max := values[row, column];
-         Result := max;
-        end;
-        
-    // field.get_longest() - Implementierung
-    function field.get_longest(): real;
-        begin
-         var max := values[0,0];
-         for var row:= 0 to row_number-1 do
-             for var column:= 0 to column_number-1 do
-                 if values[row, column].ToString.Length >  max.ToString.Length then
-                     max := values[row, column];
-         Result := max;
-        end;
-    
-    function field.get_longest(axis, num:integer): real;
-        begin
-         if axis = 0 then
-             begin
-              var max := values[0, num];
-              for var row:= 0 to row_number-1 do
-                      if values[row, num].ToString.Length >  max.ToString.Length then
-                          max := values[row, num];
-              Result := max;
-             end
-         else if axis = 1 then
+    function areEqual(a, b: array of integer): boolean;
+    begin
+      result := true;
+      if a.length <> b.length then
+        result := false
+      else
+        for var i := 0 to a.length-1 do
+          if a[i] <> b[i] then
             begin
-             var max := values[num,0];
-             for var column:= 0 to column_number-1 do
-                     if values[num, column].ToString.Length >  max.ToString.Length then
-                         max := values[num, column];
-             Result := max;
-            end
-        end;
-    
-    // field.copy() - Implementierung
-    function field.copy(): field;
-        begin
-         Result := new field(values);
-        end;
-    
-    // field.recurrence() - Implementierung
-    function field.recurrence(rep:integer): field;
-        begin
-         var tmp := self.reshape(values.Length).values;
-         var return_array := new Real[tmp.Length * rep];
-         var c := 0;
-         foreach x:real in tmp do
-             for var r:= 0 to rep-1 do
-                 begin
-                  return_array[c] := x;
-                  c += 1;
-                 end;
-         Result := new field(return_array);
-        end;
-    
-    function field.recurrence(): field;
-        begin
-         Result := self.recurrence(2);
-        end;
-        
-    function field.recurrence(rep, axis:integer): field;
-        begin
-         if axis = 0 then
-             begin
-              var return_array := new Real[row_number*rep,column_number];
-              for var row:= 0 to row_number-1 do
-                  for var r:= 0 to rep-1 do
-                      for var column:= 0 to column_number-1 do
-                          return_array[(row*rep) + r ,column] := values[row,column];
-              Result := new field(return_array);
-             end
-         else if axis = 1 then
-             Result := self.recurrence(rep).reshape(Arr(row_number, column_number*rep))
-         else 
-             raise new Exception('Not existing dimension');
-         end;
-        
-    
-    // sum() - Implementierung
-    function sum(a:field): real;
-        begin
-         Result := a.sum();
-        end;
-    
-    function sum(a:field; axis:integer): field;
-        begin
-         Result := a.sum(axis);
-        end;
-      
-      
-    // shape() - Implementierung
-    function shape(a:field): array of integer;
-        begin
-         Result := a.shape();
-        end;
-      
-      
-    // reshape() - Implementierung
-    function reshape(a:field; size:integer): field;
-        begin
-         Result := a.reshape(size);
-        end;
-        
-    function reshape(a:field; size:array of integer): field;
-        begin
-         Result := a.reshape(size);
-        end;
+            result := false;
+            break;
+            end;
+    end;
     
     
-    // get_value() - Implementierung
-    function get_value(a:field): array[,] of real;
-        begin
-         Result := a.get_value();
-        end;
-    
-    
-    // get_max() - Implementierung
-    function get_max(a:field): real;
-        begin
-         Result := a.get_max();
-        end;
-    
-    
-    // get_longest() - Implementierung
-    function get_longest(a:field): real;
-        begin
-         Result := a.get_longest();
-        end;
-    
-    function get_longest(a:field; axis, num:integer): real;
-        begin
-         Result := a.get_longest(axis, num);
-        end;
-   
-   
-    // copy() - Implementierung
-    function copy(a: field): field;
-        begin
-         Result := a.copy();
-        end;
- 
-    
-    // recurrence() - Implementierung
-    function recurrence(a:field; rep:integer): field;
-        begin
-         Result := a.recurrence(rep);
-        end;
-    
-    function recurrence(a:field): field;
-        begin
-         Result := a.recurrence();
-        end;
-        
-    function recurrence(a:field; rep, axis:integer): field;
-        begin
-         Result := a.recurrence(rep, axis)
-        end;
-        
-    // map() - Implementierung
-    function map(func: float_func; field_a: field): field;
-        begin
-         var return_array := new Real[field_a.row_number, field_a.column_number];
-         for var i:= 0 to field_a.row_number - 1 do
-            for var j:= 0 to field_a.column_number - 1 do
-                return_array[i,j] := func(field_a.values[i,j]);
-         Result := new field(return_array);
-        end;
-    
-    function map(func: int_func; field_a: field): field;
-        begin
-         var return_array := new Real[field_a.row_number, field_a.column_number];
-         for var i:= 0 to field_a.row_number - 1 do
-            for var j:= 0 to field_a.column_number - 1 do
-                return_array[i,j] := func(field_a.values[i,j]);
-         Result := new field(return_array);
-        end;
-        
-        
-    // random_field() - Implementierung
-    function random_field(rows, columns:integer): field;
-        begin
-         var return_array := new Real[rows, columns];
-         for var i:= 0 to rows - 1 do
-             for var j:= 0 to columns - 1 do
-                return_array[i,j] := Random;
-         Result := new field(return_array);   
-        end;
- 
-    function random_field(rows, columns, max:integer): field;
-        begin
-         var return_array := new Real[rows, columns];
-         for var i:= 0 to rows - 1 do
-             for var j:= 0 to columns - 1 do
-                return_array[i,j] := Random + Random(max);
-         Result := new field(return_array);
-        end;
-    
-    function random_field(rows, columns, min, max:integer): field;
-        begin
-         var return_array := new Real[rows, columns];
-         for var i:= 0 to rows - 1 do
-             for var j:= 0 to columns - 1 do
-                return_array[i,j] := Random + Random(min, max);
-         Result := new field(return_array);
-        end;    
-    
-    
-    // concatenate() - Implementierung
-    function concatenate(a,b:field): field;
-        begin
-         if a.column_number <> b.column_number then
-            raise new Exception('Fields couldn not be broadcast together');
-         var return_array := new Real[1,1];
-         SetLength(return_array, a.row_number+b.row_number, a.column_number);
-         for var column:= 0 to a.column_number-1 do
-             begin
-              for var row:= 0 to a.row_number-1 do
-                  return_array[row,column] := a.values[row,column];
-              for var row:= 0 to b.row_number-1 do
-                  return_array[row+a.row_number,column] := b.values[row, column];
-             end;
-         Result := new field(return_array); 
-        end;
-    
-    function concatenate(a,b:field; axis:integer): field;
-        begin
-         if axis = 0 then
-             Result:= concatenate(a,b)
-         else if axis = 1 then
-             begin
-              if a.row_number <> b.row_number then
-                  raise new Exception('Fields couldn not be broadcast together');
-              var return_array := new Real[1,1];
-              SetLength(return_array, a.column_number+b.column_number, a.row_number);
-              for var row:= 0 to a.row_number-1 do
-                  begin
-                   for var column:= 0 to a.column_number-1 do
-                       return_array[row,column] := a.values[row,column];
-                   for var column:= 0 to b.column_number-1 do
-                       return_array[row,column+a.column_number] := b.values[row, column];
-                  end;
-              Result := new field(return_array);
-             end;
-        end;
-        
-        
-    // multiply() - Implementierung
-    function multiply(a,b:real): real;
-        begin
-         Result := a * b;
-        end;
-    
-    function multiply(a:real; b:field): field;
-        begin
-         Result := a * b;
-        end;
-        
-    function multiply(a:field; b:real): field;
-        begin
-         Result := a * b;
-        end;
+    type indexGenerator = class
+      rank: integer;
+      shape: array of integer;
+      index: array of integer;
 
-    function multiply(a,b:field): field;
-        begin
-         var (big_field, small_field) := a.shape.Product > b.shape.Product?
-                                            (a.copy, b.copy) : (b.copy, a.copy);
-         var row_mod := big_field.row_number mod small_field.row_number;
-         var column_mod := big_field.column_number mod small_field.column_number;
-         if (row_mod <> 0) or (column_mod <> 0) then
-             raise new Exception('Fields could not be broadcast together');
-         var row_div := big_field.row_number div small_field.row_number;
-         var column_div := big_field.column_number div small_field.column_number;
-         for var row_block:= 0 to row_div-1 do
-             for var column_block:= 0 to column_div-1 do
-                 for var row:= 0 to small_field.row_number-1 do
-                    for var column:= 0 to small_field.column_number-1 do
-                        big_field[row+row_block*small_field.row_number,column+column_block*small_field.column_number] *= 
-                            small_field[row,column];
-         Result := big_field;
-        end;
-        
-        
-    // transpose() - Implementierung    
-    function transpose(field_a:field): field;
-        begin
-         var return_array := new Real[field_a.column_number, field_a.row_number];
-         for var i:= 0 to field_a.row_number-1 do
-             for var j:= 0 to field_a.column_number-1 do
-                 return_array[j,i] := field_a[i,j];
-         Result := new field(return_array);
-        end;
-        
+      function next(): array of integer;
+      begin
+        self.index[self.rank-1] += 1;
+        for var i := self.rank-1 downto 0 do
+          if self.index[i] = self.shape[i] then
+            if i = 0 then
+              self.index := ArrFill(self.rank, 0)
+            else
+              begin
+              self.index[i-1] += 1;
+              self.index[i] := 0;
+              end;
+        result := self.index;
+      end;
+    end;
+
+
+    function ndarray.__get_index_generator(): function(): array of integer;
+    begin
+      var obj := new indexGenerator;
+      obj.rank := self.rank;
+      obj.shape := self.shape;
+      obj.index := ArrFill(self.rank, 0);
+      obj.index[self.rank-1] := -1;
+      result := obj.next;
+    end;
+
     
-    // dot() - Implementierung
-    function dot(field_a, field_b: field): field;
+    type itemGenerator = class
+      index: integer;
+      value: array of real;
+
+      function next(): real;
+      begin
+        self.index += 1;
+        if self.index = self.value.Length then
+          self.index := 0;
+        result := self.value[self.index];
+      end;
+    end;
+    
+
+    function ndarray.__get_item_generator(): function(): real;
+    begin
+      var obj := new itemGenerator;
+      obj.index := -1;
+      obj.value := self.value;
+      result := obj.next;
+    end;
+    
+    
+    function ndarray.__get_item(index: array of integer): real;
+    begin
+      var acc := 0;
+      for var i := 0 to index.Length-1 do
+        acc += self.iter_array[i] * index[i];
+      Result := self.value[acc];
+    end;
+    
+    
+    procedure ndarray.__set_item(val: real; index: array of integer);
+    begin
+      var acc := 0;
+      for var i := 0 to index.Length-1 do
+        acc += self.iter_array[i] * index[i];
+      self.value[acc] := val;
+    end;
+
+
+    static function ndarray.__get_iter_array(shape: array of integer): array of integer;
+    begin
+      var rank := shape.Length;
+      var iter_array := new integer[rank];
+      iter_array[rank-1] := 1;
+      for var index := 1 to rank-1 do
+        iter_array[rank-index-1] := iter_array[rank-index] * shape[rank-index];
+      result := iter_array;
+    end;
+    
+        
+    {$region Конструкторы}
+    constructor ndarray.Create(value: array of real; shape: array of integer);
+    begin
+      self.value := value;
+      self.shape := shape;
+      self.rank := shape.Length;
+      self.length := shape.Product;
+      self.iter_array := ndarray.__get_iter_array(shape);
+    end;
+    
+    
+    constructor ndarray.Create(array_ptr: pointer; rank: integer);
+    var tmp_ptr : ^^integer;
+        shape_ptr : ^integer;
+        element_ptr : ^real;
+        size : ^integer;
+    begin
+      tmp_ptr := array_ptr;
+      array_ptr := tmp_ptr^;
+      
+      size := pointer(integer(array_ptr)+8);
+
+      self.length := size^;
+      self.rank := rank;
+      self.shape := new integer[rank];
+      if rank = 1 then
+        self.shape[0] := self.length
+      else
+        for var i := 0 to rank-1 do
+          begin
+          shape_ptr := pointer(integer(array_ptr) + 16 + i*4);
+          self.shape[i] := shape_ptr^;
+          end;
+      self.iter_array := ndarray.__get_iter_array(self.shape);
+
+      self.value := new real[size^];
+      for var i := 0 to size^-1 do
         begin
-         if ((field_a.row_number, field_b.row_number) = (1, 1)) and
-            (field_a.column_number = field_b.column_number) then
-             Result := field_a * field_b
-         else if (field_a.column_number = field_b.row_number) then
-            begin
-            var return_field := new field(field_a.row_number, field_b.column_number);
-             for var i:= 0 to return_field.row_number - 1 do
-                 for var j:= 0 to return_field.column_number - 1 do
-                     for var k:= 0 to field_a.column_number - 1 do
-                         return_field.values[i,j]+= field_a.values[i, k] * field_b.values[k, j];
-             Result := return_field;
-            end
-         else
-            raise new Exception('Wrong array sizes');
+        element_ptr := pointer(integer(array_ptr) + 16 + 2*4*(rank-(rank=1?1:0)) + i*sizeof(real));
+        self.value[i] := element_ptr^;
         end;
+    end;
+    
+    
+    constructor ndarray.Create(shape: array of integer);
+    begin
+      self.shape := shape;
+      self.rank := shape.Length;
+      self.length := shape.Product;
+      self.iter_array := ndarray.__get_iter_array(shape);
+      self.value := new real[self.length]; 
+    end;  
+    
+    
+    // ndarray.ToString() - Implementierung
+    function ndarray.ToString: string;
+    begin
+      var cnt := 0;
+      result += '['*self.rank;
+      var arr := new integer[self.rank];
+      for var index := 0 to self.length-1 do
+        begin
+        if arr.Length > 1 then 
+          for var i := self.rank-1 downto 0 do
+            if arr[i] = self.shape[i] then
+              begin
+              arr[i-1] += 1;
+              arr[i] := 0;
+              result := result.Remove(result.Length-2, 2);
+              result += '], ';
+              cnt += 1;
+              end;
+        result += '['*cnt; cnt := 0;
+        arr[self.rank-1] += 1;
+        result += self.value[index]+', ';
+        end;
+      result := result.Remove(result.Length-2, 2);
+      result += ']'*self.rank;
+    end;
+    {$endregion}
+    
+        
+    {$region Арифметические операции}    
+    class function ndarray.operator+(self_ndarray: ndarray; number: real): ndarray;
+    begin
+      var tmp_result := new real[self_ndarray.length];
+      var item_gen_a := self_ndarray.__get_item_generator();
+      for var index := 0 to self_ndarray.length-1 do
+        tmp_result[index] := item_gen_a() + number;
+      result := new ndarray(tmp_result, self_ndarray.shape);    
+    end;
+        
+        
+    class function ndarray.operator+(number: real; other_ndarray: ndarray): ndarray;
+    begin
+      Result := other_ndarray + number;    
+    end;
+        
+        
+    class function ndarray.operator+(self_ndarray, other_ndarray: ndarray): ndarray;
+    begin
+      if not areEqual(self_ndarray.shape, other_ndarray.shape) and (self_ndarray.rank <> 1) and (other_ndarray.rank <> 1) then
+        raise new System.ArithmeticException('Wrong array sizes');
+      var tmp_result := new real[self_ndarray.length];
+      var item_gen_a := self_ndarray.__get_item_generator();
+      var item_gen_b := other_ndarray.__get_item_generator();
+      for var index := 0 to self_ndarray.length-1 do
+        tmp_result[index] := item_gen_a() + item_gen_b(); 
+      Result := new ndarray(tmp_result, self_ndarray.shape);    
+    end;
+        
+        
+    class procedure ndarray.operator+=(var self_ndarray, other_ndarray: ndarray);
+    begin
+      self_ndarray := self_ndarray + other_ndarray;
+    end;
+    
+    
+    class procedure ndarray.operator+=(var self_ndarray:ndarray; number: real);
+    begin
+      self_ndarray := self_ndarray + number;
+    end;
+    
+    
+    class function ndarray.operator-(self_ndarray: ndarray): ndarray;
+    begin
+      var tmp_result := new real[self_ndarray.length];
+      var item_gen_a := self_ndarray.__get_item_generator();
+      for var index := 0 to self_ndarray.length-1 do
+        tmp_result[index] := -item_gen_a(); 
+      Result := new ndarray(tmp_result, self_ndarray.shape);        
+    end;
+    
+    
+    class function ndarray.operator-(self_ndarray: ndarray; number: real): ndarray;
+    begin
+      var tmp_result := new real[self_ndarray.length];
+      var item_gen_a := self_ndarray.__get_item_generator();
+      for var index := 0 to self_ndarray.length-1 do
+        tmp_result[index] := item_gen_a() - number; 
+      Result := new ndarray(tmp_result, self_ndarray.shape);        
+    end;
+        
+            
+    class function ndarray.operator-(number: real; self_ndarray: ndarray): ndarray;
+    begin
+      result := -self_ndarray + number;
+    end;    
+
+
+    class function ndarray.operator-(self_ndarray, other_ndarray: ndarray): ndarray;
+    begin
+      if not areEqual(self_ndarray.shape, other_ndarray.shape) and (self_ndarray.rank <> 1) and (other_ndarray.rank <> 1) then
+        raise new System.ArithmeticException('Wrong array sizes');
+      var tmp_result := new real[self_ndarray.length];
+      var item_gen_a := self_ndarray.__get_item_generator();
+      var item_gen_b := other_ndarray.__get_item_generator();
+      for var index := 0 to self_ndarray.length-1 do
+        tmp_result[index] := item_gen_a() - item_gen_b(); 
+      Result := new ndarray(tmp_result, self_ndarray.shape);    
+    end;       
+
+    
+    class procedure ndarray.operator-=(var self_ndarray:ndarray; other_ndarray: ndarray);
+    begin
+      self_ndarray := self_ndarray - other_ndarray;
+    end;
+
+    
+    class procedure ndarray.operator-=(var self_ndarray: ndarray; number: real);
+    begin
+      self_ndarray := self_ndarray - number;
+    end;
+
+        
+    class function ndarray.operator*(self_ndarray: ndarray; number: real): ndarray;
+    begin
+      var tmp_result := new real[self_ndarray.length];
+      var item_gen_a := self_ndarray.__get_item_generator();
+      for var index := 0 to self_ndarray.length-1 do
+        tmp_result[index] := item_gen_a() * number; 
+      Result := new ndarray(tmp_result, self_ndarray.shape);
+    end;
+
+
+    class function ndarray.operator*(number: real; other_ndarray: ndarray): ndarray;
+    begin
+      Result := other_ndarray * number;
+    end;
+                  
+                  
+    class function ndarray.operator*(self_ndarray, other_ndarray:ndarray): ndarray;
+    begin
+      if not areEqual(self_ndarray.shape, other_ndarray.shape) and (self_ndarray.rank <> 1) and (other_ndarray.rank <> 1) then
+        raise new System.ArithmeticException('Wrong array sizes');
+      var tmp_result := new real[self_ndarray.length];
+      var item_gen_a := self_ndarray.__get_item_generator();
+      var item_gen_b := other_ndarray.__get_item_generator();
+      for var index := 0 to self_ndarray.length-1 do
+        tmp_result[index] := item_gen_a() * item_gen_b(); 
+      Result := new ndarray(tmp_result, self_ndarray.shape);
+    end;
+            
+            
+    class procedure ndarray.operator*=(var self_ndarray: ndarray; number: real);
+    begin
+      self_ndarray := self_ndarray * number;
+    end;
+          
+      
+    class procedure ndarray.operator*=(var self_ndarray: ndarray; other_ndarray: ndarray);
+    begin
+      self_ndarray := self_ndarray * other_ndarray;
+    end;
+
+
+    class function ndarray.operator/(self_ndarray: ndarray; number: real): ndarray;
+    begin
+      if number = 0 then
+        raise new System.ArithmeticException('ZeroDivisionError');
+      var tmp_result := new real[self_ndarray.length];
+      var item_gen_a := self_ndarray.__get_item_generator();
+      for var index := 0 to self_ndarray.length-1 do
+        tmp_result[index] := item_gen_a() / number; 
+      Result := new ndarray(tmp_result, self_ndarray.shape);
+    end;
+
+    
+    class function ndarray.operator/(number: real; self_ndarray: ndarray): ndarray;
+    begin
+      var tmp_result := new real[self_ndarray.length];
+      var item_gen_a := self_ndarray.__get_item_generator();
+      for var index := 0 to self_ndarray.length-1 do
+        tmp_result[index] := number / item_gen_a(); 
+      Result := new ndarray(tmp_result, self_ndarray.shape);
+    end;
+
+
+    class function ndarray.operator/(self_ndarray: ndarray; other_ndarray: ndarray): ndarray;
+    begin
+      if not areEqual(self_ndarray.shape, other_ndarray.shape) and (self_ndarray.rank <> 1) and (other_ndarray.rank <> 1) then
+        raise new System.ArithmeticException('Wrong array sizes');
+      var tmp_result := new real[self_ndarray.length];
+      var item_gen_a := self_ndarray.__get_item_generator();
+      var item_gen_b := other_ndarray.__get_item_generator();
+      for var index := 0 to self_ndarray.length-1 do
+        tmp_result[index] := item_gen_a() / item_gen_b(); 
+      Result := new ndarray(tmp_result, self_ndarray.shape);  
+    end;
+
+
+    class procedure ndarray.operator/=(var self_ndarray: ndarray; number: real);
+    begin
+      self_ndarray := self_ndarray / number;
+    end;
+    
+
+    class procedure ndarray.operator/=(var self_ndarray: ndarray; other_ndarray: ndarray);
+    begin
+      self_ndarray := self_ndarray / other_ndarray;      
+    end;
+
+
+    class function ndarray.operator**(self_ndarray: ndarray; number: real): ndarray;
+    begin
+      var tmp_result := new real[self_ndarray.length];
+      var item_gen_a := self_ndarray.__get_item_generator();
+      for var index := 0 to self_ndarray.length-1 do
+        tmp_result[index] := item_gen_a() ** number; 
+      Result := new ndarray(tmp_result, self_ndarray.shape);
+    end;
+    
+            
+    class function ndarray.operator**(number: real; self_ndarray: ndarray): ndarray;
+    begin
+      var tmp_result := new real[self_ndarray.length];
+      var item_gen_a := self_ndarray.__get_item_generator();
+      for var index := 0 to self_ndarray.length-1 do
+        tmp_result[index] := number ** item_gen_a(); 
+      Result := new ndarray(tmp_result, self_ndarray.shape); 
+    end;
+    
+    
+    class function ndarray.operator**(self_ndarray: ndarray; other_ndarray: ndarray): ndarray;
+    begin
+      if not areEqual(self_ndarray.shape, other_ndarray.shape) and (self_ndarray.rank <> 1) and (other_ndarray.rank <> 1) then
+        raise new System.ArithmeticException('Wrong array sizes');
+      var tmp_result := new real[self_ndarray.length];
+      var item_gen_a := self_ndarray.__get_item_generator();
+      var item_gen_b := other_ndarray.__get_item_generator();
+      for var index := 0 to self_ndarray.length-1 do
+        tmp_result[index] := item_gen_a() ** item_gen_b(); 
+      Result := new ndarray(tmp_result, self_ndarray.shape);   
+    end;
+    {$endregion}
+        
+
+    function ndarray.sum(axis: integer): ndarray;
+    begin
+      result := neo.sum(self, axis);
+    end;
+
+      
+    function ndarray.get(params index: array of integer): real;
+    begin
+      result := self.__get_item(index);
+    end;
+    
+    
+    procedure ndarray.assign(val: real; params index: array of integer);
+    begin
+      self.__set_item(val, index);
+    end;
+    
+    
+    procedure ndarray.map(func: System.Func<real, real>);
+    begin
+      neo.map(self, func);
+    end;
+    
+    
+    function ndarray.max(): real;
+    begin
+      result := neo.max(self);
+    end;
+
+    
+    function ndarray.copy(): ndarray;
+    begin
+      result := neo.copy(self);
+    end;
+
+
+    function ndarray.reshape(shape: array of integer): ndarray;
+    begin
+      result := neo.reshape(self, shape);
+    end;
+   
+   
+    function ndarray.transpose(axes: array of integer): ndarray;
+    begin
+      result := neo.transpose(self, axes);
+    end;  
+   
+   
+    function ndarray.dot(other_ndarray: ndarray; axis: integer): ndarray;
+    begin
+      result := neo.dot(self, other_ndarray, axis);
+    end;
+ 
+     
+    function random_ndarray(shape: array of integer): ndarray;
+    begin
+      var tmp_result := new real[shape.Product];
+      for var index := 0 to shape.Product-1 do
+        tmp_result[index] := random;
+      Result := new ndarray(tmp_result, shape);   
+    end;
+ 
+ 
+    function arange(stop: integer): ndarray;
+    begin
+      var tmp_result := new real[stop];
+      var tmp_shape: array of integer := (stop);
+      for var i := 0 to stop-1 do
+        tmp_result[i] := i;
+      result := new ndarray(tmp_result, tmp_shape);
+    end;
+    
+    
+    function arange(start, stop: integer): ndarray;
+    begin
+      var tmp_result := new real[stop-start];
+      var tmp_shape: array of integer := (stop-start);
+      for var i := start to stop-1 do
+        tmp_result[i-start] := i;
+      result := new ndarray(tmp_result, tmp_shape);  
+    end;
+    
+    
+    function arange(start, stop, step: integer): ndarray;
+    begin
+      var tmp_result := new real[(stop-start) div step];
+      var tmp_shape: array of integer := ((stop-start) div step);
+      var i := start-1; var cnt := 0; 
+      if step < 0 then
+        while i > stop do
+          begin
+          tmp_result[cnt] := i;
+          cnt += 1;
+          i += step;
+          end
+      else
+        while i < stop do
+          begin
+          tmp_result[cnt] := i;
+          cnt += 1;
+          i += step;
+          end;
+      result := new ndarray(tmp_result, tmp_shape);  
+    end;
+
+
+    function concatenate(a, b: ndarray; axis: integer): ndarray;
+    begin
+      if axis = -1 then
+      begin
+        var tmp_shape: array of integer := (a.length+b.length-1); 
+        var tmp_ndarray := new real[a.length+b.length-1];
+        var item_gen_a := a.__get_item_generator();
+        var item_gen_b := b.__get_item_generator();
+        
+        for var index := 0 to a.length-1 do
+          tmp_ndarray[index] := item_gen_a();
+        for var index := a.length to a.length+b.length-1 do
+          tmp_ndarray[index] := item_gen_b();
+        
+        Result := new ndarray(tmp_ndarray, tmp_shape);
+        end
+      else
+        begin
+        if a.shape[axis] <> b.shape[axis] then
+          raise new Exception('Fields couldn not be broadcast together');
+        
+        var tmp_shape := new integer[a.rank];
+        for var index := 0 to a.rank-1 do
+          begin
+          tmp_shape[index] := a.shape[index];
+          if index = axis then
+            tmp_shape[index] += b.shape[axis];
+          end;
+          
+        var tmp_ndarray := new ndarray(tmp_shape);
+        var item_gen_a := a.__get_item_generator();
+        var item_gen_b := b.__get_item_generator();
+        var index_gen_c := tmp_ndarray.__get_index_generator();
+        
+        for var index := 0 to a.length+b.length-2 do
+          begin
+          var arr := index_gen_c();
+          
+          while arr[axis] > a.shape[axis]-1 do
+            begin
+            tmp_ndarray.assign(item_gen_b(), arr);  
+            arr := index_gen_c();
+            end;
+          
+          tmp_ndarray.assign(item_gen_a(), arr);
+          end;
+        Result := tmp_ndarray;
+        end;
+    end;
+        
+        
+    function copy(self: ndarray): ndarray;
+    begin
+      Result := new ndarray(self.value, self.shape);
+    end;    
+        
+        
+    function dot(self_ndarray: ndarray; other_ndarray: ndarray; axis: integer): ndarray;
+    begin
+      if (self_ndarray.rank = 1) and (other_ndarray.rank = 1) then
+        begin
+        var sum: array of real := (0);
+        for var index := 0 to self_ndarray.length-1 do
+          sum[0] += self_ndarray.get(index) * other_ndarray.get(index);
+        result := new ndarray(sum, ArrFill(1, 1));
+        end
+      else if (self_ndarray.rank = 1) or (other_ndarray.rank = 1) then
+      begin
+        if self_ndarray.shape[0] <> other_ndarray.shape[0] then
+          raise new Exception('Fields couldn not be broadcast together');
+        
+        var max_ndarray: ndarray;
+        var min_ndarray: ndarray;
+        if self_ndarray.rank > other_ndarray.rank then
+          begin
+          max_ndarray := self_ndarray;
+          min_ndarray := other_ndarray;
+          end
+        else
+          begin
+          max_ndarray := other_ndarray;
+          min_ndarray := self_ndarray;
+          end;
+        
+        var tmp_shape := new integer[max_ndarray.rank-1];
+        for var i := 1 to max_ndarray.rank-1 do
+          tmp_shape[i-1] := max_ndarray.shape[i]; 
+        
+        var tmp_arr := new real[tmp_shape.Product];
+
+        var max_index_gen := max_ndarray.__get_index_generator();
+        var max_item_gen := max_ndarray.__get_item_generator();
+        
+        var cnt_limit := max_ndarray.length div max_ndarray.shape[0]; var cnt := 0;
+        for var i := 0 to max_ndarray.length-1 do
+        begin
+          tmp_arr[cnt] += max_item_gen() * min_ndarray.value[max_index_gen()[0]];
+          cnt += 1;
+          if cnt = cnt_limit then
+            cnt := 0;
+        end;
+        result := new ndarray(tmp_arr, tmp_shape);
+        end
+      else if (self_ndarray.rank = 2) and (other_ndarray.rank = 2) then
+        begin
+          var other_ndarray_T := other_ndarray.transpose();
+          var tmp_result := new real[self_ndarray.shape[0]*other_ndarray.shape[1]];
+          var new_shape: array of integer := (self_ndarray.shape[0], other_ndarray.shape[1]);
+          for var i:=0 to self_ndarray.shape[0]-1 do
+            for var j:=0 to other_ndarray.shape[1]-1 do
+            begin  
+              var cc := 0.0;
+              for var l:=0 to self_ndarray.shape[1]-1 do
+                 cc += self_ndarray.get(i, l)*other_ndarray_T.get(j, l);
+              tmp_result[i*self_ndarray.shape[0]+j] := cc;   
+            end;
+          result := new ndarray(tmp_result, new_shape);
+        end
+      else
+        begin
+        var tmp_shape := new integer[self_ndarray.rank+other_ndarray.rank-2];
+        for var i := 0 to self_ndarray.rank-2 do
+          tmp_shape[i] := self_ndarray.shape[i];
+        for var i := 0 to other_ndarray.rank-3 do
+          tmp_shape[self_ndarray.rank+i-1] := other_ndarray.shape[i];
+        tmp_shape[self_ndarray.rank+other_ndarray.rank-3] := other_ndarray.shape[other_ndarray.rank-1];
+        
+        var tmp_ndarray := new ndarray(tmp_shape);
+        var index_gen := tmp_ndarray.__get_index_generator();
+        
+        for var i := 0 to tmp_shape.Product-1 do
+          begin
+            var arr := index_gen();
+            var arr_a := new integer[self_ndarray.rank-1];
+            for var j := 0 to self_ndarray.rank-2 do
+              arr_a[j] := arr[j];
+            
+            var a_matrix := new real[self_ndarray.shape[self_ndarray.rank-1]];
+            var cnt_a := 0;
+            for var j := 0 to self_ndarray.shape[self_ndarray.rank-1]-1 do
+            begin
+              var tmp_arr := new integer[arr_a.length+1];
+              for var k := 0 to arr_a.Length-1 do
+                tmp_arr[k] := arr_a[k];
+              tmp_arr[arr_a.length] := j;
+              a_matrix[j] := self_ndarray.get(tmp_arr);
+              end;
+              
+            var arr_b := new integer[other_ndarray.rank-1];
+            for var j := 0 to other_ndarray.rank-2 do
+              arr_b[j] := arr[self_ndarray.rank+j-1];
+                        
+            var b_matrix := new real[other_ndarray.shape[other_ndarray.rank-2]];
+            var cnt_b := 0;
+            for var j := 0 to other_ndarray.shape[other_ndarray.rank-2]-1 do
+            begin
+              var tmp_arr := new integer[arr_b.length+1];
+              for var k := 0 to arr_b.Length-2 do
+                tmp_arr[k] := arr_b[k];
+              tmp_arr[arr_b.length-1] := j;
+              tmp_arr[arr_b.length] := arr_b[arr_b.Length-1];
+              b_matrix[j] := other_ndarray.get(tmp_arr);
+              end;
+              
+            var acc := 0.0;
+            for var j := 0 to a_matrix.Length-1 do
+              acc += a_matrix[j] * b_matrix[j];
+            tmp_ndarray.assign(acc, arr);
+          end;
+        result := tmp_ndarray; 
+        end;
+    end;    
+        
+        
+    procedure map(self: ndarray; func: System.Func<real, real>);
+    begin
+      var item_gen := self.__get_item_generator();
+      for var i := 0 to self.length-1 do
+        self.value[i] := func(item_gen()); 
+    end;
+    
+    
+    // TODO: Нахождение максимальных элементов по осям
+    function max(self: ndarray): real;
+    begin
+      var item_gen := self.__get_item_generator();
+      var tmp_result := item_gen();
+      for var i := 0 to self.length-2 do
+        tmp_result := System.Math.Max(item_gen(), tmp_result);  
+      result := tmp_result;
+    end;
+        
+        
+    function multiply(a, b: real): real;
+    begin
+      Result := a * b;
+    end;
+    
+
+    function multiply(a: real; b: ndarray): ndarray;
+    begin
+      Result := b * a;
+    end;
+        
+
+    function multiply(a: ndarray; b: real): ndarray;
+    begin
+      Result := a * b;
+    end;
+
+
+    function multiply(a, b: ndarray): ndarray; 
+    var 
+      max_len: integer;
+      max_shape: array of integer;
+    begin
+      if a.length > b.length then
+        begin
+        max_len := a.length;
+        max_shape := a.shape;
+        end
+      else
+        begin
+        max_len := b.length;
+        max_shape := b.shape;  
+        end;
+      
+      var item_gen_a := a.__get_item_generator();
+      var item_gen_b := b.__get_item_generator();
+        
+      var tmp_result := new real[max_len];  
+      for var index := 0 to max_len-1 do
+        tmp_result[index] := item_gen_a() * item_gen_b();
+      result := new ndarray(tmp_result, max_shape);
+    end;
+
+
+    function reshape(self: ndarray; shape: array of integer): ndarray;
+    begin
+      Result := new ndarray(self.value, shape);
+    end;
+
+
+    function sum(self: ndarray; axis: integer): ndarray;
+    begin
+      if (self.rank = 1) or (axis = -1) then
+        begin
+        var tmp_result: array of real := (self.value.Sum);
+        var tmp_result_shape: array of integer := (1);
+        result := new ndarray(tmp_result, tmp_result_shape);
+        end
+      else
+      begin
+        var sum_array_shape := new integer[self.rank-1]; var cnt := 0;
+        for var index := 0 to self.rank-1 do
+          if index <> axis then
+            begin
+            sum_array_shape[cnt] := self.shape[index];
+            cnt += 1;
+            end
+          else  
+            continue;
+            
+        var sum_arr := new real[sum_array_shape.Product];
+        var sum_iter_array := ndarray.__get_iter_array(sum_array_shape);
+
+        var index_gen := self.__get_index_generator();
+        var item_gen := self.__get_item_generator();
+        for var i := 0 to self.length-1 do
+          begin 
+          var arr := index_gen();
+           
+          var new_arr := new integer[self.rank-1]; var sum_cnt := 0;
+          for var j := 0 to self.rank-1 do
+            if j = axis then
+              continue
+            else
+             begin
+              new_arr[sum_cnt] := arr[j];
+              sum_cnt += 1;
+              end;
+              
+          var sum_acc := 0;
+          for var j := 0 to self.rank-2 do
+            sum_acc += sum_iter_array[j] * new_arr[j];
+          sum_arr[sum_acc] += item_gen();
+          end;
+      result := new ndarray(sum_arr, sum_array_shape);
+      end;
+    end;
+
+
+    function transpose(self: ndarray; axes: array of integer): ndarray;
+    begin
+      if axes = nil then
+        begin
+        axes := new integer[self.rank];
+        for var index := 0 to self.rank-1 do
+          axes[index] := self.rank-index-1;
+        end;
+      
+      var tmp_value := new real[self.length];
+      var tmp_shape := new integer[self.rank];
+      for var index := 0 to self.rank-1 do
+        tmp_shape[index] := self.shape[axes[index]];
+      
+      var tmp_iter_array := ndarray.__get_iter_array(tmp_shape);
+      var index_gen := self.__get_index_generator();
+      var item_gen := self.__get_item_generator();
+      
+      for var i := 0 to self.length-1 do
+        begin
+        var arr := index_gen();
+        
+        var new_arr := new integer[self.rank];
+        for var j := 0 to self.rank-1 do
+          new_arr[j] := arr[axes[j]];
+        
+        var acc := 0;
+        for var j := 0 to self.rank-1 do
+          acc += tmp_iter_array[j] * new_arr[j];
+        tmp_value[acc] := item_gen();
+        end;
+      result := new ndarray(tmp_value, tmp_shape);
+    end;
 end.
