@@ -1,0 +1,2371 @@
+.method public static class neo.ndarray  arange(int32 stop) cil managed
+{
+  // Code size       90 (0x5a)
+  .maxstack  6
+  .locals init ([0] class neo.ndarray $rv_arange,
+           [1] float32[] 'tmp_result:602:608',
+           [2] int32[] 'tmp_shape:602:608',
+           [3] int32[] V_3,
+           [4] int32[] V_4,
+           [5] int32 'i:605:606',
+           [6] int32 '$tfr_1:605:606',
+           [7] class neo.neo $class_var$0)
+  IL_0000:  nop
+  IL_0001:  ldarg.0
+  IL_0002:  newarr     [mscorlib]System.Single
+  IL_0007:  stloc.1
+  IL_0008:  ldc.i4.1
+  IL_0009:  newarr     [mscorlib]System.Int32
+  IL_000e:  stloc.3
+  IL_000f:  ldloc.3
+  IL_0010:  stloc.s    V_4
+  IL_0012:  ldloc.s    V_4
+  IL_0014:  ldc.i4.0
+  IL_0015:  ldarg.0
+  IL_0016:  stelem.i4
+  IL_0017:  ldloc.3
+  IL_0018:  stloc.2
+  IL_0019:  nop
+  IL_001a:  ldc.i4.0
+  IL_001b:  stloc.s    'i:605:606'
+  IL_001d:  ldarg.0
+  IL_001e:  ldc.i4.1
+  IL_001f:  sub
+  IL_0020:  stloc.s    '$tfr_1:605:606'
+  IL_0022:  ldc.i4.0
+  IL_0023:  stloc.s    'i:605:606'
+  IL_0025:  ldloc.s    'i:605:606'
+  IL_0027:  ldloc.s    '$tfr_1:605:606'
+  IL_0029:  cgt
+  IL_002b:  ldc.i4.0
+  IL_002c:  ceq
+  IL_002e:  brfalse    IL_0050
+  IL_0033:  ldloc.1
+  IL_0034:  ldloc.s    'i:605:606'
+  IL_0036:  ldloc.s    'i:605:606'
+  IL_0038:  conv.r4
+  IL_0039:  stelem.r4
+  IL_003a:  ldloc.s    'i:605:606'
+  IL_003c:  ldloc.s    '$tfr_1:605:606'
+  IL_003e:  clt
+  IL_0040:  brfalse    IL_0050
+  IL_0045:  ldloc.s    'i:605:606'
+  IL_0047:  ldc.i4.1
+  IL_0048:  add
+  IL_0049:  stloc.s    'i:605:606'
+  IL_004b:  br         IL_0033
+  IL_0050:  ldloc.1
+  IL_0051:  ldloc.2
+  IL_0052:  newobj     instance void neo.ndarray::.ctor(float32[],
+                                                        int32[])
+  IL_0057:  stloc.0
+  IL_0058:  ldloc.0
+  IL_0059:  ret
+} // end of method neo::arange
+
+.method public static class neo.ndarray  arange(int32 start,
+                                                int32 stop) cil managed
+{
+  // Code size       96 (0x60)
+  .maxstack  7
+  .locals init ([0] class neo.ndarray $rv_arange,
+           [1] float32[] 'tmp_result:612:618',
+           [2] int32[] 'tmp_shape:612:618',
+           [3] int32[] V_3,
+           [4] int32[] V_4,
+           [5] int32 'i:615:616',
+           [6] int32 '$tfr_1:615:616',
+           [7] class neo.neo $class_var$0)
+  IL_0000:  nop
+  IL_0001:  ldarg.1
+  IL_0002:  ldarg.0
+  IL_0003:  sub
+  IL_0004:  newarr     [mscorlib]System.Single
+  IL_0009:  stloc.1
+  IL_000a:  ldc.i4.1
+  IL_000b:  newarr     [mscorlib]System.Int32
+  IL_0010:  stloc.3
+  IL_0011:  ldloc.3
+  IL_0012:  stloc.s    V_4
+  IL_0014:  ldloc.s    V_4
+  IL_0016:  ldc.i4.0
+  IL_0017:  ldarg.1
+  IL_0018:  ldarg.0
+  IL_0019:  sub
+  IL_001a:  stelem.i4
+  IL_001b:  ldloc.3
+  IL_001c:  stloc.2
+  IL_001d:  nop
+  IL_001e:  ldarg.0
+  IL_001f:  stloc.s    'i:615:616'
+  IL_0021:  ldarg.1
+  IL_0022:  ldc.i4.1
+  IL_0023:  sub
+  IL_0024:  stloc.s    '$tfr_1:615:616'
+  IL_0026:  ldarg.0
+  IL_0027:  stloc.s    'i:615:616'
+  IL_0029:  ldloc.s    'i:615:616'
+  IL_002b:  ldloc.s    '$tfr_1:615:616'
+  IL_002d:  cgt
+  IL_002f:  ldc.i4.0
+  IL_0030:  ceq
+  IL_0032:  brfalse    IL_0056
+  IL_0037:  ldloc.1
+  IL_0038:  ldloc.s    'i:615:616'
+  IL_003a:  ldarg.0
+  IL_003b:  sub
+  IL_003c:  ldloc.s    'i:615:616'
+  IL_003e:  conv.r4
+  IL_003f:  stelem.r4
+  IL_0040:  ldloc.s    'i:615:616'
+  IL_0042:  ldloc.s    '$tfr_1:615:616'
+  IL_0044:  clt
+  IL_0046:  brfalse    IL_0056
+  IL_004b:  ldloc.s    'i:615:616'
+  IL_004d:  ldc.i4.1
+  IL_004e:  add
+  IL_004f:  stloc.s    'i:615:616'
+  IL_0051:  br         IL_0037
+  IL_0056:  ldloc.1
+  IL_0057:  ldloc.2
+  IL_0058:  newobj     instance void neo.ndarray::.ctor(float32[],
+                                                        int32[])
+  IL_005d:  stloc.0
+  IL_005e:  ldloc.0
+  IL_005f:  ret
+} // end of method neo::arange
+
+.method public static class neo.ndarray  arange(int32 start,
+                                                int32 stop,
+                                                int32 step) cil managed
+{
+  // Code size       129 (0x81)
+  .maxstack  10
+  .locals init ([0] class neo.ndarray $rv_arange,
+           [1] float32[] 'tmp_result:622:641',
+           [2] int32[] 'tmp_shape:622:641',
+           [3] int32 'i:622:641',
+           [4] int32 'cnt:622:641',
+           [5] int32[] V_5,
+           [6] int32[] V_6,
+           [7] class neo.neo $class_var$0)
+  IL_0000:  nop
+  IL_0001:  ldarg.1
+  IL_0002:  ldarg.0
+  IL_0003:  sub
+  IL_0004:  ldarg.2
+  IL_0005:  div
+  IL_0006:  newarr     [mscorlib]System.Single
+  IL_000b:  stloc.1
+  IL_000c:  ldc.i4.1
+  IL_000d:  newarr     [mscorlib]System.Int32
+  IL_0012:  stloc.s    V_5
+  IL_0014:  ldloc.s    V_5
+  IL_0016:  stloc.s    V_6
+  IL_0018:  ldloc.s    V_6
+  IL_001a:  ldc.i4.0
+  IL_001b:  ldarg.1
+  IL_001c:  ldarg.0
+  IL_001d:  sub
+  IL_001e:  ldarg.2
+  IL_001f:  div
+  IL_0020:  stelem.i4
+  IL_0021:  ldloc.s    V_5
+  IL_0023:  stloc.2
+  IL_0024:  ldarg.0
+  IL_0025:  ldc.i4.1
+  IL_0026:  sub
+  IL_0027:  stloc.3
+  IL_0028:  ldc.i4.0
+  IL_0029:  stloc.s    'cnt:622:641'
+  IL_002b:  ldarg.2
+  IL_002c:  ldc.i4.0
+  IL_002d:  clt
+  IL_002f:  brfalse    IL_0058
+  IL_0034:  ldloc.3
+  IL_0035:  ldarg.1
+  IL_0036:  cgt
+  IL_0038:  brfalse    IL_0053
+  IL_003d:  nop
+  IL_003e:  ldloc.1
+  IL_003f:  ldloc.s    'cnt:622:641'
+  IL_0041:  ldloc.3
+  IL_0042:  conv.r4
+  IL_0043:  stelem.r4
+  IL_0044:  ldloc.s    'cnt:622:641'
+  IL_0046:  ldc.i4.1
+  IL_0047:  add
+  IL_0048:  stloc.s    'cnt:622:641'
+  IL_004a:  ldloc.3
+  IL_004b:  ldarg.2
+  IL_004c:  add
+  IL_004d:  stloc.3
+  IL_004e:  br         IL_0034
+  IL_0053:  br         IL_0077
+  IL_0058:  ldloc.3
+  IL_0059:  ldarg.1
+  IL_005a:  clt
+  IL_005c:  brfalse    IL_0077
+  IL_0061:  nop
+  IL_0062:  ldloc.1
+  IL_0063:  ldloc.s    'cnt:622:641'
+  IL_0065:  ldloc.3
+  IL_0066:  conv.r4
+  IL_0067:  stelem.r4
+  IL_0068:  ldloc.s    'cnt:622:641'
+  IL_006a:  ldc.i4.1
+  IL_006b:  add
+  IL_006c:  stloc.s    'cnt:622:641'
+  IL_006e:  ldloc.3
+  IL_006f:  ldarg.2
+  IL_0070:  add
+  IL_0071:  stloc.3
+  IL_0072:  br         IL_0058
+  IL_0077:  ldloc.1
+  IL_0078:  ldloc.2
+  IL_0079:  newobj     instance void neo.ndarray::.ctor(float32[],
+                                                        int32[])
+  IL_007e:  stloc.0
+  IL_007f:  ldloc.0
+  IL_0080:  ret
+} // end of method neo::arange
+
+.method public static class neo.ndarray  concatenate(class neo.ndarray a,
+                                                     class neo.ndarray b,
+                                                     [opt] int32 axis) cil managed
+{
+  .param [3] = int32(0xFFFFFFFF)
+  // Code size       579 (0x243)
+  .maxstack  27
+  .locals init ([0] class neo.ndarray $rv_concatenate,
+           [1] int32[] 'tmp_shape:647:659',
+           [2] float32[] 'tmp_ndarray:647:659',
+           [3] class neo.$delegate1 'item_gen_a:647:659',
+           [4] class neo.$delegate1 'item_gen_b:647:659',
+           [5] int32[] V_5,
+           [6] int32[] V_6,
+           [7] int32 'index:653:654',
+           [8] int32 '$tfr_1:653:654',
+           [9] int32 'index:655:656',
+           [10] int32 '$tfr_2:655:656',
+           [11] int32[] 'tmp_shape:661:691',
+           [12] class neo.ndarray 'tmp_ndarray:661:691',
+           [13] class neo.$delegate1 'item_gen_a:661:691',
+           [14] class neo.$delegate1 'item_gen_b:661:691',
+           [15] class neo.$delegate0 'index_gen_c:661:691',
+           [16] int32 'index:666:671',
+           [17] int32 '$tfr_3:666:671',
+           [18] int32 V_18,
+           [19] int32 'index:678:689',
+           [20] int32 '$tfr_4:678:689',
+           [21] int32[] 'arr:679:689',
+           [22] class neo.neo $class_var$0)
+  IL_0000:  nop
+  IL_0001:  ldarg.2
+  IL_0002:  ldc.i4.m1
+  IL_0003:  ceq
+  IL_0005:  brfalse    IL_00ee
+  IL_000a:  nop
+  IL_000b:  ldc.i4.1
+  IL_000c:  newarr     [mscorlib]System.Int32
+  IL_0011:  stloc.s    V_5
+  IL_0013:  ldloc.s    V_5
+  IL_0015:  stloc.s    V_6
+  IL_0017:  ldloc.s    V_6
+  IL_0019:  ldc.i4.0
+  IL_001a:  ldarg.0
+  IL_001b:  ldfld      int32 neo.ndarray::length
+  IL_0020:  ldarg.1
+  IL_0021:  ldfld      int32 neo.ndarray::length
+  IL_0026:  add
+  IL_0027:  ldc.i4.1
+  IL_0028:  sub
+  IL_0029:  stelem.i4
+  IL_002a:  ldloc.s    V_5
+  IL_002c:  stloc.1
+  IL_002d:  ldarg.0
+  IL_002e:  ldfld      int32 neo.ndarray::length
+  IL_0033:  ldarg.1
+  IL_0034:  ldfld      int32 neo.ndarray::length
+  IL_0039:  add
+  IL_003a:  ldc.i4.1
+  IL_003b:  sub
+  IL_003c:  newarr     [mscorlib]System.Single
+  IL_0041:  stloc.2
+  IL_0042:  ldarg.0
+  IL_0043:  callvirt   instance class neo.$delegate1 neo.ndarray::__get_item_generator()
+  IL_0048:  stloc.3
+  IL_0049:  ldarg.1
+  IL_004a:  callvirt   instance class neo.$delegate1 neo.ndarray::__get_item_generator()
+  IL_004f:  stloc.s    'item_gen_b:647:659'
+  IL_0051:  nop
+  IL_0052:  ldc.i4.0
+  IL_0053:  stloc.s    'index:653:654'
+  IL_0055:  ldarg.0
+  IL_0056:  ldfld      int32 neo.ndarray::length
+  IL_005b:  ldc.i4.1
+  IL_005c:  sub
+  IL_005d:  stloc.s    '$tfr_1:653:654'
+  IL_005f:  ldc.i4.0
+  IL_0060:  stloc.s    'index:653:654'
+  IL_0062:  ldloc.s    'index:653:654'
+  IL_0064:  ldloc.s    '$tfr_1:653:654'
+  IL_0066:  cgt
+  IL_0068:  ldc.i4.0
+  IL_0069:  ceq
+  IL_006b:  brfalse    IL_0090
+  IL_0070:  ldloc.2
+  IL_0071:  ldloc.s    'index:653:654'
+  IL_0073:  ldloc.3
+  IL_0074:  callvirt   instance float32 neo.$delegate1::Invoke()
+  IL_0079:  stelem.r4
+  IL_007a:  ldloc.s    'index:653:654'
+  IL_007c:  ldloc.s    '$tfr_1:653:654'
+  IL_007e:  clt
+  IL_0080:  brfalse    IL_0090
+  IL_0085:  ldloc.s    'index:653:654'
+  IL_0087:  ldc.i4.1
+  IL_0088:  add
+  IL_0089:  stloc.s    'index:653:654'
+  IL_008b:  br         IL_0070
+  IL_0090:  nop
+  IL_0091:  ldarg.0
+  IL_0092:  ldfld      int32 neo.ndarray::length
+  IL_0097:  stloc.s    'index:655:656'
+  IL_0099:  ldarg.0
+  IL_009a:  ldfld      int32 neo.ndarray::length
+  IL_009f:  ldarg.1
+  IL_00a0:  ldfld      int32 neo.ndarray::length
+  IL_00a5:  add
+  IL_00a6:  ldc.i4.1
+  IL_00a7:  sub
+  IL_00a8:  stloc.s    '$tfr_2:655:656'
+  IL_00aa:  ldarg.0
+  IL_00ab:  ldfld      int32 neo.ndarray::length
+  IL_00b0:  stloc.s    'index:655:656'
+  IL_00b2:  ldloc.s    'index:655:656'
+  IL_00b4:  ldloc.s    '$tfr_2:655:656'
+  IL_00b6:  cgt
+  IL_00b8:  ldc.i4.0
+  IL_00b9:  ceq
+  IL_00bb:  brfalse    IL_00e1
+  IL_00c0:  ldloc.2
+  IL_00c1:  ldloc.s    'index:655:656'
+  IL_00c3:  ldloc.s    'item_gen_b:647:659'
+  IL_00c5:  callvirt   instance float32 neo.$delegate1::Invoke()
+  IL_00ca:  stelem.r4
+  IL_00cb:  ldloc.s    'index:655:656'
+  IL_00cd:  ldloc.s    '$tfr_2:655:656'
+  IL_00cf:  clt
+  IL_00d1:  brfalse    IL_00e1
+  IL_00d6:  ldloc.s    'index:655:656'
+  IL_00d8:  ldc.i4.1
+  IL_00d9:  add
+  IL_00da:  stloc.s    'index:655:656'
+  IL_00dc:  br         IL_00c0
+  IL_00e1:  ldloc.2
+  IL_00e2:  ldloc.1
+  IL_00e3:  newobj     instance void neo.ndarray::.ctor(float32[],
+                                                        int32[])
+  IL_00e8:  stloc.0
+  IL_00e9:  br         IL_0241
+  IL_00ee:  nop
+  IL_00ef:  ldarg.0
+  IL_00f0:  ldfld      int32[] neo.ndarray::shape
+  IL_00f5:  ldarg.2
+  IL_00f6:  ldelem.i4
+  IL_00f7:  ldarg.1
+  IL_00f8:  ldfld      int32[] neo.ndarray::shape
+  IL_00fd:  ldarg.2
+  IL_00fe:  ldelem.i4
+  IL_00ff:  ceq
+  IL_0101:  ldc.i4.0
+  IL_0102:  ceq
+  IL_0104:  brfalse    IL_0119
+  IL_0109:  ldstr      "Fields couldn not be broadcast together"
+  IL_010e:  newobj     instance void [mscorlib]System.Exception::.ctor(string)
+  IL_0113:  throw
+  IL_0114:  br         IL_0119
+  IL_0119:  ldarg.0
+  IL_011a:  ldfld      int32 neo.ndarray::rank
+  IL_011f:  newarr     [mscorlib]System.Int32
+  IL_0124:  stloc.s    'tmp_shape:661:691'
+  IL_0126:  nop
+  IL_0127:  ldc.i4.0
+  IL_0128:  stloc.s    'index:666:671'
+  IL_012a:  ldarg.0
+  IL_012b:  ldfld      int32 neo.ndarray::rank
+  IL_0130:  ldc.i4.1
+  IL_0131:  sub
+  IL_0132:  stloc.s    '$tfr_3:666:671'
+  IL_0134:  ldc.i4.0
+  IL_0135:  stloc.s    'index:666:671'
+  IL_0137:  ldloc.s    'index:666:671'
+  IL_0139:  ldloc.s    '$tfr_3:666:671'
+  IL_013b:  cgt
+  IL_013d:  ldc.i4.0
+  IL_013e:  ceq
+  IL_0140:  brfalse    IL_0190
+  IL_0145:  nop
+  IL_0146:  ldloc.s    'tmp_shape:661:691'
+  IL_0148:  ldloc.s    'index:666:671'
+  IL_014a:  ldarg.0
+  IL_014b:  ldfld      int32[] neo.ndarray::shape
+  IL_0150:  ldloc.s    'index:666:671'
+  IL_0152:  ldelem.i4
+  IL_0153:  stelem.i4
+  IL_0154:  ldloc.s    'index:666:671'
+  IL_0156:  ldarg.2
+  IL_0157:  ceq
+  IL_0159:  brfalse    IL_017a
+  IL_015e:  ldloc.s    'tmp_shape:661:691'
+  IL_0160:  ldloc.s    'index:666:671'
+  IL_0162:  stloc.s    V_18
+  IL_0164:  ldloc.s    V_18
+  IL_0166:  ldloc.s    'tmp_shape:661:691'
+  IL_0168:  ldloc.s    V_18
+  IL_016a:  ldelem.i4
+  IL_016b:  ldarg.1
+  IL_016c:  ldfld      int32[] neo.ndarray::shape
+  IL_0171:  ldarg.2
+  IL_0172:  ldelem.i4
+  IL_0173:  add
+  IL_0174:  stelem.i4
+  IL_0175:  br         IL_017a
+  IL_017a:  ldloc.s    'index:666:671'
+  IL_017c:  ldloc.s    '$tfr_3:666:671'
+  IL_017e:  clt
+  IL_0180:  brfalse    IL_0190
+  IL_0185:  ldloc.s    'index:666:671'
+  IL_0187:  ldc.i4.1
+  IL_0188:  add
+  IL_0189:  stloc.s    'index:666:671'
+  IL_018b:  br         IL_0145
+  IL_0190:  ldloc.s    'tmp_shape:661:691'
+  IL_0192:  newobj     instance void neo.ndarray::.ctor(int32[])
+  IL_0197:  stloc.s    'tmp_ndarray:661:691'
+  IL_0199:  ldarg.0
+  IL_019a:  callvirt   instance class neo.$delegate1 neo.ndarray::__get_item_generator()
+  IL_019f:  stloc.s    'item_gen_a:661:691'
+  IL_01a1:  ldarg.1
+  IL_01a2:  callvirt   instance class neo.$delegate1 neo.ndarray::__get_item_generator()
+  IL_01a7:  stloc.s    'item_gen_b:661:691'
+  IL_01a9:  ldloc.s    'tmp_ndarray:661:691'
+  IL_01ab:  callvirt   instance class neo.$delegate0 neo.ndarray::__get_index_generator()
+  IL_01b0:  stloc.s    'index_gen_c:661:691'
+  IL_01b2:  nop
+  IL_01b3:  ldc.i4.0
+  IL_01b4:  stloc.s    'index:678:689'
+  IL_01b6:  ldarg.0
+  IL_01b7:  ldfld      int32 neo.ndarray::length
+  IL_01bc:  ldarg.1
+  IL_01bd:  ldfld      int32 neo.ndarray::length
+  IL_01c2:  add
+  IL_01c3:  ldc.i4.2
+  IL_01c4:  sub
+  IL_01c5:  stloc.s    '$tfr_4:678:689'
+  IL_01c7:  ldc.i4.0
+  IL_01c8:  stloc.s    'index:678:689'
+  IL_01ca:  ldloc.s    'index:678:689'
+  IL_01cc:  ldloc.s    '$tfr_4:678:689'
+  IL_01ce:  cgt
+  IL_01d0:  ldc.i4.0
+  IL_01d1:  ceq
+  IL_01d3:  brfalse    IL_023e
+  IL_01d8:  nop
+  IL_01d9:  ldloc.s    'index_gen_c:661:691'
+  IL_01db:  callvirt   instance int32[] neo.$delegate0::Invoke()
+  IL_01e0:  stloc.s    'arr:679:689'
+  IL_01e2:  ldloc.s    'arr:679:689'
+  IL_01e4:  ldarg.2
+  IL_01e5:  ldelem.i4
+  IL_01e6:  ldarg.0
+  IL_01e7:  ldfld      int32[] neo.ndarray::shape
+  IL_01ec:  ldarg.2
+  IL_01ed:  ldelem.i4
+  IL_01ee:  ldc.i4.1
+  IL_01ef:  sub
+  IL_01f0:  cgt
+  IL_01f2:  brfalse    IL_0217
+  IL_01f7:  nop
+  IL_01f8:  ldloc.s    'tmp_ndarray:661:691'
+  IL_01fa:  ldloc.s    'item_gen_b:661:691'
+  IL_01fc:  callvirt   instance float32 neo.$delegate1::Invoke()
+  IL_0201:  ldloc.s    'arr:679:689'
+  IL_0203:  callvirt   instance void neo.ndarray::assign(float32,
+                                                         int32[])
+  IL_0208:  nop
+  IL_0209:  ldloc.s    'index_gen_c:661:691'
+  IL_020b:  callvirt   instance int32[] neo.$delegate0::Invoke()
+  IL_0210:  stloc.s    'arr:679:689'
+  IL_0212:  br         IL_01e2
+  IL_0217:  ldloc.s    'tmp_ndarray:661:691'
+  IL_0219:  ldloc.s    'item_gen_a:661:691'
+  IL_021b:  callvirt   instance float32 neo.$delegate1::Invoke()
+  IL_0220:  ldloc.s    'arr:679:689'
+  IL_0222:  callvirt   instance void neo.ndarray::assign(float32,
+                                                         int32[])
+  IL_0227:  nop
+  IL_0228:  ldloc.s    'index:678:689'
+  IL_022a:  ldloc.s    '$tfr_4:678:689'
+  IL_022c:  clt
+  IL_022e:  brfalse    IL_023e
+  IL_0233:  ldloc.s    'index:678:689'
+  IL_0235:  ldc.i4.1
+  IL_0236:  add
+  IL_0237:  stloc.s    'index:678:689'
+  IL_0239:  br         IL_01d8
+  IL_023e:  ldloc.s    'tmp_ndarray:661:691'
+  IL_0240:  stloc.0
+  IL_0241:  ldloc.0
+  IL_0242:  ret
+} // end of method neo::concatenate
+
+.method public static class neo.ndarray  copy(class neo.ndarray self) cil managed
+{
+  // Code size       21 (0x15)
+  .maxstack  3
+  .locals init ([0] class neo.ndarray $rv_copy,
+           [1] class neo.neo $class_var$0)
+  IL_0000:  nop
+  IL_0001:  ldarg.0
+  IL_0002:  ldfld      float32[] neo.ndarray::'value'
+  IL_0007:  ldarg.0
+  IL_0008:  ldfld      int32[] neo.ndarray::shape
+  IL_000d:  newobj     instance void neo.ndarray::.ctor(float32[],
+                                                        int32[])
+  IL_0012:  stloc.0
+  IL_0013:  ldloc.0
+  IL_0014:  ret
+} // end of method neo::copy
+
+.method public static class neo.ndarray  dot(class neo.ndarray self_ndarray,
+                                             class neo.ndarray other_ndarray,
+                                             [opt] int32 axis) cil managed
+{
+  .param [3] = int32(0x00000000)
+  // Code size       1949 (0x79d)
+  .maxstack  99
+  .locals init ([0] class neo.ndarray $rv_dot,
+           [1] float32[] 'sum:704:709',
+           [2] float32[] V_2,
+           [3] float32[] V_3,
+           [4] int32 'index:706:707',
+           [5] int32 '$tfr_1:706:707',
+           [6] int32[] '$intarr3:707:707',
+           [7] int32[] '$intarr4:707:707',
+           [8] int32 V_8,
+           [9] int32[] V_9,
+           [10] int32[] V_10,
+           [11] int32[] V_11,
+           [12] int32[] V_12,
+           [13] class neo.ndarray 'max_ndarray:711:746',
+           [14] class neo.ndarray 'min_ndarray:711:746',
+           [15] int32[] 'tmp_shape:711:746',
+           [16] float32[] 'tmp_arr:711:746',
+           [17] class neo.$delegate0 'max_index_gen:711:746',
+           [18] class neo.$delegate1 'max_item_gen:711:746',
+           [19] int32 'cnt_limit:711:746',
+           [20] int32 'cnt:711:746',
+           [21] int32 'i:729:730',
+           [22] int32 '$tfr_2:729:730',
+           [23] int32 'i:738:744',
+           [24] int32 '$tfr_3:738:744',
+           [25] int32 V_25,
+           [26] class neo.ndarray 'other_ndarray_T:748:761',
+           [27] float32[] 'tmp_result:748:761',
+           [28] int32[] 'new_shape:748:761',
+           [29] int32[] V_29,
+           [30] int32[] V_30,
+           [31] int32 'i:752:759',
+           [32] int32 '$tfr_4:752:759',
+           [33] int32 'j:753:759',
+           [34] int32 '$tfr_5:753:759',
+           [35] float64 'cc:754:759',
+           [36] int32 'l:756:757',
+           [37] int32 '$tfr_6:756:757',
+           [38] int32[] '$intarr5:757:757',
+           [39] int32[] '$intarr6:757:757',
+           [40] int32[] V_40,
+           [41] int32[] V_41,
+           [42] int32[] V_42,
+           [43] int32[] V_43,
+           [44] int32[] 'tmp_shape:763:814',
+           [45] class neo.ndarray 'tmp_ndarray:763:814',
+           [46] class neo.$delegate0 'index_gen:763:814',
+           [47] int32 'i:765:766',
+           [48] int32 '$tfr_7:765:766',
+           [49] int32 'i:767:768',
+           [50] int32 '$tfr_8:767:768',
+           [51] int32 'i:774:812',
+           [52] int32 '$tfr_9:774:812',
+           [53] int32[] 'arr:775:812',
+           [54] int32[] 'arr_a:775:812',
+           [55] float32[] 'a_matrix:775:812',
+           [56] int32 'cnt_a:775:812',
+           [57] int32[] 'arr_b:775:812',
+           [58] float32[] 'b_matrix:775:812',
+           [59] int32 'cnt_b:775:812',
+           [60] float64 'acc:775:812',
+           [61] int32 'j:778:779',
+           [62] int32 '$tfr_10:778:779',
+           [63] int32 'j:783:790',
+           [64] int32 '$tfr_11:783:790',
+           [65] int32[] 'tmp_arr:784:790',
+           [66] int32 'k:786:787',
+           [67] int32 '$tfr_12:786:787',
+           [68] int32 'j:793:794',
+           [69] int32 '$tfr_13:793:794',
+           [70] int32 'j:798:806',
+           [71] int32 '$tfr_14:798:806',
+           [72] int32[] 'tmp_arr:799:806',
+           [73] int32 'k:801:802',
+           [74] int32 '$tfr_15:801:802',
+           [75] int32 'j:809:810',
+           [76] int32 '$tfr_16:809:810',
+           [77] class neo.neo $class_var$0)
+  IL_0000:  nop
+  IL_0001:  ldarg.0
+  IL_0002:  ldfld      int32 neo.ndarray::rank
+  IL_0007:  ldc.i4.1
+  IL_0008:  ceq
+  IL_000a:  brfalse    IL_001f
+  IL_000f:  ldc.i4.1
+  IL_0010:  ldarg.1
+  IL_0011:  ldfld      int32 neo.ndarray::rank
+  IL_0016:  ldc.i4.1
+  IL_0017:  ceq
+  IL_0019:  and
+  IL_001a:  br         IL_0020
+  IL_001f:  ldc.i4.0
+  IL_0020:  brfalse    IL_00c3
+  IL_0025:  nop
+  IL_0026:  ldc.i4.1
+  IL_0027:  newarr     [mscorlib]System.Single
+  IL_002c:  stloc.2
+  IL_002d:  ldloc.2
+  IL_002e:  stloc.3
+  IL_002f:  ldloc.3
+  IL_0030:  ldc.i4.0
+  IL_0031:  ldc.r4     0.0
+  IL_0036:  stelem.r4
+  IL_0037:  ldloc.2
+  IL_0038:  stloc.1
+  IL_0039:  nop
+  IL_003a:  ldc.i4.0
+  IL_003b:  stloc.s    'index:706:707'
+  IL_003d:  ldarg.0
+  IL_003e:  ldfld      int32 neo.ndarray::length
+  IL_0043:  ldc.i4.1
+  IL_0044:  sub
+  IL_0045:  stloc.s    '$tfr_1:706:707'
+  IL_0047:  ldc.i4.0
+  IL_0048:  stloc.s    'index:706:707'
+  IL_004a:  ldloc.s    'index:706:707'
+  IL_004c:  ldloc.s    '$tfr_1:706:707'
+  IL_004e:  cgt
+  IL_0050:  ldc.i4.0
+  IL_0051:  ceq
+  IL_0053:  brfalse    IL_00b0
+  IL_0058:  nop
+  IL_0059:  ldloc.1
+  IL_005a:  ldc.i4.0
+  IL_005b:  stloc.s    V_8
+  IL_005d:  ldloc.s    V_8
+  IL_005f:  ldloc.1
+  IL_0060:  ldloc.s    V_8
+  IL_0062:  ldelem.r4
+  IL_0063:  ldarg.0
+  IL_0064:  ldc.i4.1
+  IL_0065:  newarr     [mscorlib]System.Int32
+  IL_006a:  stloc.s    V_9
+  IL_006c:  ldloc.s    V_9
+  IL_006e:  stloc.s    V_10
+  IL_0070:  ldloc.s    V_10
+  IL_0072:  ldc.i4.0
+  IL_0073:  ldloc.s    'index:706:707'
+  IL_0075:  stelem.i4
+  IL_0076:  ldloc.s    V_9
+  IL_0078:  callvirt   instance float32 neo.ndarray::get(int32[])
+  IL_007d:  ldarg.1
+  IL_007e:  ldc.i4.1
+  IL_007f:  newarr     [mscorlib]System.Int32
+  IL_0084:  stloc.s    V_11
+  IL_0086:  ldloc.s    V_11
+  IL_0088:  stloc.s    V_12
+  IL_008a:  ldloc.s    V_12
+  IL_008c:  ldc.i4.0
+  IL_008d:  ldloc.s    'index:706:707'
+  IL_008f:  stelem.i4
+  IL_0090:  ldloc.s    V_11
+  IL_0092:  callvirt   instance float32 neo.ndarray::get(int32[])
+  IL_0097:  mul
+  IL_0098:  add
+  IL_0099:  stelem.r4
+  IL_009a:  ldloc.s    'index:706:707'
+  IL_009c:  ldloc.s    '$tfr_1:706:707'
+  IL_009e:  clt
+  IL_00a0:  brfalse    IL_00b0
+  IL_00a5:  ldloc.s    'index:706:707'
+  IL_00a7:  ldc.i4.1
+  IL_00a8:  add
+  IL_00a9:  stloc.s    'index:706:707'
+  IL_00ab:  br         IL_0058
+  IL_00b0:  ldloc.1
+  IL_00b1:  ldc.i4.1
+  IL_00b2:  ldc.i4.1
+  IL_00b3:  call       !!0[] $PABCSystem.PABCSystem::ArrFill<int32>(int32,
+                                                                    !!0)
+  IL_00b8:  newobj     instance void neo.ndarray::.ctor(float32[],
+                                                        int32[])
+  IL_00bd:  stloc.0
+  IL_00be:  br         IL_079b
+  IL_00c3:  ldarg.0
+  IL_00c4:  ldfld      int32 neo.ndarray::rank
+  IL_00c9:  ldc.i4.1
+  IL_00ca:  ceq
+  IL_00cc:  brtrue     IL_00e1
+  IL_00d1:  ldc.i4.0
+  IL_00d2:  ldarg.1
+  IL_00d3:  ldfld      int32 neo.ndarray::rank
+  IL_00d8:  ldc.i4.1
+  IL_00d9:  ceq
+  IL_00db:  or
+  IL_00dc:  br         IL_00e2
+  IL_00e1:  ldc.i4.1
+  IL_00e2:  brfalse    IL_024d
+  IL_00e7:  nop
+  IL_00e8:  ldarg.0
+  IL_00e9:  ldfld      int32[] neo.ndarray::shape
+  IL_00ee:  ldc.i4.0
+  IL_00ef:  ldelem.i4
+  IL_00f0:  ldarg.1
+  IL_00f1:  ldfld      int32[] neo.ndarray::shape
+  IL_00f6:  ldc.i4.0
+  IL_00f7:  ldelem.i4
+  IL_00f8:  ceq
+  IL_00fa:  ldc.i4.0
+  IL_00fb:  ceq
+  IL_00fd:  brfalse    IL_0112
+  IL_0102:  ldstr      "Fields couldn not be broadcast together"
+  IL_0107:  newobj     instance void [mscorlib]System.Exception::.ctor(string)
+  IL_010c:  throw
+  IL_010d:  br         IL_0112
+  IL_0112:  ldarg.0
+  IL_0113:  ldfld      int32 neo.ndarray::rank
+  IL_0118:  ldarg.1
+  IL_0119:  ldfld      int32 neo.ndarray::rank
+  IL_011e:  cgt
+  IL_0120:  brfalse    IL_0131
+  IL_0125:  nop
+  IL_0126:  ldarg.0
+  IL_0127:  stloc.s    'max_ndarray:711:746'
+  IL_0129:  ldarg.1
+  IL_012a:  stloc.s    'min_ndarray:711:746'
+  IL_012c:  br         IL_0138
+  IL_0131:  nop
+  IL_0132:  ldarg.1
+  IL_0133:  stloc.s    'max_ndarray:711:746'
+  IL_0135:  ldarg.0
+  IL_0136:  stloc.s    'min_ndarray:711:746'
+  IL_0138:  ldloc.s    'max_ndarray:711:746'
+  IL_013a:  ldfld      int32 neo.ndarray::rank
+  IL_013f:  ldc.i4.1
+  IL_0140:  sub
+  IL_0141:  newarr     [mscorlib]System.Int32
+  IL_0146:  stloc.s    'tmp_shape:711:746'
+  IL_0148:  nop
+  IL_0149:  ldc.i4.1
+  IL_014a:  stloc.s    'i:729:730'
+  IL_014c:  ldloc.s    'max_ndarray:711:746'
+  IL_014e:  ldfld      int32 neo.ndarray::rank
+  IL_0153:  ldc.i4.1
+  IL_0154:  sub
+  IL_0155:  stloc.s    '$tfr_2:729:730'
+  IL_0157:  ldc.i4.1
+  IL_0158:  stloc.s    'i:729:730'
+  IL_015a:  ldloc.s    'i:729:730'
+  IL_015c:  ldloc.s    '$tfr_2:729:730'
+  IL_015e:  cgt
+  IL_0160:  ldc.i4.0
+  IL_0161:  ceq
+  IL_0163:  brfalse    IL_018f
+  IL_0168:  ldloc.s    'tmp_shape:711:746'
+  IL_016a:  ldloc.s    'i:729:730'
+  IL_016c:  ldc.i4.1
+  IL_016d:  sub
+  IL_016e:  ldloc.s    'max_ndarray:711:746'
+  IL_0170:  ldfld      int32[] neo.ndarray::shape
+  IL_0175:  ldloc.s    'i:729:730'
+  IL_0177:  ldelem.i4
+  IL_0178:  stelem.i4
+  IL_0179:  ldloc.s    'i:729:730'
+  IL_017b:  ldloc.s    '$tfr_2:729:730'
+  IL_017d:  clt
+  IL_017f:  brfalse    IL_018f
+  IL_0184:  ldloc.s    'i:729:730'
+  IL_0186:  ldc.i4.1
+  IL_0187:  add
+  IL_0188:  stloc.s    'i:729:730'
+  IL_018a:  br         IL_0168
+  IL_018f:  ldloc.s    'tmp_shape:711:746'
+  IL_0191:  call       int64 $PABCSystem_implementation______.PABCSystem_implementation______::Product(class [mscorlib]System.Collections.Generic.IEnumerable`1<int32>)
+  IL_0196:  conv.i4
+  IL_0197:  newarr     [mscorlib]System.Single
+  IL_019c:  stloc.s    'tmp_arr:711:746'
+  IL_019e:  ldloc.s    'max_ndarray:711:746'
+  IL_01a0:  callvirt   instance class neo.$delegate0 neo.ndarray::__get_index_generator()
+  IL_01a5:  stloc.s    'max_index_gen:711:746'
+  IL_01a7:  ldloc.s    'max_ndarray:711:746'
+  IL_01a9:  callvirt   instance class neo.$delegate1 neo.ndarray::__get_item_generator()
+  IL_01ae:  stloc.s    'max_item_gen:711:746'
+  IL_01b0:  ldloc.s    'max_ndarray:711:746'
+  IL_01b2:  ldfld      int32 neo.ndarray::length
+  IL_01b7:  ldloc.s    'max_ndarray:711:746'
+  IL_01b9:  ldfld      int32[] neo.ndarray::shape
+  IL_01be:  ldc.i4.0
+  IL_01bf:  ldelem.i4
+  IL_01c0:  div
+  IL_01c1:  stloc.s    'cnt_limit:711:746'
+  IL_01c3:  ldc.i4.0
+  IL_01c4:  stloc.s    'cnt:711:746'
+  IL_01c6:  nop
+  IL_01c7:  ldc.i4.0
+  IL_01c8:  stloc.s    'i:738:744'
+  IL_01ca:  ldloc.s    'max_ndarray:711:746'
+  IL_01cc:  ldfld      int32 neo.ndarray::length
+  IL_01d1:  ldc.i4.1
+  IL_01d2:  sub
+  IL_01d3:  stloc.s    '$tfr_3:738:744'
+  IL_01d5:  ldc.i4.0
+  IL_01d6:  stloc.s    'i:738:744'
+  IL_01d8:  ldloc.s    'i:738:744'
+  IL_01da:  ldloc.s    '$tfr_3:738:744'
+  IL_01dc:  cgt
+  IL_01de:  ldc.i4.0
+  IL_01df:  ceq
+  IL_01e1:  brfalse    IL_023e
+  IL_01e6:  nop
+  IL_01e7:  ldloc.s    'tmp_arr:711:746'
+  IL_01e9:  ldloc.s    'cnt:711:746'
+  IL_01eb:  stloc.s    V_25
+  IL_01ed:  ldloc.s    V_25
+  IL_01ef:  ldloc.s    'tmp_arr:711:746'
+  IL_01f1:  ldloc.s    V_25
+  IL_01f3:  ldelem.r4
+  IL_01f4:  ldloc.s    'max_item_gen:711:746'
+  IL_01f6:  callvirt   instance float32 neo.$delegate1::Invoke()
+  IL_01fb:  ldloc.s    'min_ndarray:711:746'
+  IL_01fd:  ldfld      float32[] neo.ndarray::'value'
+  IL_0202:  ldloc.s    'max_index_gen:711:746'
+  IL_0204:  callvirt   instance int32[] neo.$delegate0::Invoke()
+  IL_0209:  ldc.i4.0
+  IL_020a:  ldelem.i4
+  IL_020b:  ldelem.r4
+  IL_020c:  mul
+  IL_020d:  add
+  IL_020e:  stelem.r4
+  IL_020f:  ldloc.s    'cnt:711:746'
+  IL_0211:  ldc.i4.1
+  IL_0212:  add
+  IL_0213:  stloc.s    'cnt:711:746'
+  IL_0215:  ldloc.s    'cnt:711:746'
+  IL_0217:  ldloc.s    'cnt_limit:711:746'
+  IL_0219:  ceq
+  IL_021b:  brfalse    IL_0228
+  IL_0220:  ldc.i4.0
+  IL_0221:  stloc.s    'cnt:711:746'
+  IL_0223:  br         IL_0228
+  IL_0228:  ldloc.s    'i:738:744'
+  IL_022a:  ldloc.s    '$tfr_3:738:744'
+  IL_022c:  clt
+  IL_022e:  brfalse    IL_023e
+  IL_0233:  ldloc.s    'i:738:744'
+  IL_0235:  ldc.i4.1
+  IL_0236:  add
+  IL_0237:  stloc.s    'i:738:744'
+  IL_0239:  br         IL_01e6
+  IL_023e:  ldloc.s    'tmp_arr:711:746'
+  IL_0240:  ldloc.s    'tmp_shape:711:746'
+  IL_0242:  newobj     instance void neo.ndarray::.ctor(float32[],
+                                                        int32[])
+  IL_0247:  stloc.0
+  IL_0248:  br         IL_079b
+  IL_024d:  ldarg.0
+  IL_024e:  ldfld      int32 neo.ndarray::rank
+  IL_0253:  ldc.i4.2
+  IL_0254:  ceq
+  IL_0256:  brfalse    IL_026b
+  IL_025b:  ldc.i4.1
+  IL_025c:  ldarg.1
+  IL_025d:  ldfld      int32 neo.ndarray::rank
+  IL_0262:  ldc.i4.2
+  IL_0263:  ceq
+  IL_0265:  and
+  IL_0266:  br         IL_026c
+  IL_026b:  ldc.i4.0
+  IL_026c:  brfalse    IL_03d8
+  IL_0271:  nop
+  IL_0272:  ldarg.1
+  IL_0273:  ldnull
+  IL_0274:  callvirt   instance class neo.ndarray neo.ndarray::transpose(int32[])
+  IL_0279:  stloc.s    'other_ndarray_T:748:761'
+  IL_027b:  ldarg.0
+  IL_027c:  ldfld      int32[] neo.ndarray::shape
+  IL_0281:  ldc.i4.0
+  IL_0282:  ldelem.i4
+  IL_0283:  ldarg.1
+  IL_0284:  ldfld      int32[] neo.ndarray::shape
+  IL_0289:  ldc.i4.1
+  IL_028a:  ldelem.i4
+  IL_028b:  mul
+  IL_028c:  newarr     [mscorlib]System.Single
+  IL_0291:  stloc.s    'tmp_result:748:761'
+  IL_0293:  ldc.i4.2
+  IL_0294:  newarr     [mscorlib]System.Int32
+  IL_0299:  stloc.s    V_29
+  IL_029b:  ldloc.s    V_29
+  IL_029d:  stloc.s    V_30
+  IL_029f:  ldloc.s    V_30
+  IL_02a1:  ldc.i4.0
+  IL_02a2:  ldarg.0
+  IL_02a3:  ldfld      int32[] neo.ndarray::shape
+  IL_02a8:  ldc.i4.0
+  IL_02a9:  ldelem.i4
+  IL_02aa:  stelem.i4
+  IL_02ab:  ldloc.s    V_30
+  IL_02ad:  ldc.i4.1
+  IL_02ae:  ldarg.1
+  IL_02af:  ldfld      int32[] neo.ndarray::shape
+  IL_02b4:  ldc.i4.1
+  IL_02b5:  ldelem.i4
+  IL_02b6:  stelem.i4
+  IL_02b7:  ldloc.s    V_29
+  IL_02b9:  stloc.s    'new_shape:748:761'
+  IL_02bb:  nop
+  IL_02bc:  ldc.i4.0
+  IL_02bd:  stloc.s    'i:752:759'
+  IL_02bf:  ldarg.0
+  IL_02c0:  ldfld      int32[] neo.ndarray::shape
+  IL_02c5:  ldc.i4.0
+  IL_02c6:  ldelem.i4
+  IL_02c7:  ldc.i4.1
+  IL_02c8:  sub
+  IL_02c9:  stloc.s    '$tfr_4:752:759'
+  IL_02cb:  ldc.i4.0
+  IL_02cc:  stloc.s    'i:752:759'
+  IL_02ce:  ldloc.s    'i:752:759'
+  IL_02d0:  ldloc.s    '$tfr_4:752:759'
+  IL_02d2:  cgt
+  IL_02d4:  ldc.i4.0
+  IL_02d5:  ceq
+  IL_02d7:  brfalse    IL_03c9
+  IL_02dc:  nop
+  IL_02dd:  ldc.i4.0
+  IL_02de:  stloc.s    'j:753:759'
+  IL_02e0:  ldarg.1
+  IL_02e1:  ldfld      int32[] neo.ndarray::shape
+  IL_02e6:  ldc.i4.1
+  IL_02e7:  ldelem.i4
+  IL_02e8:  ldc.i4.1
+  IL_02e9:  sub
+  IL_02ea:  stloc.s    '$tfr_5:753:759'
+  IL_02ec:  ldc.i4.0
+  IL_02ed:  stloc.s    'j:753:759'
+  IL_02ef:  ldloc.s    'j:753:759'
+  IL_02f1:  ldloc.s    '$tfr_5:753:759'
+  IL_02f3:  cgt
+  IL_02f5:  ldc.i4.0
+  IL_02f6:  ceq
+  IL_02f8:  brfalse    IL_03b3
+  IL_02fd:  nop
+  IL_02fe:  ldc.r8     0.0
+  IL_0307:  stloc.s    'cc:754:759'
+  IL_0309:  nop
+  IL_030a:  ldc.i4.0
+  IL_030b:  stloc.s    'l:756:757'
+  IL_030d:  ldarg.0
+  IL_030e:  ldfld      int32[] neo.ndarray::shape
+  IL_0313:  ldc.i4.1
+  IL_0314:  ldelem.i4
+  IL_0315:  ldc.i4.1
+  IL_0316:  sub
+  IL_0317:  stloc.s    '$tfr_6:756:757'
+  IL_0319:  ldc.i4.0
+  IL_031a:  stloc.s    'l:756:757'
+  IL_031c:  ldloc.s    'l:756:757'
+  IL_031e:  ldloc.s    '$tfr_6:756:757'
+  IL_0320:  cgt
+  IL_0322:  ldc.i4.0
+  IL_0323:  ceq
+  IL_0325:  brfalse    IL_0389
+  IL_032a:  nop
+  IL_032b:  ldloc.s    'cc:754:759'
+  IL_032d:  ldarg.0
+  IL_032e:  ldc.i4.2
+  IL_032f:  newarr     [mscorlib]System.Int32
+  IL_0334:  stloc.s    V_40
+  IL_0336:  ldloc.s    V_40
+  IL_0338:  stloc.s    V_41
+  IL_033a:  ldloc.s    V_41
+  IL_033c:  ldc.i4.0
+  IL_033d:  ldloc.s    'i:752:759'
+  IL_033f:  stelem.i4
+  IL_0340:  ldloc.s    V_41
+  IL_0342:  ldc.i4.1
+  IL_0343:  ldloc.s    'l:756:757'
+  IL_0345:  stelem.i4
+  IL_0346:  ldloc.s    V_40
+  IL_0348:  callvirt   instance float32 neo.ndarray::get(int32[])
+  IL_034d:  ldloc.s    'other_ndarray_T:748:761'
+  IL_034f:  ldc.i4.2
+  IL_0350:  newarr     [mscorlib]System.Int32
+  IL_0355:  stloc.s    V_42
+  IL_0357:  ldloc.s    V_42
+  IL_0359:  stloc.s    V_43
+  IL_035b:  ldloc.s    V_43
+  IL_035d:  ldc.i4.0
+  IL_035e:  ldloc.s    'j:753:759'
+  IL_0360:  stelem.i4
+  IL_0361:  ldloc.s    V_43
+  IL_0363:  ldc.i4.1
+  IL_0364:  ldloc.s    'l:756:757'
+  IL_0366:  stelem.i4
+  IL_0367:  ldloc.s    V_42
+  IL_0369:  callvirt   instance float32 neo.ndarray::get(int32[])
+  IL_036e:  mul
+  IL_036f:  conv.r8
+  IL_0370:  add
+  IL_0371:  stloc.s    'cc:754:759'
+  IL_0373:  ldloc.s    'l:756:757'
+  IL_0375:  ldloc.s    '$tfr_6:756:757'
+  IL_0377:  clt
+  IL_0379:  brfalse    IL_0389
+  IL_037e:  ldloc.s    'l:756:757'
+  IL_0380:  ldc.i4.1
+  IL_0381:  add
+  IL_0382:  stloc.s    'l:756:757'
+  IL_0384:  br         IL_032a
+  IL_0389:  ldloc.s    'tmp_result:748:761'
+  IL_038b:  ldloc.s    'i:752:759'
+  IL_038d:  ldarg.0
+  IL_038e:  ldfld      int32[] neo.ndarray::shape
+  IL_0393:  ldc.i4.0
+  IL_0394:  ldelem.i4
+  IL_0395:  mul
+  IL_0396:  ldloc.s    'j:753:759'
+  IL_0398:  add
+  IL_0399:  ldloc.s    'cc:754:759'
+  IL_039b:  conv.r4
+  IL_039c:  stelem.r4
+  IL_039d:  ldloc.s    'j:753:759'
+  IL_039f:  ldloc.s    '$tfr_5:753:759'
+  IL_03a1:  clt
+  IL_03a3:  brfalse    IL_03b3
+  IL_03a8:  ldloc.s    'j:753:759'
+  IL_03aa:  ldc.i4.1
+  IL_03ab:  add
+  IL_03ac:  stloc.s    'j:753:759'
+  IL_03ae:  br         IL_02fd
+  IL_03b3:  ldloc.s    'i:752:759'
+  IL_03b5:  ldloc.s    '$tfr_4:752:759'
+  IL_03b7:  clt
+  IL_03b9:  brfalse    IL_03c9
+  IL_03be:  ldloc.s    'i:752:759'
+  IL_03c0:  ldc.i4.1
+  IL_03c1:  add
+  IL_03c2:  stloc.s    'i:752:759'
+  IL_03c4:  br         IL_02dc
+  IL_03c9:  ldloc.s    'tmp_result:748:761'
+  IL_03cb:  ldloc.s    'new_shape:748:761'
+  IL_03cd:  newobj     instance void neo.ndarray::.ctor(float32[],
+                                                        int32[])
+  IL_03d2:  stloc.0
+  IL_03d3:  br         IL_079b
+  IL_03d8:  nop
+  IL_03d9:  ldarg.0
+  IL_03da:  ldfld      int32 neo.ndarray::rank
+  IL_03df:  ldarg.1
+  IL_03e0:  ldfld      int32 neo.ndarray::rank
+  IL_03e5:  add
+  IL_03e6:  ldc.i4.2
+  IL_03e7:  sub
+  IL_03e8:  newarr     [mscorlib]System.Int32
+  IL_03ed:  stloc.s    'tmp_shape:763:814'
+  IL_03ef:  nop
+  IL_03f0:  ldc.i4.0
+  IL_03f1:  stloc.s    'i:765:766'
+  IL_03f3:  ldarg.0
+  IL_03f4:  ldfld      int32 neo.ndarray::rank
+  IL_03f9:  ldc.i4.2
+  IL_03fa:  sub
+  IL_03fb:  stloc.s    '$tfr_7:765:766'
+  IL_03fd:  ldc.i4.0
+  IL_03fe:  stloc.s    'i:765:766'
+  IL_0400:  ldloc.s    'i:765:766'
+  IL_0402:  ldloc.s    '$tfr_7:765:766'
+  IL_0404:  cgt
+  IL_0406:  ldc.i4.0
+  IL_0407:  ceq
+  IL_0409:  brfalse    IL_0432
+  IL_040e:  ldloc.s    'tmp_shape:763:814'
+  IL_0410:  ldloc.s    'i:765:766'
+  IL_0412:  ldarg.0
+  IL_0413:  ldfld      int32[] neo.ndarray::shape
+  IL_0418:  ldloc.s    'i:765:766'
+  IL_041a:  ldelem.i4
+  IL_041b:  stelem.i4
+  IL_041c:  ldloc.s    'i:765:766'
+  IL_041e:  ldloc.s    '$tfr_7:765:766'
+  IL_0420:  clt
+  IL_0422:  brfalse    IL_0432
+  IL_0427:  ldloc.s    'i:765:766'
+  IL_0429:  ldc.i4.1
+  IL_042a:  add
+  IL_042b:  stloc.s    'i:765:766'
+  IL_042d:  br         IL_040e
+  IL_0432:  nop
+  IL_0433:  ldc.i4.0
+  IL_0434:  stloc.s    'i:767:768'
+  IL_0436:  ldarg.1
+  IL_0437:  ldfld      int32 neo.ndarray::rank
+  IL_043c:  ldc.i4.3
+  IL_043d:  sub
+  IL_043e:  stloc.s    '$tfr_8:767:768'
+  IL_0440:  ldc.i4.0
+  IL_0441:  stloc.s    'i:767:768'
+  IL_0443:  ldloc.s    'i:767:768'
+  IL_0445:  ldloc.s    '$tfr_8:767:768'
+  IL_0447:  cgt
+  IL_0449:  ldc.i4.0
+  IL_044a:  ceq
+  IL_044c:  brfalse    IL_047e
+  IL_0451:  ldloc.s    'tmp_shape:763:814'
+  IL_0453:  ldarg.0
+  IL_0454:  ldfld      int32 neo.ndarray::rank
+  IL_0459:  ldloc.s    'i:767:768'
+  IL_045b:  add
+  IL_045c:  ldc.i4.1
+  IL_045d:  sub
+  IL_045e:  ldarg.1
+  IL_045f:  ldfld      int32[] neo.ndarray::shape
+  IL_0464:  ldloc.s    'i:767:768'
+  IL_0466:  ldelem.i4
+  IL_0467:  stelem.i4
+  IL_0468:  ldloc.s    'i:767:768'
+  IL_046a:  ldloc.s    '$tfr_8:767:768'
+  IL_046c:  clt
+  IL_046e:  brfalse    IL_047e
+  IL_0473:  ldloc.s    'i:767:768'
+  IL_0475:  ldc.i4.1
+  IL_0476:  add
+  IL_0477:  stloc.s    'i:767:768'
+  IL_0479:  br         IL_0451
+  IL_047e:  ldloc.s    'tmp_shape:763:814'
+  IL_0480:  ldarg.0
+  IL_0481:  ldfld      int32 neo.ndarray::rank
+  IL_0486:  ldarg.1
+  IL_0487:  ldfld      int32 neo.ndarray::rank
+  IL_048c:  add
+  IL_048d:  ldc.i4.3
+  IL_048e:  sub
+  IL_048f:  ldarg.1
+  IL_0490:  ldfld      int32[] neo.ndarray::shape
+  IL_0495:  ldarg.1
+  IL_0496:  ldfld      int32 neo.ndarray::rank
+  IL_049b:  ldc.i4.1
+  IL_049c:  sub
+  IL_049d:  ldelem.i4
+  IL_049e:  stelem.i4
+  IL_049f:  ldloc.s    'tmp_shape:763:814'
+  IL_04a1:  newobj     instance void neo.ndarray::.ctor(int32[])
+  IL_04a6:  stloc.s    'tmp_ndarray:763:814'
+  IL_04a8:  ldloc.s    'tmp_ndarray:763:814'
+  IL_04aa:  callvirt   instance class neo.$delegate0 neo.ndarray::__get_index_generator()
+  IL_04af:  stloc.s    'index_gen:763:814'
+  IL_04b1:  nop
+  IL_04b2:  ldc.i4.0
+  IL_04b3:  stloc.s    'i:774:812'
+  IL_04b5:  ldloc.s    'tmp_shape:763:814'
+  IL_04b7:  call       int64 $PABCSystem_implementation______.PABCSystem_implementation______::Product(class [mscorlib]System.Collections.Generic.IEnumerable`1<int32>)
+  IL_04bc:  ldc.i8     0x1
+  IL_04c5:  sub
+  IL_04c6:  conv.i4
+  IL_04c7:  stloc.s    '$tfr_9:774:812'
+  IL_04c9:  ldc.i4.0
+  IL_04ca:  stloc.s    'i:774:812'
+  IL_04cc:  ldloc.s    'i:774:812'
+  IL_04ce:  ldloc.s    '$tfr_9:774:812'
+  IL_04d0:  cgt
+  IL_04d2:  ldc.i4.0
+  IL_04d3:  ceq
+  IL_04d5:  brfalse    IL_0798
+  IL_04da:  nop
+  IL_04db:  ldloc.s    'index_gen:763:814'
+  IL_04dd:  callvirt   instance int32[] neo.$delegate0::Invoke()
+  IL_04e2:  stloc.s    'arr:775:812'
+  IL_04e4:  ldarg.0
+  IL_04e5:  ldfld      int32 neo.ndarray::rank
+  IL_04ea:  ldc.i4.1
+  IL_04eb:  sub
+  IL_04ec:  newarr     [mscorlib]System.Int32
+  IL_04f1:  stloc.s    'arr_a:775:812'
+  IL_04f3:  nop
+  IL_04f4:  ldc.i4.0
+  IL_04f5:  stloc.s    'j:778:779'
+  IL_04f7:  ldarg.0
+  IL_04f8:  ldfld      int32 neo.ndarray::rank
+  IL_04fd:  ldc.i4.2
+  IL_04fe:  sub
+  IL_04ff:  stloc.s    '$tfr_10:778:779'
+  IL_0501:  ldc.i4.0
+  IL_0502:  stloc.s    'j:778:779'
+  IL_0504:  ldloc.s    'j:778:779'
+  IL_0506:  ldloc.s    '$tfr_10:778:779'
+  IL_0508:  cgt
+  IL_050a:  ldc.i4.0
+  IL_050b:  ceq
+  IL_050d:  brfalse    IL_0532
+  IL_0512:  ldloc.s    'arr_a:775:812'
+  IL_0514:  ldloc.s    'j:778:779'
+  IL_0516:  ldloc.s    'arr:775:812'
+  IL_0518:  ldloc.s    'j:778:779'
+  IL_051a:  ldelem.i4
+  IL_051b:  stelem.i4
+  IL_051c:  ldloc.s    'j:778:779'
+  IL_051e:  ldloc.s    '$tfr_10:778:779'
+  IL_0520:  clt
+  IL_0522:  brfalse    IL_0532
+  IL_0527:  ldloc.s    'j:778:779'
+  IL_0529:  ldc.i4.1
+  IL_052a:  add
+  IL_052b:  stloc.s    'j:778:779'
+  IL_052d:  br         IL_0512
+  IL_0532:  ldarg.0
+  IL_0533:  ldfld      int32[] neo.ndarray::shape
+  IL_0538:  ldarg.0
+  IL_0539:  ldfld      int32 neo.ndarray::rank
+  IL_053e:  ldc.i4.1
+  IL_053f:  sub
+  IL_0540:  ldelem.i4
+  IL_0541:  newarr     [mscorlib]System.Single
+  IL_0546:  stloc.s    'a_matrix:775:812'
+  IL_0548:  ldc.i4.0
+  IL_0549:  stloc.s    'cnt_a:775:812'
+  IL_054b:  nop
+  IL_054c:  ldc.i4.0
+  IL_054d:  stloc.s    'j:783:790'
+  IL_054f:  ldarg.0
+  IL_0550:  ldfld      int32[] neo.ndarray::shape
+  IL_0555:  ldarg.0
+  IL_0556:  ldfld      int32 neo.ndarray::rank
+  IL_055b:  ldc.i4.1
+  IL_055c:  sub
+  IL_055d:  ldelem.i4
+  IL_055e:  ldc.i4.1
+  IL_055f:  sub
+  IL_0560:  stloc.s    '$tfr_11:783:790'
+  IL_0562:  ldc.i4.0
+  IL_0563:  stloc.s    'j:783:790'
+  IL_0565:  ldloc.s    'j:783:790'
+  IL_0567:  ldloc.s    '$tfr_11:783:790'
+  IL_0569:  cgt
+  IL_056b:  ldc.i4.0
+  IL_056c:  ceq
+  IL_056e:  brfalse    IL_05f3
+  IL_0573:  nop
+  IL_0574:  ldloc.s    'arr_a:775:812'
+  IL_0576:  callvirt   instance int32 [mscorlib]System.Array::get_Length()
+  IL_057b:  ldc.i4.1
+  IL_057c:  add
+  IL_057d:  newarr     [mscorlib]System.Int32
+  IL_0582:  stloc.s    'tmp_arr:784:790'
+  IL_0584:  nop
+  IL_0585:  ldc.i4.0
+  IL_0586:  stloc.s    'k:786:787'
+  IL_0588:  ldloc.s    'arr_a:775:812'
+  IL_058a:  callvirt   instance int32 [mscorlib]System.Array::get_Length()
+  IL_058f:  ldc.i4.1
+  IL_0590:  sub
+  IL_0591:  stloc.s    '$tfr_12:786:787'
+  IL_0593:  ldc.i4.0
+  IL_0594:  stloc.s    'k:786:787'
+  IL_0596:  ldloc.s    'k:786:787'
+  IL_0598:  ldloc.s    '$tfr_12:786:787'
+  IL_059a:  cgt
+  IL_059c:  ldc.i4.0
+  IL_059d:  ceq
+  IL_059f:  brfalse    IL_05c4
+  IL_05a4:  ldloc.s    'tmp_arr:784:790'
+  IL_05a6:  ldloc.s    'k:786:787'
+  IL_05a8:  ldloc.s    'arr_a:775:812'
+  IL_05aa:  ldloc.s    'k:786:787'
+  IL_05ac:  ldelem.i4
+  IL_05ad:  stelem.i4
+  IL_05ae:  ldloc.s    'k:786:787'
+  IL_05b0:  ldloc.s    '$tfr_12:786:787'
+  IL_05b2:  clt
+  IL_05b4:  brfalse    IL_05c4
+  IL_05b9:  ldloc.s    'k:786:787'
+  IL_05bb:  ldc.i4.1
+  IL_05bc:  add
+  IL_05bd:  stloc.s    'k:786:787'
+  IL_05bf:  br         IL_05a4
+  IL_05c4:  ldloc.s    'tmp_arr:784:790'
+  IL_05c6:  ldloc.s    'arr_a:775:812'
+  IL_05c8:  callvirt   instance int32 [mscorlib]System.Array::get_Length()
+  IL_05cd:  ldloc.s    'j:783:790'
+  IL_05cf:  stelem.i4
+  IL_05d0:  ldloc.s    'a_matrix:775:812'
+  IL_05d2:  ldloc.s    'j:783:790'
+  IL_05d4:  ldarg.0
+  IL_05d5:  ldloc.s    'tmp_arr:784:790'
+  IL_05d7:  callvirt   instance float32 neo.ndarray::get(int32[])
+  IL_05dc:  stelem.r4
+  IL_05dd:  ldloc.s    'j:783:790'
+  IL_05df:  ldloc.s    '$tfr_11:783:790'
+  IL_05e1:  clt
+  IL_05e3:  brfalse    IL_05f3
+  IL_05e8:  ldloc.s    'j:783:790'
+  IL_05ea:  ldc.i4.1
+  IL_05eb:  add
+  IL_05ec:  stloc.s    'j:783:790'
+  IL_05ee:  br         IL_0573
+  IL_05f3:  ldarg.1
+  IL_05f4:  ldfld      int32 neo.ndarray::rank
+  IL_05f9:  ldc.i4.1
+  IL_05fa:  sub
+  IL_05fb:  newarr     [mscorlib]System.Int32
+  IL_0600:  stloc.s    'arr_b:775:812'
+  IL_0602:  nop
+  IL_0603:  ldc.i4.0
+  IL_0604:  stloc.s    'j:793:794'
+  IL_0606:  ldarg.1
+  IL_0607:  ldfld      int32 neo.ndarray::rank
+  IL_060c:  ldc.i4.2
+  IL_060d:  sub
+  IL_060e:  stloc.s    '$tfr_13:793:794'
+  IL_0610:  ldc.i4.0
+  IL_0611:  stloc.s    'j:793:794'
+  IL_0613:  ldloc.s    'j:793:794'
+  IL_0615:  ldloc.s    '$tfr_13:793:794'
+  IL_0617:  cgt
+  IL_0619:  ldc.i4.0
+  IL_061a:  ceq
+  IL_061c:  brfalse    IL_064a
+  IL_0621:  ldloc.s    'arr_b:775:812'
+  IL_0623:  ldloc.s    'j:793:794'
+  IL_0625:  ldloc.s    'arr:775:812'
+  IL_0627:  ldarg.0
+  IL_0628:  ldfld      int32 neo.ndarray::rank
+  IL_062d:  ldloc.s    'j:793:794'
+  IL_062f:  add
+  IL_0630:  ldc.i4.1
+  IL_0631:  sub
+  IL_0632:  ldelem.i4
+  IL_0633:  stelem.i4
+  IL_0634:  ldloc.s    'j:793:794'
+  IL_0636:  ldloc.s    '$tfr_13:793:794'
+  IL_0638:  clt
+  IL_063a:  brfalse    IL_064a
+  IL_063f:  ldloc.s    'j:793:794'
+  IL_0641:  ldc.i4.1
+  IL_0642:  add
+  IL_0643:  stloc.s    'j:793:794'
+  IL_0645:  br         IL_0621
+  IL_064a:  ldarg.1
+  IL_064b:  ldfld      int32[] neo.ndarray::shape
+  IL_0650:  ldarg.1
+  IL_0651:  ldfld      int32 neo.ndarray::rank
+  IL_0656:  ldc.i4.2
+  IL_0657:  sub
+  IL_0658:  ldelem.i4
+  IL_0659:  newarr     [mscorlib]System.Single
+  IL_065e:  stloc.s    'b_matrix:775:812'
+  IL_0660:  ldc.i4.0
+  IL_0661:  stloc.s    'cnt_b:775:812'
+  IL_0663:  nop
+  IL_0664:  ldc.i4.0
+  IL_0665:  stloc.s    'j:798:806'
+  IL_0667:  ldarg.1
+  IL_0668:  ldfld      int32[] neo.ndarray::shape
+  IL_066d:  ldarg.1
+  IL_066e:  ldfld      int32 neo.ndarray::rank
+  IL_0673:  ldc.i4.2
+  IL_0674:  sub
+  IL_0675:  ldelem.i4
+  IL_0676:  ldc.i4.1
+  IL_0677:  sub
+  IL_0678:  stloc.s    '$tfr_14:798:806'
+  IL_067a:  ldc.i4.0
+  IL_067b:  stloc.s    'j:798:806'
+  IL_067d:  ldloc.s    'j:798:806'
+  IL_067f:  ldloc.s    '$tfr_14:798:806'
+  IL_0681:  cgt
+  IL_0683:  ldc.i4.0
+  IL_0684:  ceq
+  IL_0686:  brfalse    IL_0723
+  IL_068b:  nop
+  IL_068c:  ldloc.s    'arr_b:775:812'
+  IL_068e:  callvirt   instance int32 [mscorlib]System.Array::get_Length()
+  IL_0693:  ldc.i4.1
+  IL_0694:  add
+  IL_0695:  newarr     [mscorlib]System.Int32
+  IL_069a:  stloc.s    'tmp_arr:799:806'
+  IL_069c:  nop
+  IL_069d:  ldc.i4.0
+  IL_069e:  stloc.s    'k:801:802'
+  IL_06a0:  ldloc.s    'arr_b:775:812'
+  IL_06a2:  callvirt   instance int32 [mscorlib]System.Array::get_Length()
+  IL_06a7:  ldc.i4.2
+  IL_06a8:  sub
+  IL_06a9:  stloc.s    '$tfr_15:801:802'
+  IL_06ab:  ldc.i4.0
+  IL_06ac:  stloc.s    'k:801:802'
+  IL_06ae:  ldloc.s    'k:801:802'
+  IL_06b0:  ldloc.s    '$tfr_15:801:802'
+  IL_06b2:  cgt
+  IL_06b4:  ldc.i4.0
+  IL_06b5:  ceq
+  IL_06b7:  brfalse    IL_06dc
+  IL_06bc:  ldloc.s    'tmp_arr:799:806'
+  IL_06be:  ldloc.s    'k:801:802'
+  IL_06c0:  ldloc.s    'arr_b:775:812'
+  IL_06c2:  ldloc.s    'k:801:802'
+  IL_06c4:  ldelem.i4
+  IL_06c5:  stelem.i4
+  IL_06c6:  ldloc.s    'k:801:802'
+  IL_06c8:  ldloc.s    '$tfr_15:801:802'
+  IL_06ca:  clt
+  IL_06cc:  brfalse    IL_06dc
+  IL_06d1:  ldloc.s    'k:801:802'
+  IL_06d3:  ldc.i4.1
+  IL_06d4:  add
+  IL_06d5:  stloc.s    'k:801:802'
+  IL_06d7:  br         IL_06bc
+  IL_06dc:  ldloc.s    'tmp_arr:799:806'
+  IL_06de:  ldloc.s    'arr_b:775:812'
+  IL_06e0:  callvirt   instance int32 [mscorlib]System.Array::get_Length()
+  IL_06e5:  ldc.i4.1
+  IL_06e6:  sub
+  IL_06e7:  ldloc.s    'j:798:806'
+  IL_06e9:  stelem.i4
+  IL_06ea:  ldloc.s    'tmp_arr:799:806'
+  IL_06ec:  ldloc.s    'arr_b:775:812'
+  IL_06ee:  callvirt   instance int32 [mscorlib]System.Array::get_Length()
+  IL_06f3:  ldloc.s    'arr_b:775:812'
+  IL_06f5:  ldloc.s    'arr_b:775:812'
+  IL_06f7:  callvirt   instance int32 [mscorlib]System.Array::get_Length()
+  IL_06fc:  ldc.i4.1
+  IL_06fd:  sub
+  IL_06fe:  ldelem.i4
+  IL_06ff:  stelem.i4
+  IL_0700:  ldloc.s    'b_matrix:775:812'
+  IL_0702:  ldloc.s    'j:798:806'
+  IL_0704:  ldarg.1
+  IL_0705:  ldloc.s    'tmp_arr:799:806'
+  IL_0707:  callvirt   instance float32 neo.ndarray::get(int32[])
+  IL_070c:  stelem.r4
+  IL_070d:  ldloc.s    'j:798:806'
+  IL_070f:  ldloc.s    '$tfr_14:798:806'
+  IL_0711:  clt
+  IL_0713:  brfalse    IL_0723
+  IL_0718:  ldloc.s    'j:798:806'
+  IL_071a:  ldc.i4.1
+  IL_071b:  add
+  IL_071c:  stloc.s    'j:798:806'
+  IL_071e:  br         IL_068b
+  IL_0723:  ldc.r8     0.0
+  IL_072c:  stloc.s    'acc:775:812'
+  IL_072e:  nop
+  IL_072f:  ldc.i4.0
+  IL_0730:  stloc.s    'j:809:810'
+  IL_0732:  ldloc.s    'a_matrix:775:812'
+  IL_0734:  callvirt   instance int32 [mscorlib]System.Array::get_Length()
+  IL_0739:  ldc.i4.1
+  IL_073a:  sub
+  IL_073b:  stloc.s    '$tfr_16:809:810'
+  IL_073d:  ldc.i4.0
+  IL_073e:  stloc.s    'j:809:810'
+  IL_0740:  ldloc.s    'j:809:810'
+  IL_0742:  ldloc.s    '$tfr_16:809:810'
+  IL_0744:  cgt
+  IL_0746:  ldc.i4.0
+  IL_0747:  ceq
+  IL_0749:  brfalse    IL_0775
+  IL_074e:  ldloc.s    'acc:775:812'
+  IL_0750:  ldloc.s    'a_matrix:775:812'
+  IL_0752:  ldloc.s    'j:809:810'
+  IL_0754:  ldelem.r4
+  IL_0755:  ldloc.s    'b_matrix:775:812'
+  IL_0757:  ldloc.s    'j:809:810'
+  IL_0759:  ldelem.r4
+  IL_075a:  mul
+  IL_075b:  conv.r8
+  IL_075c:  add
+  IL_075d:  stloc.s    'acc:775:812'
+  IL_075f:  ldloc.s    'j:809:810'
+  IL_0761:  ldloc.s    '$tfr_16:809:810'
+  IL_0763:  clt
+  IL_0765:  brfalse    IL_0775
+  IL_076a:  ldloc.s    'j:809:810'
+  IL_076c:  ldc.i4.1
+  IL_076d:  add
+  IL_076e:  stloc.s    'j:809:810'
+  IL_0770:  br         IL_074e
+  IL_0775:  ldloc.s    'tmp_ndarray:763:814'
+  IL_0777:  ldloc.s    'acc:775:812'
+  IL_0779:  conv.r4
+  IL_077a:  ldloc.s    'arr:775:812'
+  IL_077c:  callvirt   instance void neo.ndarray::assign(float32,
+                                                         int32[])
+  IL_0781:  nop
+  IL_0782:  ldloc.s    'i:774:812'
+  IL_0784:  ldloc.s    '$tfr_9:774:812'
+  IL_0786:  clt
+  IL_0788:  brfalse    IL_0798
+  IL_078d:  ldloc.s    'i:774:812'
+  IL_078f:  ldc.i4.1
+  IL_0790:  add
+  IL_0791:  stloc.s    'i:774:812'
+  IL_0793:  br         IL_04da
+  IL_0798:  ldloc.s    'tmp_ndarray:763:814'
+  IL_079a:  stloc.0
+  IL_079b:  ldloc.0
+  IL_079c:  ret
+} // end of method neo::dot
+
+.method public static void  map(class neo.ndarray self,
+                                class [mscorlib]System.Func`2<float32,float32> func) cil managed
+{
+  // Code size       73 (0x49)
+  .maxstack  4
+  .locals init ([0] class neo.$delegate1 'item_gen:819:823',
+           [1] int32 'i:821:822',
+           [2] int32 '$tfr_1:821:822',
+           [3] class neo.neo $class_var$0)
+  IL_0000:  nop
+  IL_0001:  ldarg.0
+  IL_0002:  callvirt   instance class neo.$delegate1 neo.ndarray::__get_item_generator()
+  IL_0007:  stloc.0
+  IL_0008:  nop
+  IL_0009:  ldc.i4.0
+  IL_000a:  stloc.1
+  IL_000b:  ldarg.0
+  IL_000c:  ldfld      int32 neo.ndarray::length
+  IL_0011:  ldc.i4.1
+  IL_0012:  sub
+  IL_0013:  stloc.2
+  IL_0014:  ldc.i4.0
+  IL_0015:  stloc.1
+  IL_0016:  ldloc.1
+  IL_0017:  ldloc.2
+  IL_0018:  cgt
+  IL_001a:  ldc.i4.0
+  IL_001b:  ceq
+  IL_001d:  brfalse    IL_0048
+  IL_0022:  ldarg.0
+  IL_0023:  ldfld      float32[] neo.ndarray::'value'
+  IL_0028:  ldloc.1
+  IL_0029:  ldarg.1
+  IL_002a:  ldloc.0
+  IL_002b:  callvirt   instance float32 neo.$delegate1::Invoke()
+  IL_0030:  callvirt   instance !1 class [mscorlib]System.Func`2<float32,float32>::Invoke(!0)
+  IL_0035:  stelem.r4
+  IL_0036:  ldloc.1
+  IL_0037:  ldloc.2
+  IL_0038:  clt
+  IL_003a:  brfalse    IL_0048
+  IL_003f:  ldloc.1
+  IL_0040:  ldc.i4.1
+  IL_0041:  add
+  IL_0042:  stloc.1
+  IL_0043:  br         IL_0022
+  IL_0048:  ret
+} // end of method neo::map
+
+.method public static float32  max(class neo.ndarray self) cil managed
+{
+  // Code size       79 (0x4f)
+  .maxstack  3
+  .locals init ([0] float32 $rv_max,
+           [1] class neo.$delegate1 'item_gen:828:834',
+           [2] float32 'tmp_result:828:834',
+           [3] int32 'i:831:832',
+           [4] int32 '$tfr_1:831:832',
+           [5] class neo.neo $class_var$0)
+  IL_0000:  nop
+  IL_0001:  ldarg.0
+  IL_0002:  callvirt   instance class neo.$delegate1 neo.ndarray::__get_item_generator()
+  IL_0007:  stloc.1
+  IL_0008:  ldloc.1
+  IL_0009:  callvirt   instance float32 neo.$delegate1::Invoke()
+  IL_000e:  stloc.2
+  IL_000f:  nop
+  IL_0010:  ldc.i4.0
+  IL_0011:  stloc.3
+  IL_0012:  ldarg.0
+  IL_0013:  ldfld      int32 neo.ndarray::length
+  IL_0018:  ldc.i4.2
+  IL_0019:  sub
+  IL_001a:  stloc.s    '$tfr_1:831:832'
+  IL_001c:  ldc.i4.0
+  IL_001d:  stloc.3
+  IL_001e:  ldloc.3
+  IL_001f:  ldloc.s    '$tfr_1:831:832'
+  IL_0021:  cgt
+  IL_0023:  ldc.i4.0
+  IL_0024:  ceq
+  IL_0026:  brfalse    IL_004b
+  IL_002b:  ldloc.1
+  IL_002c:  callvirt   instance float32 neo.$delegate1::Invoke()
+  IL_0031:  ldloc.2
+  IL_0032:  call       float32 [mscorlib]System.Math::Max(float32,
+                                                          float32)
+  IL_0037:  stloc.2
+  IL_0038:  ldloc.3
+  IL_0039:  ldloc.s    '$tfr_1:831:832'
+  IL_003b:  clt
+  IL_003d:  brfalse    IL_004b
+  IL_0042:  ldloc.3
+  IL_0043:  ldc.i4.1
+  IL_0044:  add
+  IL_0045:  stloc.3
+  IL_0046:  br         IL_002b
+  IL_004b:  ldloc.2
+  IL_004c:  stloc.0
+  IL_004d:  ldloc.0
+  IL_004e:  ret
+} // end of method neo::max
+
+.method public static class neo.ndarray  multiply(float32 a,
+                                                  class neo.ndarray b) cil managed
+{
+  // Code size       11 (0xb)
+  .maxstack  2
+  .locals init ([0] class neo.ndarray $rv_multiply,
+           [1] class neo.neo $class_var$0)
+  IL_0000:  nop
+  IL_0001:  ldarg.1
+  IL_0002:  ldarg.0
+  IL_0003:  call       class neo.ndarray neo.ndarray::op_Multiply(class neo.ndarray,
+                                                                  float32)
+  IL_0008:  stloc.0
+  IL_0009:  ldloc.0
+  IL_000a:  ret
+} // end of method neo::multiply
+
+.method public static class neo.ndarray  multiply(class neo.ndarray a,
+                                                  float32 b) cil managed
+{
+  // Code size       11 (0xb)
+  .maxstack  2
+  .locals init ([0] class neo.ndarray $rv_multiply,
+           [1] class neo.neo $class_var$0)
+  IL_0000:  nop
+  IL_0001:  ldarg.0
+  IL_0002:  ldarg.1
+  IL_0003:  call       class neo.ndarray neo.ndarray::op_Multiply(class neo.ndarray,
+                                                                  float32)
+  IL_0008:  stloc.0
+  IL_0009:  ldloc.0
+  IL_000a:  ret
+} // end of method neo::multiply
+
+.method public static class neo.ndarray  multiply(class neo.ndarray a,
+                                                  class neo.ndarray b) cil managed
+{
+  // Code size       156 (0x9c)
+  .maxstack  9
+  .locals init ([0] class neo.ndarray $rv_multiply,
+           [1] int32 max_len,
+           [2] int32[] max_shape,
+           [3] class neo.$delegate1 'item_gen_a:859:878',
+           [4] class neo.$delegate1 'item_gen_b:859:878',
+           [5] float32[] 'tmp_result:859:878',
+           [6] int32 'index:875:876',
+           [7] int32 '$tfr_1:875:876',
+           [8] class neo.neo $class_var$0)
+  IL_0000:  nop
+  IL_0001:  ldarg.0
+  IL_0002:  ldfld      int32 neo.ndarray::length
+  IL_0007:  ldarg.1
+  IL_0008:  ldfld      int32 neo.ndarray::length
+  IL_000d:  cgt
+  IL_000f:  brfalse    IL_0028
+  IL_0014:  nop
+  IL_0015:  ldarg.0
+  IL_0016:  ldfld      int32 neo.ndarray::length
+  IL_001b:  stloc.1
+  IL_001c:  ldarg.0
+  IL_001d:  ldfld      int32[] neo.ndarray::shape
+  IL_0022:  stloc.2
+  IL_0023:  br         IL_0037
+  IL_0028:  nop
+  IL_0029:  ldarg.1
+  IL_002a:  ldfld      int32 neo.ndarray::length
+  IL_002f:  stloc.1
+  IL_0030:  ldarg.1
+  IL_0031:  ldfld      int32[] neo.ndarray::shape
+  IL_0036:  stloc.2
+  IL_0037:  ldarg.0
+  IL_0038:  callvirt   instance class neo.$delegate1 neo.ndarray::__get_item_generator()
+  IL_003d:  stloc.3
+  IL_003e:  ldarg.1
+  IL_003f:  callvirt   instance class neo.$delegate1 neo.ndarray::__get_item_generator()
+  IL_0044:  stloc.s    'item_gen_b:859:878'
+  IL_0046:  ldloc.1
+  IL_0047:  newarr     [mscorlib]System.Single
+  IL_004c:  stloc.s    'tmp_result:859:878'
+  IL_004e:  nop
+  IL_004f:  ldc.i4.0
+  IL_0050:  stloc.s    'index:875:876'
+  IL_0052:  ldloc.1
+  IL_0053:  ldc.i4.1
+  IL_0054:  sub
+  IL_0055:  stloc.s    '$tfr_1:875:876'
+  IL_0057:  ldc.i4.0
+  IL_0058:  stloc.s    'index:875:876'
+  IL_005a:  ldloc.s    'index:875:876'
+  IL_005c:  ldloc.s    '$tfr_1:875:876'
+  IL_005e:  cgt
+  IL_0060:  ldc.i4.0
+  IL_0061:  ceq
+  IL_0063:  brfalse    IL_0091
+  IL_0068:  ldloc.s    'tmp_result:859:878'
+  IL_006a:  ldloc.s    'index:875:876'
+  IL_006c:  ldloc.3
+  IL_006d:  callvirt   instance float32 neo.$delegate1::Invoke()
+  IL_0072:  ldloc.s    'item_gen_b:859:878'
+  IL_0074:  callvirt   instance float32 neo.$delegate1::Invoke()
+  IL_0079:  mul
+  IL_007a:  stelem.r4
+  IL_007b:  ldloc.s    'index:875:876'
+  IL_007d:  ldloc.s    '$tfr_1:875:876'
+  IL_007f:  clt
+  IL_0081:  brfalse    IL_0091
+  IL_0086:  ldloc.s    'index:875:876'
+  IL_0088:  ldc.i4.1
+  IL_0089:  add
+  IL_008a:  stloc.s    'index:875:876'
+  IL_008c:  br         IL_0068
+  IL_0091:  ldloc.s    'tmp_result:859:878'
+  IL_0093:  ldloc.2
+  IL_0094:  newobj     instance void neo.ndarray::.ctor(float32[],
+                                                        int32[])
+  IL_0099:  stloc.0
+  IL_009a:  ldloc.0
+  IL_009b:  ret
+} // end of method neo::multiply
+
+.method public static float32  multiply(float32 a,
+                                        float32 b) cil managed
+{
+  // Code size       7 (0x7)
+  .maxstack  2
+  .locals init ([0] float32 $rv_multiply,
+           [1] class neo.neo $class_var$0)
+  IL_0000:  nop
+  IL_0001:  ldarg.0
+  IL_0002:  ldarg.1
+  IL_0003:  mul
+  IL_0004:  stloc.0
+  IL_0005:  ldloc.0
+  IL_0006:  ret
+} // end of method neo::multiply
+
+.method public static class neo.ndarray  random_ndarray(int32[] shape) cil managed
+{
+  // Code size       86 (0x56)
+  .maxstack  6
+  .locals init ([0] class neo.ndarray $rv_random_ndarray,
+           [1] float32[] 'tmp_result:593:598',
+           [2] int32 'index:595:596',
+           [3] int32 '$tfr_1:595:596',
+           [4] class neo.neo $class_var$0)
+  IL_0000:  nop
+  IL_0001:  ldarg.0
+  IL_0002:  call       int64 $PABCSystem_implementation______.PABCSystem_implementation______::Product(class [mscorlib]System.Collections.Generic.IEnumerable`1<int32>)
+  IL_0007:  conv.i4
+  IL_0008:  newarr     [mscorlib]System.Single
+  IL_000d:  stloc.1
+  IL_000e:  nop
+  IL_000f:  ldc.i4.0
+  IL_0010:  stloc.2
+  IL_0011:  ldarg.0
+  IL_0012:  call       int64 $PABCSystem_implementation______.PABCSystem_implementation______::Product(class [mscorlib]System.Collections.Generic.IEnumerable`1<int32>)
+  IL_0017:  ldc.i8     0x1
+  IL_0020:  sub
+  IL_0021:  conv.i4
+  IL_0022:  stloc.3
+  IL_0023:  ldc.i4.0
+  IL_0024:  stloc.2
+  IL_0025:  ldloc.2
+  IL_0026:  ldloc.3
+  IL_0027:  cgt
+  IL_0029:  ldc.i4.0
+  IL_002a:  ceq
+  IL_002c:  brfalse    IL_004c
+  IL_0031:  ldloc.1
+  IL_0032:  ldloc.2
+  IL_0033:  call       float64 $PABCSystem.PABCSystem::Random()
+  IL_0038:  conv.r4
+  IL_0039:  stelem.r4
+  IL_003a:  ldloc.2
+  IL_003b:  ldloc.3
+  IL_003c:  clt
+  IL_003e:  brfalse    IL_004c
+  IL_0043:  ldloc.2
+  IL_0044:  ldc.i4.1
+  IL_0045:  add
+  IL_0046:  stloc.2
+  IL_0047:  br         IL_0031
+  IL_004c:  ldloc.1
+  IL_004d:  ldarg.0
+  IL_004e:  newobj     instance void neo.ndarray::.ctor(float32[],
+                                                        int32[])
+  IL_0053:  stloc.0
+  IL_0054:  ldloc.0
+  IL_0055:  ret
+} // end of method neo::random_ndarray
+
+.method public static class neo.ndarray  reshape(class neo.ndarray self,
+                                                 int32[] shape) cil managed
+{
+  // Code size       16 (0x10)
+  .maxstack  3
+  .locals init ([0] class neo.ndarray $rv_reshape,
+           [1] class neo.neo $class_var$0)
+  IL_0000:  nop
+  IL_0001:  ldarg.0
+  IL_0002:  ldfld      float32[] neo.ndarray::'value'
+  IL_0007:  ldarg.1
+  IL_0008:  newobj     instance void neo.ndarray::.ctor(float32[],
+                                                        int32[])
+  IL_000d:  stloc.0
+  IL_000e:  ldloc.0
+  IL_000f:  ret
+} // end of method neo::reshape
+
+.method public static class neo.ndarray  sum(class neo.ndarray self,
+                                             [opt] int32 axis) cil managed
+{
+  .param [2] = int32(0xFFFFFFFF)
+  // Code size       526 (0x20e)
+  .maxstack  29
+  .locals init ([0] class neo.ndarray $rv_sum,
+           [1] float32[] 'tmp_result:890:894',
+           [2] int32[] 'tmp_result_shape:890:894',
+           [3] float32[] V_3,
+           [4] float32[] V_4,
+           [5] int32[] V_5,
+           [6] int32[] V_6,
+           [7] int32[] 'sum_array_shape:896:932',
+           [8] int32 'cnt:896:932',
+           [9] float32[] 'sum_arr:896:932',
+           [10] int32[] 'sum_iter_array:896:932',
+           [11] class neo.$delegate0 'index_gen:896:932',
+           [12] class neo.$delegate1 'item_gen:896:932',
+           [13] int32 'index:898:905',
+           [14] int32 '$tfr_1:898:905',
+           [15] int32 'i:912:930',
+           [16] int32 '$tfr_2:912:930',
+           [17] int32[] 'arr:913:930',
+           [18] int32[] 'new_arr:913:930',
+           [19] int32 'sum_cnt:913:930',
+           [20] int32 'sum_acc:913:930',
+           [21] int32 'j:917:924',
+           [22] int32 '$tfr_3:917:924',
+           [23] int32 'j:927:928',
+           [24] int32 '$tfr_4:927:928',
+           [25] int32 V_25,
+           [26] class neo.neo $class_var$0)
+  IL_0000:  nop
+  IL_0001:  ldarg.0
+  IL_0002:  ldfld      int32 neo.ndarray::rank
+  IL_0007:  ldc.i4.1
+  IL_0008:  ceq
+  IL_000a:  brtrue     IL_001a
+  IL_000f:  ldc.i4.0
+  IL_0010:  ldarg.1
+  IL_0011:  ldc.i4.m1
+  IL_0012:  ceq
+  IL_0014:  or
+  IL_0015:  br         IL_001b
+  IL_001a:  ldc.i4.1
+  IL_001b:  brfalse    IL_005d
+  IL_0020:  nop
+  IL_0021:  ldc.i4.1
+  IL_0022:  newarr     [mscorlib]System.Single
+  IL_0027:  stloc.3
+  IL_0028:  ldloc.3
+  IL_0029:  stloc.s    V_4
+  IL_002b:  ldloc.s    V_4
+  IL_002d:  ldc.i4.0
+  IL_002e:  ldarg.0
+  IL_002f:  ldfld      float32[] neo.ndarray::'value'
+  IL_0034:  call       float32 [System.Core]System.Linq.Enumerable::Sum(class [mscorlib]System.Collections.Generic.IEnumerable`1<float32>)
+  IL_0039:  stelem.r4
+  IL_003a:  ldloc.3
+  IL_003b:  stloc.1
+  IL_003c:  ldc.i4.1
+  IL_003d:  newarr     [mscorlib]System.Int32
+  IL_0042:  stloc.s    V_5
+  IL_0044:  ldloc.s    V_5
+  IL_0046:  stloc.s    V_6
+  IL_0048:  ldloc.s    V_6
+  IL_004a:  ldc.i4.0
+  IL_004b:  ldc.i4.1
+  IL_004c:  stelem.i4
+  IL_004d:  ldloc.s    V_5
+  IL_004f:  stloc.2
+  IL_0050:  ldloc.1
+  IL_0051:  ldloc.2
+  IL_0052:  newobj     instance void neo.ndarray::.ctor(float32[],
+                                                        int32[])
+  IL_0057:  stloc.0
+  IL_0058:  br         IL_020c
+  IL_005d:  nop
+  IL_005e:  ldarg.0
+  IL_005f:  ldfld      int32 neo.ndarray::rank
+  IL_0064:  ldc.i4.1
+  IL_0065:  sub
+  IL_0066:  newarr     [mscorlib]System.Int32
+  IL_006b:  stloc.s    'sum_array_shape:896:932'
+  IL_006d:  ldc.i4.0
+  IL_006e:  stloc.s    'cnt:896:932'
+  IL_0070:  nop
+  IL_0071:  ldc.i4.0
+  IL_0072:  stloc.s    'index:898:905'
+  IL_0074:  ldarg.0
+  IL_0075:  ldfld      int32 neo.ndarray::rank
+  IL_007a:  ldc.i4.1
+  IL_007b:  sub
+  IL_007c:  stloc.s    '$tfr_1:898:905'
+  IL_007e:  ldc.i4.0
+  IL_007f:  stloc.s    'index:898:905'
+  IL_0081:  ldloc.s    'index:898:905'
+  IL_0083:  ldloc.s    '$tfr_1:898:905'
+  IL_0085:  cgt
+  IL_0087:  ldc.i4.0
+  IL_0088:  ceq
+  IL_008a:  brfalse    IL_00d1
+  IL_008f:  ldloc.s    'index:898:905'
+  IL_0091:  ldarg.1
+  IL_0092:  ceq
+  IL_0094:  ldc.i4.0
+  IL_0095:  ceq
+  IL_0097:  brfalse    IL_00b6
+  IL_009c:  nop
+  IL_009d:  ldloc.s    'sum_array_shape:896:932'
+  IL_009f:  ldloc.s    'cnt:896:932'
+  IL_00a1:  ldarg.0
+  IL_00a2:  ldfld      int32[] neo.ndarray::shape
+  IL_00a7:  ldloc.s    'index:898:905'
+  IL_00a9:  ldelem.i4
+  IL_00aa:  stelem.i4
+  IL_00ab:  ldloc.s    'cnt:896:932'
+  IL_00ad:  ldc.i4.1
+  IL_00ae:  add
+  IL_00af:  stloc.s    'cnt:896:932'
+  IL_00b1:  br         IL_00bb
+  IL_00b6:  br         IL_00bb
+  IL_00bb:  ldloc.s    'index:898:905'
+  IL_00bd:  ldloc.s    '$tfr_1:898:905'
+  IL_00bf:  clt
+  IL_00c1:  brfalse    IL_00d1
+  IL_00c6:  ldloc.s    'index:898:905'
+  IL_00c8:  ldc.i4.1
+  IL_00c9:  add
+  IL_00ca:  stloc.s    'index:898:905'
+  IL_00cc:  br         IL_008f
+  IL_00d1:  ldloc.s    'sum_array_shape:896:932'
+  IL_00d3:  call       int64 $PABCSystem_implementation______.PABCSystem_implementation______::Product(class [mscorlib]System.Collections.Generic.IEnumerable`1<int32>)
+  IL_00d8:  conv.i4
+  IL_00d9:  newarr     [mscorlib]System.Single
+  IL_00de:  stloc.s    'sum_arr:896:932'
+  IL_00e0:  ldloc.s    'sum_array_shape:896:932'
+  IL_00e2:  call       int32[] neo.ndarray::__get_iter_array(int32[])
+  IL_00e7:  stloc.s    'sum_iter_array:896:932'
+  IL_00e9:  ldarg.0
+  IL_00ea:  callvirt   instance class neo.$delegate0 neo.ndarray::__get_index_generator()
+  IL_00ef:  stloc.s    'index_gen:896:932'
+  IL_00f1:  ldarg.0
+  IL_00f2:  callvirt   instance class neo.$delegate1 neo.ndarray::__get_item_generator()
+  IL_00f7:  stloc.s    'item_gen:896:932'
+  IL_00f9:  nop
+  IL_00fa:  ldc.i4.0
+  IL_00fb:  stloc.s    'i:912:930'
+  IL_00fd:  ldarg.0
+  IL_00fe:  ldfld      int32 neo.ndarray::length
+  IL_0103:  ldc.i4.1
+  IL_0104:  sub
+  IL_0105:  stloc.s    '$tfr_2:912:930'
+  IL_0107:  ldc.i4.0
+  IL_0108:  stloc.s    'i:912:930'
+  IL_010a:  ldloc.s    'i:912:930'
+  IL_010c:  ldloc.s    '$tfr_2:912:930'
+  IL_010e:  cgt
+  IL_0110:  ldc.i4.0
+  IL_0111:  ceq
+  IL_0113:  brfalse    IL_0202
+  IL_0118:  nop
+  IL_0119:  ldloc.s    'index_gen:896:932'
+  IL_011b:  callvirt   instance int32[] neo.$delegate0::Invoke()
+  IL_0120:  stloc.s    'arr:913:930'
+  IL_0122:  ldarg.0
+  IL_0123:  ldfld      int32 neo.ndarray::rank
+  IL_0128:  ldc.i4.1
+  IL_0129:  sub
+  IL_012a:  newarr     [mscorlib]System.Int32
+  IL_012f:  stloc.s    'new_arr:913:930'
+  IL_0131:  ldc.i4.0
+  IL_0132:  stloc.s    'sum_cnt:913:930'
+  IL_0134:  nop
+  IL_0135:  ldc.i4.0
+  IL_0136:  stloc.s    'j:917:924'
+  IL_0138:  ldarg.0
+  IL_0139:  ldfld      int32 neo.ndarray::rank
+  IL_013e:  ldc.i4.1
+  IL_013f:  sub
+  IL_0140:  stloc.s    '$tfr_3:917:924'
+  IL_0142:  ldc.i4.0
+  IL_0143:  stloc.s    'j:917:924'
+  IL_0145:  ldloc.s    'j:917:924'
+  IL_0147:  ldloc.s    '$tfr_3:917:924'
+  IL_0149:  cgt
+  IL_014b:  ldc.i4.0
+  IL_014c:  ceq
+  IL_014e:  brfalse    IL_018e
+  IL_0153:  ldloc.s    'j:917:924'
+  IL_0155:  ldarg.1
+  IL_0156:  ceq
+  IL_0158:  brfalse    IL_0167
+  IL_015d:  br         IL_0178
+  IL_0162:  br         IL_0178
+  IL_0167:  nop
+  IL_0168:  ldloc.s    'new_arr:913:930'
+  IL_016a:  ldloc.s    'sum_cnt:913:930'
+  IL_016c:  ldloc.s    'arr:913:930'
+  IL_016e:  ldloc.s    'j:917:924'
+  IL_0170:  ldelem.i4
+  IL_0171:  stelem.i4
+  IL_0172:  ldloc.s    'sum_cnt:913:930'
+  IL_0174:  ldc.i4.1
+  IL_0175:  add
+  IL_0176:  stloc.s    'sum_cnt:913:930'
+  IL_0178:  ldloc.s    'j:917:924'
+  IL_017a:  ldloc.s    '$tfr_3:917:924'
+  IL_017c:  clt
+  IL_017e:  brfalse    IL_018e
+  IL_0183:  ldloc.s    'j:917:924'
+  IL_0185:  ldc.i4.1
+  IL_0186:  add
+  IL_0187:  stloc.s    'j:917:924'
+  IL_0189:  br         IL_0153
+  IL_018e:  ldc.i4.0
+  IL_018f:  stloc.s    'sum_acc:913:930'
+  IL_0191:  nop
+  IL_0192:  ldc.i4.0
+  IL_0193:  stloc.s    'j:927:928'
+  IL_0195:  ldarg.0
+  IL_0196:  ldfld      int32 neo.ndarray::rank
+  IL_019b:  ldc.i4.2
+  IL_019c:  sub
+  IL_019d:  stloc.s    '$tfr_4:927:928'
+  IL_019f:  ldc.i4.0
+  IL_01a0:  stloc.s    'j:927:928'
+  IL_01a2:  ldloc.s    'j:927:928'
+  IL_01a4:  ldloc.s    '$tfr_4:927:928'
+  IL_01a6:  cgt
+  IL_01a8:  ldc.i4.0
+  IL_01a9:  ceq
+  IL_01ab:  brfalse    IL_01d6
+  IL_01b0:  ldloc.s    'sum_acc:913:930'
+  IL_01b2:  ldloc.s    'sum_iter_array:896:932'
+  IL_01b4:  ldloc.s    'j:927:928'
+  IL_01b6:  ldelem.i4
+  IL_01b7:  ldloc.s    'new_arr:913:930'
+  IL_01b9:  ldloc.s    'j:927:928'
+  IL_01bb:  ldelem.i4
+  IL_01bc:  mul
+  IL_01bd:  add
+  IL_01be:  stloc.s    'sum_acc:913:930'
+  IL_01c0:  ldloc.s    'j:927:928'
+  IL_01c2:  ldloc.s    '$tfr_4:927:928'
+  IL_01c4:  clt
+  IL_01c6:  brfalse    IL_01d6
+  IL_01cb:  ldloc.s    'j:927:928'
+  IL_01cd:  ldc.i4.1
+  IL_01ce:  add
+  IL_01cf:  stloc.s    'j:927:928'
+  IL_01d1:  br         IL_01b0
+  IL_01d6:  ldloc.s    'sum_arr:896:932'
+  IL_01d8:  ldloc.s    'sum_acc:913:930'
+  IL_01da:  stloc.s    V_25
+  IL_01dc:  ldloc.s    V_25
+  IL_01de:  ldloc.s    'sum_arr:896:932'
+  IL_01e0:  ldloc.s    V_25
+  IL_01e2:  ldelem.r4
+  IL_01e3:  ldloc.s    'item_gen:896:932'
+  IL_01e5:  callvirt   instance float32 neo.$delegate1::Invoke()
+  IL_01ea:  add
+  IL_01eb:  stelem.r4
+  IL_01ec:  ldloc.s    'i:912:930'
+  IL_01ee:  ldloc.s    '$tfr_2:912:930'
+  IL_01f0:  clt
+  IL_01f2:  brfalse    IL_0202
+  IL_01f7:  ldloc.s    'i:912:930'
+  IL_01f9:  ldc.i4.1
+  IL_01fa:  add
+  IL_01fb:  stloc.s    'i:912:930'
+  IL_01fd:  br         IL_0118
+  IL_0202:  ldloc.s    'sum_arr:896:932'
+  IL_0204:  ldloc.s    'sum_array_shape:896:932'
+  IL_0206:  newobj     instance void neo.ndarray::.ctor(float32[],
+                                                        int32[])
+  IL_020b:  stloc.0
+  IL_020c:  ldloc.0
+  IL_020d:  ret
+} // end of method neo::sum
+
+.method public static class neo.ndarray  transpose(class neo.ndarray self,
+                                                   int32[] axes) cil managed
+{
+  // Code size       448 (0x1c0)
+  .maxstack  24
+  .locals init ([0] class neo.ndarray $rv_transpose,
+           [1] float32[] 'tmp_value:937:968',
+           [2] int32[] 'tmp_shape:937:968',
+           [3] int32[] 'tmp_iter_array:937:968',
+           [4] class neo.$delegate0 'index_gen:937:968',
+           [5] class neo.$delegate1 'item_gen:937:968',
+           [6] int32 'index:941:942',
+           [7] int32 '$tfr_1:941:942',
+           [8] int32 'index:947:948',
+           [9] int32 '$tfr_2:947:948',
+           [10] int32 'i:954:966',
+           [11] int32 '$tfr_3:954:966',
+           [12] int32[] 'arr:955:966',
+           [13] int32[] 'new_arr:955:966',
+           [14] int32 'acc:955:966',
+           [15] int32 'j:959:960',
+           [16] int32 '$tfr_4:959:960',
+           [17] int32 'j:963:964',
+           [18] int32 '$tfr_5:963:964',
+           [19] class neo.neo $class_var$0)
+  IL_0000:  nop
+  IL_0001:  ldarg.1
+  IL_0002:  ldnull
+  IL_0003:  ceq
+  IL_0005:  brfalse    IL_0064
+  IL_000a:  nop
+  IL_000b:  ldarg.0
+  IL_000c:  ldfld      int32 neo.ndarray::rank
+  IL_0011:  newarr     [mscorlib]System.Int32
+  IL_0016:  starg.s    axes
+  IL_0018:  nop
+  IL_0019:  nop
+  IL_001a:  nop
+  IL_001b:  nop
+  IL_001c:  ldc.i4.0
+  IL_001d:  stloc.s    'index:941:942'
+  IL_001f:  ldarg.0
+  IL_0020:  ldfld      int32 neo.ndarray::rank
+  IL_0025:  ldc.i4.1
+  IL_0026:  sub
+  IL_0027:  stloc.s    '$tfr_1:941:942'
+  IL_0029:  ldc.i4.0
+  IL_002a:  stloc.s    'index:941:942'
+  IL_002c:  ldloc.s    'index:941:942'
+  IL_002e:  ldloc.s    '$tfr_1:941:942'
+  IL_0030:  cgt
+  IL_0032:  ldc.i4.0
+  IL_0033:  ceq
+  IL_0035:  brfalse    IL_005f
+  IL_003a:  ldarg.1
+  IL_003b:  ldloc.s    'index:941:942'
+  IL_003d:  ldarg.0
+  IL_003e:  ldfld      int32 neo.ndarray::rank
+  IL_0043:  ldloc.s    'index:941:942'
+  IL_0045:  sub
+  IL_0046:  ldc.i4.1
+  IL_0047:  sub
+  IL_0048:  stelem.i4
+  IL_0049:  ldloc.s    'index:941:942'
+  IL_004b:  ldloc.s    '$tfr_1:941:942'
+  IL_004d:  clt
+  IL_004f:  brfalse    IL_005f
+  IL_0054:  ldloc.s    'index:941:942'
+  IL_0056:  ldc.i4.1
+  IL_0057:  add
+  IL_0058:  stloc.s    'index:941:942'
+  IL_005a:  br         IL_003a
+  IL_005f:  br         IL_0064
+  IL_0064:  ldarg.0
+  IL_0065:  ldfld      int32 neo.ndarray::length
+  IL_006a:  newarr     [mscorlib]System.Single
+  IL_006f:  stloc.1
+  IL_0070:  ldarg.0
+  IL_0071:  ldfld      int32 neo.ndarray::rank
+  IL_0076:  newarr     [mscorlib]System.Int32
+  IL_007b:  stloc.2
+  IL_007c:  nop
+  IL_007d:  ldc.i4.0
+  IL_007e:  stloc.s    'index:947:948'
+  IL_0080:  ldarg.0
+  IL_0081:  ldfld      int32 neo.ndarray::rank
+  IL_0086:  ldc.i4.1
+  IL_0087:  sub
+  IL_0088:  stloc.s    '$tfr_2:947:948'
+  IL_008a:  ldc.i4.0
+  IL_008b:  stloc.s    'index:947:948'
+  IL_008d:  ldloc.s    'index:947:948'
+  IL_008f:  ldloc.s    '$tfr_2:947:948'
+  IL_0091:  cgt
+  IL_0093:  ldc.i4.0
+  IL_0094:  ceq
+  IL_0096:  brfalse    IL_00c0
+  IL_009b:  ldloc.2
+  IL_009c:  ldloc.s    'index:947:948'
+  IL_009e:  ldarg.0
+  IL_009f:  ldfld      int32[] neo.ndarray::shape
+  IL_00a4:  ldarg.1
+  IL_00a5:  ldloc.s    'index:947:948'
+  IL_00a7:  ldelem.i4
+  IL_00a8:  ldelem.i4
+  IL_00a9:  stelem.i4
+  IL_00aa:  ldloc.s    'index:947:948'
+  IL_00ac:  ldloc.s    '$tfr_2:947:948'
+  IL_00ae:  clt
+  IL_00b0:  brfalse    IL_00c0
+  IL_00b5:  ldloc.s    'index:947:948'
+  IL_00b7:  ldc.i4.1
+  IL_00b8:  add
+  IL_00b9:  stloc.s    'index:947:948'
+  IL_00bb:  br         IL_009b
+  IL_00c0:  ldloc.2
+  IL_00c1:  call       int32[] neo.ndarray::__get_iter_array(int32[])
+  IL_00c6:  stloc.3
+  IL_00c7:  ldarg.0
+  IL_00c8:  callvirt   instance class neo.$delegate0 neo.ndarray::__get_index_generator()
+  IL_00cd:  stloc.s    'index_gen:937:968'
+  IL_00cf:  ldarg.0
+  IL_00d0:  callvirt   instance class neo.$delegate1 neo.ndarray::__get_item_generator()
+  IL_00d5:  stloc.s    'item_gen:937:968'
+  IL_00d7:  nop
+  IL_00d8:  ldc.i4.0
+  IL_00d9:  stloc.s    'i:954:966'
+  IL_00db:  ldarg.0
+  IL_00dc:  ldfld      int32 neo.ndarray::length
+  IL_00e1:  ldc.i4.1
+  IL_00e2:  sub
+  IL_00e3:  stloc.s    '$tfr_3:954:966'
+  IL_00e5:  ldc.i4.0
+  IL_00e6:  stloc.s    'i:954:966'
+  IL_00e8:  ldloc.s    'i:954:966'
+  IL_00ea:  ldloc.s    '$tfr_3:954:966'
+  IL_00ec:  cgt
+  IL_00ee:  ldc.i4.0
+  IL_00ef:  ceq
+  IL_00f1:  brfalse    IL_01b6
+  IL_00f6:  nop
+  IL_00f7:  ldloc.s    'index_gen:937:968'
+  IL_00f9:  callvirt   instance int32[] neo.$delegate0::Invoke()
+  IL_00fe:  stloc.s    'arr:955:966'
+  IL_0100:  ldarg.0
+  IL_0101:  ldfld      int32 neo.ndarray::rank
+  IL_0106:  newarr     [mscorlib]System.Int32
+  IL_010b:  stloc.s    'new_arr:955:966'
+  IL_010d:  nop
+  IL_010e:  ldc.i4.0
+  IL_010f:  stloc.s    'j:959:960'
+  IL_0111:  ldarg.0
+  IL_0112:  ldfld      int32 neo.ndarray::rank
+  IL_0117:  ldc.i4.1
+  IL_0118:  sub
+  IL_0119:  stloc.s    '$tfr_4:959:960'
+  IL_011b:  ldc.i4.0
+  IL_011c:  stloc.s    'j:959:960'
+  IL_011e:  ldloc.s    'j:959:960'
+  IL_0120:  ldloc.s    '$tfr_4:959:960'
+  IL_0122:  cgt
+  IL_0124:  ldc.i4.0
+  IL_0125:  ceq
+  IL_0127:  brfalse    IL_014e
+  IL_012c:  ldloc.s    'new_arr:955:966'
+  IL_012e:  ldloc.s    'j:959:960'
+  IL_0130:  ldloc.s    'arr:955:966'
+  IL_0132:  ldarg.1
+  IL_0133:  ldloc.s    'j:959:960'
+  IL_0135:  ldelem.i4
+  IL_0136:  ldelem.i4
+  IL_0137:  stelem.i4
+  IL_0138:  ldloc.s    'j:959:960'
+  IL_013a:  ldloc.s    '$tfr_4:959:960'
+  IL_013c:  clt
+  IL_013e:  brfalse    IL_014e
+  IL_0143:  ldloc.s    'j:959:960'
+  IL_0145:  ldc.i4.1
+  IL_0146:  add
+  IL_0147:  stloc.s    'j:959:960'
+  IL_0149:  br         IL_012c
+  IL_014e:  ldc.i4.0
+  IL_014f:  stloc.s    'acc:955:966'
+  IL_0151:  nop
+  IL_0152:  ldc.i4.0
+  IL_0153:  stloc.s    'j:963:964'
+  IL_0155:  ldarg.0
+  IL_0156:  ldfld      int32 neo.ndarray::rank
+  IL_015b:  ldc.i4.1
+  IL_015c:  sub
+  IL_015d:  stloc.s    '$tfr_5:963:964'
+  IL_015f:  ldc.i4.0
+  IL_0160:  stloc.s    'j:963:964'
+  IL_0162:  ldloc.s    'j:963:964'
+  IL_0164:  ldloc.s    '$tfr_5:963:964'
+  IL_0166:  cgt
+  IL_0168:  ldc.i4.0
+  IL_0169:  ceq
+  IL_016b:  brfalse    IL_0195
+  IL_0170:  ldloc.s    'acc:955:966'
+  IL_0172:  ldloc.3
+  IL_0173:  ldloc.s    'j:963:964'
+  IL_0175:  ldelem.i4
+  IL_0176:  ldloc.s    'new_arr:955:966'
+  IL_0178:  ldloc.s    'j:963:964'
+  IL_017a:  ldelem.i4
+  IL_017b:  mul
+  IL_017c:  add
+  IL_017d:  stloc.s    'acc:955:966'
+  IL_017f:  ldloc.s    'j:963:964'
+  IL_0181:  ldloc.s    '$tfr_5:963:964'
+  IL_0183:  clt
+  IL_0185:  brfalse    IL_0195
+  IL_018a:  ldloc.s    'j:963:964'
+  IL_018c:  ldc.i4.1
+  IL_018d:  add
+  IL_018e:  stloc.s    'j:963:964'
+  IL_0190:  br         IL_0170
+  IL_0195:  ldloc.1
+  IL_0196:  ldloc.s    'acc:955:966'
+  IL_0198:  ldloc.s    'item_gen:937:968'
+  IL_019a:  callvirt   instance float32 neo.$delegate1::Invoke()
+  IL_019f:  stelem.r4
+  IL_01a0:  ldloc.s    'i:954:966'
+  IL_01a2:  ldloc.s    '$tfr_3:954:966'
+  IL_01a4:  clt
+  IL_01a6:  brfalse    IL_01b6
+  IL_01ab:  ldloc.s    'i:954:966'
+  IL_01ad:  ldc.i4.1
+  IL_01ae:  add
+  IL_01af:  stloc.s    'i:954:966'
+  IL_01b1:  br         IL_00f6
+  IL_01b6:  ldloc.1
+  IL_01b7:  ldloc.2
+  IL_01b8:  newobj     instance void neo.ndarray::.ctor(float32[],
+                                                        int32[])
+  IL_01bd:  stloc.0
+  IL_01be:  ldloc.0
+  IL_01bf:  ret
+} // end of method neo::transpose
