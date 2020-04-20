@@ -6,21 +6,21 @@ interface
         ndarray = class
       
         private
-            value: array of real;      
+            value: array of single;      
             iter_array: array of integer;
             shape: array of integer;
             length: integer;
             rank: integer;
             
-            constructor Create(value: array of real; shape: array of integer);
+            constructor Create(value: array of single; shape: array of integer);
             
             function __get_index_generator(): function(): array of integer;
             
-            function __get_item_generator(): function(): real;
+            function __get_item_generator(): function(): single;
             
-            function __get_item(index: array of integer): real;
+            function __get_item(index: array of integer): single;
             
-            procedure __set_item(val: real; index: array of integer);
+            procedure __set_item(val: single; index: array of integer);
             
             static function __get_iter_array(shape: array of integer): array of integer;
             
@@ -31,57 +31,57 @@ interface
             
             function ToString: string; override;
     
-            class function operator+(self_ndarray: ndarray; number: real): ndarray;
+            class function operator+(self_ndarray: ndarray; number: single): ndarray;
            
-            class function operator+(number: real; other_ndarray: ndarray): ndarray;
+            class function operator+(number: single; other_ndarray: ndarray): ndarray;
            
             class function operator+(self_ndarray, other_ndarray:ndarray): ndarray;
            
             class procedure operator+=(var self_ndarray, other_ndarray: ndarray);
             
-            class procedure operator+=(var self_ndarray: ndarray; number: real);
+            class procedure operator+=(var self_ndarray: ndarray; number: single);
             
             class function operator-(self_ndarray: ndarray): ndarray;
                         
-            class function operator-(self_ndarray: ndarray; number: real): ndarray;
+            class function operator-(self_ndarray: ndarray; number: single): ndarray;
             
-            class function operator-(number: real; self_ndarray: ndarray): ndarray;
+            class function operator-(number: single; self_ndarray: ndarray): ndarray;
                 
             class function operator-(self_ndarray, other_ndarray: ndarray): ndarray;
             
             class procedure operator-=(var self_ndarray: ndarray; other_ndarray: ndarray);
             
-            class procedure operator-=(var self_ndarray: ndarray; number: real);
+            class procedure operator-=(var self_ndarray: ndarray; number: single);
                 
-            class function operator*(self_ndarray: ndarray; number: real): ndarray;
+            class function operator*(self_ndarray: ndarray; number: single): ndarray;
 
-            class function operator*(number: real; other_ndarray: ndarray): ndarray;
+            class function operator*(number: single; other_ndarray: ndarray): ndarray;
             
             class function operator*(self_ndarray, other_ndarray: ndarray): ndarray;
             
-            class procedure operator*=(var self_ndarray: ndarray; const number: real);
+            class procedure operator*=(var self_ndarray: ndarray; const number: single);
 
             class procedure operator*=(var self_ndarray: ndarray; const other_ndarray: ndarray);
                 
-            class function operator/(self_ndarray: ndarray; number: real): ndarray;
+            class function operator/(self_ndarray: ndarray; number: single): ndarray;
             
-            class function operator/(number: real; self_ndarray: ndarray): ndarray;
+            class function operator/(number: single; self_ndarray: ndarray): ndarray;
             
             class function operator/(self_ndarray: ndarray; other_ndarray: ndarray): ndarray;
             
-            class procedure operator/=(var self_ndarray: ndarray; number: real);
+            class procedure operator/=(var self_ndarray: ndarray; number: single);
             
             class procedure operator/=(var self_ndarray: ndarray; other_ndarray: ndarray);
 
-            class function operator**(self_ndarray: ndarray; number: real): ndarray;
+            class function operator**(self_ndarray: ndarray; number: single): ndarray;
                 
-            class function operator**(number: real; self_ndarray: ndarray): ndarray;
+            class function operator**(number: single; self_ndarray: ndarray): ndarray;
                 
             class function operator**(self_ndarray: ndarray; other_ndarray: ndarray): ndarray;
                 
-            function get(params index: array of integer): real;
+            function get(params index: array of integer): single;
    
-            procedure assign(val: real; params index: array of integer);
+            procedure assign(val: single; params index: array of integer);
             
             function get_shape(): array of integer;
             
@@ -89,9 +89,9 @@ interface
             
             function dot(other_ndarray: ndarray; axis: integer := 0): ndarray;
             
-            procedure map(func: System.Func<real, real>);
+            procedure map(func: System.Func<single, single>);
             
-            function max(): real;
+            function max(): single;
             
             function reshape(shape: array of integer): ndarray;
             
@@ -112,13 +112,13 @@ interface
    
     function dot(self_ndarray: ndarray; other_ndarray: ndarray; axis: integer := 0): ndarray;
    
-    procedure map(self: ndarray; func: System.Func<real, real>);
+    procedure map(self: ndarray; func: System.Func<single, single>);
     
-    function max(self: ndarray): real;
+    function max(self: ndarray): single;
     
-    function multiply(a, b: real): real;
-    function multiply(a:real; b:ndarray): ndarray;
-    function multiply(a:ndarray; b:real): ndarray;
+    function multiply(a, b: single): single;
+    function multiply(a:single; b:ndarray): ndarray;
+    function multiply(a:ndarray; b:single): ndarray;
     function multiply(a,b:ndarray): ndarray;
     
     function random_ndarray(shape: array of integer): ndarray;
@@ -129,21 +129,28 @@ interface
          
     function transpose(self: ndarray; axes: array of integer := nil): ndarray;
          
+    function areEqual(a, b: array of integer): boolean;
         
 implementation
     
     function areEqual(a, b: array of integer): boolean;
     begin
+      if a.Length <> b.Length then
+        begin
+        result := false;
+        exit;
+        end;
+
       result := true;
-      if a.length <> b.length then
-        result := false
-      else
-        for var i := 0 to a.length-1 do
-          if a[i] <> b[i] then
-            begin
-            result := false;
-            break;
-            end;
+
+      var length := a.Length-1;
+      {$omp parallel for}
+      for var i := 0 to length do
+        if a[i] <> b[i] then
+          begin
+          result := false;
+          exit;
+          end;
     end;
     
     
@@ -182,9 +189,9 @@ implementation
     
     type itemGenerator = class
       index: integer;
-      value: array of real;
+      value: array of single;
 
-      function next(): real;
+      function next(): single;
       begin
         self.index += 1;
         if self.index = self.value.Length then
@@ -194,7 +201,7 @@ implementation
     end;
     
 
-    function ndarray.__get_item_generator(): function(): real;
+    function ndarray.__get_item_generator(): function(): single;
     begin
       var obj := new itemGenerator;
       obj.index := -1;
@@ -203,7 +210,7 @@ implementation
     end;
     
     
-    function ndarray.__get_item(index: array of integer): real;
+    function ndarray.__get_item(index: array of integer): single;
     begin
       var acc := 0;
       for var i := 0 to index.Length-1 do
@@ -212,7 +219,7 @@ implementation
     end;
     
     
-    procedure ndarray.__set_item(val: real; index: array of integer);
+    procedure ndarray.__set_item(val: single; index: array of integer);
     begin
       var acc := 0;
       for var i := 0 to index.Length-1 do
@@ -233,7 +240,7 @@ implementation
     
         
     {$region Конструкторы}
-    constructor ndarray.Create(value: array of real; shape: array of integer);
+    constructor ndarray.Create(value: array of single; shape: array of integer);
     begin
       self.value := value;
       self.shape := shape;
@@ -246,7 +253,7 @@ implementation
     constructor ndarray.Create(array_ptr: pointer; rank: integer);
     var tmp_ptr : ^^integer;
         shape_ptr : ^integer;
-        element_ptr : ^real;
+        element_ptr : ^single;
         size : ^integer;
     begin
       tmp_ptr := array_ptr;
@@ -267,10 +274,10 @@ implementation
           end;
       self.iter_array := ndarray.__get_iter_array(self.shape);
 
-      self.value := new real[size^];
+      self.value := new single[size^];
       for var i := 0 to size^-1 do
         begin
-        element_ptr := pointer(integer(array_ptr) + 16 + 2*4*(rank-(rank=1?1:0)) + i*sizeof(real));
+        element_ptr := pointer(integer(array_ptr) + 16 + 2*4*(rank-(rank=1?1:0)) + i*sizeof(single));
         self.value[i] := element_ptr^;
         end;
     end;
@@ -282,7 +289,7 @@ implementation
       self.rank := shape.Length;
       self.length := shape.Product;
       self.iter_array := ndarray.__get_iter_array(shape);
-      self.value := new real[self.length]; 
+      self.value := new single[self.length]; 
     end;  
     
     
@@ -315,9 +322,9 @@ implementation
     
         
     {$region Арифметические операции}    
-    class function ndarray.operator+(self_ndarray: ndarray; number: real): ndarray;
+    class function ndarray.operator+(self_ndarray: ndarray; number: single): ndarray;
     begin
-      var tmp_result := new real[self_ndarray.length];
+      var tmp_result := new single[self_ndarray.length];
       var item_gen_a := self_ndarray.__get_item_generator();
       for var index := 0 to self_ndarray.length-1 do
         tmp_result[index] := item_gen_a() + number;
@@ -325,7 +332,7 @@ implementation
     end;
         
         
-    class function ndarray.operator+(number: real; other_ndarray: ndarray): ndarray;
+    class function ndarray.operator+(number: single; other_ndarray: ndarray): ndarray;
     begin
       Result := other_ndarray + number;    
     end;
@@ -335,7 +342,7 @@ implementation
     begin
       if not areEqual(self_ndarray.shape, other_ndarray.shape) and (self_ndarray.rank <> 1) and (other_ndarray.rank <> 1) then
         raise new System.ArithmeticException('Wrong array sizes');
-      var tmp_result := new real[self_ndarray.length];
+      var tmp_result := new single[self_ndarray.length];
       var item_gen_a := self_ndarray.__get_item_generator();
       var item_gen_b := other_ndarray.__get_item_generator();
       for var index := 0 to self_ndarray.length-1 do
@@ -350,7 +357,7 @@ implementation
     end;
     
     
-    class procedure ndarray.operator+=(var self_ndarray:ndarray; number: real);
+    class procedure ndarray.operator+=(var self_ndarray:ndarray; number: single);
     begin
       self_ndarray := self_ndarray + number;
     end;
@@ -358,7 +365,7 @@ implementation
     
     class function ndarray.operator-(self_ndarray: ndarray): ndarray;
     begin
-      var tmp_result := new real[self_ndarray.length];
+      var tmp_result := new single[self_ndarray.length];
       var item_gen_a := self_ndarray.__get_item_generator();
       for var index := 0 to self_ndarray.length-1 do
         tmp_result[index] := -item_gen_a(); 
@@ -366,9 +373,9 @@ implementation
     end;
     
     
-    class function ndarray.operator-(self_ndarray: ndarray; number: real): ndarray;
+    class function ndarray.operator-(self_ndarray: ndarray; number: single): ndarray;
     begin
-      var tmp_result := new real[self_ndarray.length];
+      var tmp_result := new single[self_ndarray.length];
       var item_gen_a := self_ndarray.__get_item_generator();
       for var index := 0 to self_ndarray.length-1 do
         tmp_result[index] := item_gen_a() - number; 
@@ -376,7 +383,7 @@ implementation
     end;
         
             
-    class function ndarray.operator-(number: real; self_ndarray: ndarray): ndarray;
+    class function ndarray.operator-(number: single; self_ndarray: ndarray): ndarray;
     begin
       result := -self_ndarray + number;
     end;    
@@ -386,7 +393,7 @@ implementation
     begin
       if not areEqual(self_ndarray.shape, other_ndarray.shape) and (self_ndarray.rank <> 1) and (other_ndarray.rank <> 1) then
         raise new System.ArithmeticException('Wrong array sizes');
-      var tmp_result := new real[self_ndarray.length];
+      var tmp_result := new single[self_ndarray.length];
       var item_gen_a := self_ndarray.__get_item_generator();
       var item_gen_b := other_ndarray.__get_item_generator();
       for var index := 0 to self_ndarray.length-1 do
@@ -401,15 +408,15 @@ implementation
     end;
 
     
-    class procedure ndarray.operator-=(var self_ndarray: ndarray; number: real);
+    class procedure ndarray.operator-=(var self_ndarray: ndarray; number: single);
     begin
       self_ndarray := self_ndarray - number;
     end;
 
         
-    class function ndarray.operator*(self_ndarray: ndarray; number: real): ndarray;
+    class function ndarray.operator*(self_ndarray: ndarray; number: single): ndarray;
     begin
-      var tmp_result := new real[self_ndarray.length];
+      var tmp_result := new single[self_ndarray.length];
       var item_gen_a := self_ndarray.__get_item_generator();
       for var index := 0 to self_ndarray.length-1 do
         tmp_result[index] := item_gen_a() * number; 
@@ -417,7 +424,7 @@ implementation
     end;
 
 
-    class function ndarray.operator*(number: real; other_ndarray: ndarray): ndarray;
+    class function ndarray.operator*(number: single; other_ndarray: ndarray): ndarray;
     begin
       Result := other_ndarray * number;
     end;
@@ -427,7 +434,7 @@ implementation
     begin
       if not areEqual(self_ndarray.shape, other_ndarray.shape) and (self_ndarray.rank <> 1) and (other_ndarray.rank <> 1) then
         raise new System.ArithmeticException('Wrong array sizes');
-      var tmp_result := new real[self_ndarray.length];
+      var tmp_result := new single[self_ndarray.length];
       var item_gen_a := self_ndarray.__get_item_generator();
       var item_gen_b := other_ndarray.__get_item_generator();
       for var index := 0 to self_ndarray.length-1 do
@@ -436,7 +443,7 @@ implementation
     end;
             
             
-    class procedure ndarray.operator*=(var self_ndarray: ndarray; number: real);
+    class procedure ndarray.operator*=(var self_ndarray: ndarray; number: single);
     begin
       self_ndarray := self_ndarray * number;
     end;
@@ -448,11 +455,11 @@ implementation
     end;
 
 
-    class function ndarray.operator/(self_ndarray: ndarray; number: real): ndarray;
+    class function ndarray.operator/(self_ndarray: ndarray; number: single): ndarray;
     begin
       if number = 0 then
         raise new System.ArithmeticException('ZeroDivisionError');
-      var tmp_result := new real[self_ndarray.length];
+      var tmp_result := new single[self_ndarray.length];
       var item_gen_a := self_ndarray.__get_item_generator();
       for var index := 0 to self_ndarray.length-1 do
         tmp_result[index] := item_gen_a() / number; 
@@ -460,9 +467,9 @@ implementation
     end;
 
     
-    class function ndarray.operator/(number: real; self_ndarray: ndarray): ndarray;
+    class function ndarray.operator/(number: single; self_ndarray: ndarray): ndarray;
     begin
-      var tmp_result := new real[self_ndarray.length];
+      var tmp_result := new single[self_ndarray.length];
       var item_gen_a := self_ndarray.__get_item_generator();
       for var index := 0 to self_ndarray.length-1 do
         tmp_result[index] := number / item_gen_a(); 
@@ -474,7 +481,7 @@ implementation
     begin
       if not areEqual(self_ndarray.shape, other_ndarray.shape) and (self_ndarray.rank <> 1) and (other_ndarray.rank <> 1) then
         raise new System.ArithmeticException('Wrong array sizes');
-      var tmp_result := new real[self_ndarray.length];
+      var tmp_result := new single[self_ndarray.length];
       var item_gen_a := self_ndarray.__get_item_generator();
       var item_gen_b := other_ndarray.__get_item_generator();
       for var index := 0 to self_ndarray.length-1 do
@@ -483,7 +490,7 @@ implementation
     end;
 
 
-    class procedure ndarray.operator/=(var self_ndarray: ndarray; number: real);
+    class procedure ndarray.operator/=(var self_ndarray: ndarray; number: single);
     begin
       self_ndarray := self_ndarray / number;
     end;
@@ -495,22 +502,22 @@ implementation
     end;
 
 
-    class function ndarray.operator**(self_ndarray: ndarray; number: real): ndarray;
+    class function ndarray.operator**(self_ndarray: ndarray; number: single): ndarray;
     begin
-      var tmp_result := new real[self_ndarray.length];
+      var tmp_result := new single[self_ndarray.length];
       var item_gen_a := self_ndarray.__get_item_generator();
       for var index := 0 to self_ndarray.length-1 do
-        tmp_result[index] := item_gen_a() ** number; 
+        tmp_result[index] := item_gen_a() ** real(number); 
       Result := new ndarray(tmp_result, self_ndarray.shape);
     end;
     
             
-    class function ndarray.operator**(number: real; self_ndarray: ndarray): ndarray;
+    class function ndarray.operator**(number: single; self_ndarray: ndarray): ndarray;
     begin
-      var tmp_result := new real[self_ndarray.length];
+      var tmp_result := new single[self_ndarray.length];
       var item_gen_a := self_ndarray.__get_item_generator();
       for var index := 0 to self_ndarray.length-1 do
-        tmp_result[index] := number ** item_gen_a(); 
+        tmp_result[index] := number ** real(item_gen_a()); 
       Result := new ndarray(tmp_result, self_ndarray.shape); 
     end;
     
@@ -519,11 +526,11 @@ implementation
     begin
       if not areEqual(self_ndarray.shape, other_ndarray.shape) and (self_ndarray.rank <> 1) and (other_ndarray.rank <> 1) then
         raise new System.ArithmeticException('Wrong array sizes');
-      var tmp_result := new real[self_ndarray.length];
+      var tmp_result := new single[self_ndarray.length];
       var item_gen_a := self_ndarray.__get_item_generator();
       var item_gen_b := other_ndarray.__get_item_generator();
       for var index := 0 to self_ndarray.length-1 do
-        tmp_result[index] := item_gen_a() ** item_gen_b(); 
+        tmp_result[index] := item_gen_a() ** real(item_gen_b()); 
       Result := new ndarray(tmp_result, self_ndarray.shape);   
     end;
     {$endregion}
@@ -535,13 +542,13 @@ implementation
     end;
 
       
-    function ndarray.get(params index: array of integer): real;
+    function ndarray.get(params index: array of integer): single;
     begin
       result := self.__get_item(index);
     end;
     
     
-    procedure ndarray.assign(val: real; params index: array of integer);
+    procedure ndarray.assign(val: single; params index: array of integer);
     begin
       self.__set_item(val, index);
     end;
@@ -553,13 +560,13 @@ implementation
     end;
     
     
-    procedure ndarray.map(func: System.Func<real, real>);
+    procedure ndarray.map(func: System.Func<single, single>);
     begin
       neo.map(self, func);
     end;
     
     
-    function ndarray.max(): real;
+    function ndarray.max(): single;
     begin
       result := neo.max(self);
     end;
@@ -591,7 +598,7 @@ implementation
      
     function random_ndarray(shape: array of integer): ndarray;
     begin
-      var tmp_result := new real[shape.Product];
+      var tmp_result := new single[shape.Product];
       for var index := 0 to shape.Product-1 do
         tmp_result[index] := random;
       Result := new ndarray(tmp_result, shape);   
@@ -600,7 +607,7 @@ implementation
  
     function arange(stop: integer): ndarray;
     begin
-      var tmp_result := new real[stop];
+      var tmp_result := new single[stop];
       var tmp_shape: array of integer := (stop);
       for var i := 0 to stop-1 do
         tmp_result[i] := i;
@@ -610,7 +617,7 @@ implementation
     
     function arange(start, stop: integer): ndarray;
     begin
-      var tmp_result := new real[stop-start];
+      var tmp_result := new single[stop-start];
       var tmp_shape: array of integer := (stop-start);
       for var i := start to stop-1 do
         tmp_result[i-start] := i;
@@ -620,7 +627,7 @@ implementation
     
     function arange(start, stop, step: integer): ndarray;
     begin
-      var tmp_result := new real[(stop-start) div step];
+      var tmp_result := new single[(stop-start) div step];
       var tmp_shape: array of integer := ((stop-start) div step);
       var i := start-1; var cnt := 0; 
       if step < 0 then
@@ -646,7 +653,7 @@ implementation
       if axis = -1 then
       begin
         var tmp_shape: array of integer := (a.length+b.length-1); 
-        var tmp_ndarray := new real[a.length+b.length-1];
+        var tmp_ndarray := new single[a.length+b.length-1];
         var item_gen_a := a.__get_item_generator();
         var item_gen_b := b.__get_item_generator();
         
@@ -702,7 +709,7 @@ implementation
     begin
       if (self_ndarray.rank = 1) and (other_ndarray.rank = 1) then
         begin
-        var sum: array of real := (0);
+        var sum: array of single := (0);
         for var index := 0 to self_ndarray.length-1 do
           sum[0] += self_ndarray.get(index) * other_ndarray.get(index);
         result := new ndarray(sum, ArrFill(1, 1));
@@ -729,7 +736,7 @@ implementation
         for var i := 1 to max_ndarray.rank-1 do
           tmp_shape[i-1] := max_ndarray.shape[i]; 
         
-        var tmp_arr := new real[tmp_shape.Product];
+        var tmp_arr := new single[tmp_shape.Product];
 
         var max_index_gen := max_ndarray.__get_index_generator();
         var max_item_gen := max_ndarray.__get_item_generator();
@@ -747,7 +754,7 @@ implementation
       else if (self_ndarray.rank = 2) and (other_ndarray.rank = 2) then
         begin
           var other_ndarray_T := other_ndarray.transpose();
-          var tmp_result := new real[self_ndarray.shape[0]*other_ndarray.shape[1]];
+          var tmp_result := new single[self_ndarray.shape[0]*other_ndarray.shape[1]];
           var new_shape: array of integer := (self_ndarray.shape[0], other_ndarray.shape[1]);
           for var i:=0 to self_ndarray.shape[0]-1 do
             for var j:=0 to other_ndarray.shape[1]-1 do
@@ -778,7 +785,7 @@ implementation
             for var j := 0 to self_ndarray.rank-2 do
               arr_a[j] := arr[j];
             
-            var a_matrix := new real[self_ndarray.shape[self_ndarray.rank-1]];
+            var a_matrix := new single[self_ndarray.shape[self_ndarray.rank-1]];
             var cnt_a := 0;
             for var j := 0 to self_ndarray.shape[self_ndarray.rank-1]-1 do
             begin
@@ -793,7 +800,7 @@ implementation
             for var j := 0 to other_ndarray.rank-2 do
               arr_b[j] := arr[self_ndarray.rank+j-1];
                         
-            var b_matrix := new real[other_ndarray.shape[other_ndarray.rank-2]];
+            var b_matrix := new single[other_ndarray.shape[other_ndarray.rank-2]];
             var cnt_b := 0;
             for var j := 0 to other_ndarray.shape[other_ndarray.rank-2]-1 do
             begin
@@ -815,7 +822,7 @@ implementation
     end;    
         
         
-    procedure map(self: ndarray; func: System.Func<real, real>);
+    procedure map(self: ndarray; func: System.Func<single, single>);
     begin
       var item_gen := self.__get_item_generator();
       for var i := 0 to self.length-1 do
@@ -824,7 +831,7 @@ implementation
     
     
     // TODO: Нахождение максимальных элементов по осям
-    function max(self: ndarray): real;
+    function max(self: ndarray): single;
     begin
       var item_gen := self.__get_item_generator();
       var tmp_result := item_gen();
@@ -834,19 +841,19 @@ implementation
     end;
         
         
-    function multiply(a, b: real): real;
+    function multiply(a, b: single): single;
     begin
       Result := a * b;
     end;
     
 
-    function multiply(a: real; b: ndarray): ndarray;
+    function multiply(a: single; b: ndarray): ndarray;
     begin
       Result := b * a;
     end;
         
 
-    function multiply(a: ndarray; b: real): ndarray;
+    function multiply(a: ndarray; b: single): ndarray;
     begin
       Result := a * b;
     end;
@@ -871,7 +878,7 @@ implementation
       var item_gen_a := a.__get_item_generator();
       var item_gen_b := b.__get_item_generator();
         
-      var tmp_result := new real[max_len];  
+      var tmp_result := new single[max_len];  
       for var index := 0 to max_len-1 do
         tmp_result[index] := item_gen_a() * item_gen_b();
       result := new ndarray(tmp_result, max_shape);
@@ -888,7 +895,7 @@ implementation
     begin
       if (self.rank = 1) or (axis = -1) then
         begin
-        var tmp_result: array of real := (self.value.Sum);
+        var tmp_result: array of single := (self.value.Sum);
         var tmp_result_shape: array of integer := (1);
         result := new ndarray(tmp_result, tmp_result_shape);
         end
@@ -904,7 +911,7 @@ implementation
           else  
             continue;
             
-        var sum_arr := new real[sum_array_shape.Product];
+        var sum_arr := new single[sum_array_shape.Product];
         var sum_iter_array := ndarray.__get_iter_array(sum_array_shape);
 
         var index_gen := self.__get_index_generator();
@@ -942,7 +949,7 @@ implementation
           axes[index] := self.rank-index-1;
         end;
       
-      var tmp_value := new real[self.length];
+      var tmp_value := new single[self.length];
       var tmp_shape := new integer[self.rank];
       for var index := 0 to self.rank-1 do
         tmp_shape[index] := self.shape[axes[index]];
