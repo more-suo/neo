@@ -1,4 +1,4 @@
-﻿unit neo;
+﻿library neo;
 
 interface
         
@@ -129,8 +129,6 @@ interface
          
     function transpose(self: ndarray; axes: array of integer := nil): ndarray;
          
-    function areEqual(a, b: array of integer): boolean;
-        
 implementation
     
     function areEqual(a, b: array of integer): boolean;
@@ -291,6 +289,7 @@ implementation
       self.iter_array := ndarray.__get_iter_array(shape);
       self.value := new single[self.length]; 
     end;  
+    {$endregion}
     
     
     // ndarray.ToString() - Implementierung
@@ -318,17 +317,15 @@ implementation
       result := result.Remove(result.Length-2, 2);
       result += ']'*self.rank;
     end;
-    {$endregion}
     
         
     {$region Арифметические операции}    
     class function ndarray.operator+(self_ndarray: ndarray; number: single): ndarray;
     begin
       var tmp_result := new single[self_ndarray.length];
-      var item_gen_a := self_ndarray.__get_item_generator();
-      for var index := 0 to self_ndarray.length-1 do
-        tmp_result[index] := item_gen_a() + number;
-      result := new ndarray(tmp_result, self_ndarray.shape);    
+      for var i := 0 to self_ndarray.length-1 do
+        tmp_result[i] := self_ndarray.value[i] + number;
+      result := new ndarray(tmp_result, self_ndarray.shape);
     end;
         
         
@@ -343,10 +340,8 @@ implementation
       if not areEqual(self_ndarray.shape, other_ndarray.shape) and (self_ndarray.rank <> 1) and (other_ndarray.rank <> 1) then
         raise new System.ArithmeticException('Wrong array sizes');
       var tmp_result := new single[self_ndarray.length];
-      var item_gen_a := self_ndarray.__get_item_generator();
-      var item_gen_b := other_ndarray.__get_item_generator();
-      for var index := 0 to self_ndarray.length-1 do
-        tmp_result[index] := item_gen_a() + item_gen_b(); 
+      for var i := 0 to self_ndarray.length-1 do
+        tmp_result[i] := self_ndarray.value[i] + other_ndarray.value[i]; 
       Result := new ndarray(tmp_result, self_ndarray.shape);    
     end;
         
