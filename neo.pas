@@ -491,10 +491,10 @@ implementation
 
     class function ndarray.operator**(self_ndarray: ndarray; number: single): ndarray;
     begin
+      var tmp_number := real(number);
       var tmp_result := new single[self_ndarray.length];
-      var item_gen_a := self_ndarray.__get_item_generator();
-      for var index := 0 to self_ndarray.length-1 do
-        tmp_result[index] := item_gen_a() ** real(number); 
+      for var i := 0 to self_ndarray.length-1 do
+        tmp_result[i] := self_ndarray.value[i] ** tmp_number; 
       Result := new ndarray(tmp_result, self_ndarray.shape);
     end;
     
@@ -502,9 +502,8 @@ implementation
     class function ndarray.operator**(number: single; self_ndarray: ndarray): ndarray;
     begin
       var tmp_result := new single[self_ndarray.length];
-      var item_gen_a := self_ndarray.__get_item_generator();
-      for var index := 0 to self_ndarray.length-1 do
-        tmp_result[index] := number ** real(item_gen_a()); 
+      for var i := 0 to self_ndarray.length-1 do
+        tmp_result[i] := number ** real(self_ndarray.value[i]); 
       Result := new ndarray(tmp_result, self_ndarray.shape); 
     end;
     
@@ -514,10 +513,8 @@ implementation
       if not areEqual(self_ndarray.shape, other_ndarray.shape) and (self_ndarray.rank <> 1) and (other_ndarray.rank <> 1) then
         raise new System.ArithmeticException('Wrong array sizes');
       var tmp_result := new single[self_ndarray.length];
-      var item_gen_a := self_ndarray.__get_item_generator();
-      var item_gen_b := other_ndarray.__get_item_generator();
-      for var index := 0 to self_ndarray.length-1 do
-        tmp_result[index] := item_gen_a() ** real(item_gen_b()); 
+      for var i := 0 to self_ndarray.length-1 do
+        tmp_result[i] := self_ndarray.value[i] ** real(other_ndarray.value[i]); 
       Result := new ndarray(tmp_result, self_ndarray.shape);   
     end;
     {$endregion}
