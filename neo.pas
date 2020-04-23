@@ -12,7 +12,7 @@ interface
             length: integer;
             rank: integer;
             
-            constructor Create(value: array of single; shape: array of integer);
+            constructor Create(const value: array of single; const shape: array of integer);
             
             function __get_index_generator(): function(): array of integer;
             
@@ -22,112 +22,115 @@ interface
             
             procedure __set_item(val: single; index: array of integer);
             
-            static function __get_iter_array(shape: array of integer): array of integer;
+            static function __get_iter_array(const shape: array of integer): array of integer;
             
         public            
-            constructor Create(array_ptr: pointer; rank: integer);
+            constructor Create(array_ptr: pointer; const rank: integer);
             
-            constructor Create(shape: array of integer);
+            constructor Create(const shape: array of integer);
             
             function ToString: string; override;
     
-            class function operator+(self_ndarray: ndarray; number: single): ndarray;
+            class function operator+(self_ndarray: neo.ndarray; number: single): neo.ndarray;
            
-            class function operator+(number: single; other_ndarray: ndarray): ndarray;
+            class function operator+(number: single; other_ndarray: neo.ndarray): neo.ndarray;
            
-            class function operator+(self_ndarray, other_ndarray:ndarray): ndarray;
+            class function operator+(self_ndarray, other_ndarray: neo.ndarray): neo.ndarray;
            
-            class procedure operator+=(var self_ndarray, other_ndarray: ndarray);
+            class procedure operator+=(var self_ndarray, other_ndarray: neo.ndarray);
             
-            class procedure operator+=(var self_ndarray: ndarray; number: single);
+            class procedure operator+=(var self_ndarray: neo.ndarray; number: single);
             
-            class function operator-(self_ndarray: ndarray): ndarray;
+            class function operator-(self_ndarray: neo.ndarray): neo.ndarray;
                         
-            class function operator-(self_ndarray: ndarray; number: single): ndarray;
+            class function operator-(self_ndarray: neo.ndarray; number: single): neo.ndarray;
             
-            class function operator-(number: single; self_ndarray: ndarray): ndarray;
+            class function operator-(number: single; self_ndarray: neo.ndarray): neo.ndarray;
                 
-            class function operator-(self_ndarray, other_ndarray: ndarray): ndarray;
+            class function operator-(self_ndarray, other_ndarray: neo.ndarray): neo.ndarray;
             
-            class procedure operator-=(var self_ndarray: ndarray; other_ndarray: ndarray);
+            class procedure operator-=(var self_ndarray: neo.ndarray; other_ndarray: neo.ndarray);
             
-            class procedure operator-=(var self_ndarray: ndarray; number: single);
+            class procedure operator-=(var self_ndarray: neo.ndarray; number: single);
                 
-            class function operator*(self_ndarray: ndarray; number: single): ndarray;
+            class function operator*(self_ndarray: neo.ndarray; number: single): neo.ndarray;
 
-            class function operator*(number: single; other_ndarray: ndarray): ndarray;
+            class function operator*(number: single; other_ndarray: neo.ndarray): neo.ndarray;
             
-            class function operator*(self_ndarray, other_ndarray: ndarray): ndarray;
+            class function operator*(self_ndarray, other_ndarray: neo.ndarray): neo.ndarray;
             
-            class procedure operator*=(var self_ndarray: ndarray; const number: single);
+            class procedure operator*=(var self_ndarray: neo.ndarray; const number: single);
 
-            class procedure operator*=(var self_ndarray: ndarray; const other_ndarray: ndarray);
+            class procedure operator*=(var self_ndarray: neo.ndarray; const other_ndarray: neo.ndarray);
                 
-            class function operator/(self_ndarray: ndarray; number: single): ndarray;
+            class function operator/(self_ndarray: neo.ndarray; number: single): neo.ndarray;
             
-            class function operator/(number: single; self_ndarray: ndarray): ndarray;
+            class function operator/(number: single; self_ndarray: neo.ndarray): neo.ndarray;
             
-            class function operator/(self_ndarray: ndarray; other_ndarray: ndarray): ndarray;
+            class function operator/(self_ndarray: neo.ndarray; other_ndarray: neo.ndarray): neo.ndarray;
             
-            class procedure operator/=(var self_ndarray: ndarray; number: single);
+            class procedure operator/=(var self_ndarray: neo.ndarray; number: single);
             
-            class procedure operator/=(var self_ndarray: ndarray; other_ndarray: ndarray);
+            class procedure operator/=(var self_ndarray: neo.ndarray; other_ndarray: neo.ndarray);
 
-            class function operator**(self_ndarray: ndarray; number: single): ndarray;
+            class function operator**(self_ndarray: neo.ndarray; number: single): neo.ndarray;
                 
-            class function operator**(number: single; self_ndarray: ndarray): ndarray;
+            class function operator**(number: single; self_ndarray: neo.ndarray): neo.ndarray;
                 
-            class function operator**(self_ndarray: ndarray; other_ndarray: ndarray): ndarray;
+            class function operator**(self_ndarray: neo.ndarray; other_ndarray: neo.ndarray): neo.ndarray;
                 
-            function get(params index: array of integer): single;
-   
-            procedure assign(val: single; params index: array of integer);
-            
-            function get_shape(): array of integer;
-            
-            function copy(): ndarray;
-            
-            function dot(other_ndarray: ndarray; axis: integer := 0): ndarray;
-            
-            procedure map(func: System.Func<single, single>);
-            
-            function max(): single;
-            
-            function reshape(shape: array of integer): ndarray;
-            
-            function sum(axis: integer := -1): ndarray;
-
-            function transpose(axes: array of integer := nil): ndarray;
+//            function get(params index: array of integer): single;
+//   
+//            procedure assign(val: single; params index: array of integer);
+//            
+//            function get_shape(): array of integer;
+//            
+//            function copy(): neo.ndarray;
+//            
+//            function dot(other_ndarray: neo.ndarray; axis: integer := 0): neo.ndarray;
+//            
+//            procedure map(func: System.Func<single, single>);
+//            
+//            function max(): single;
+//            
+//            function reshape(shape: array of integer): neo.ndarray;
+//            
+//            function sum(axis: integer := -1): neo.ndarray;
+//
+//            function transpose(axes: array of integer := nil): neo.ndarray;
     end;
    
-    function arange(stop: integer): ndarray;
+//    function arange(stop: integer): neo.ndarray;
+//    
+//    function arange(start, stop: integer): neo.ndarray;
+//    
+//    function arange(start, stop, step: integer): neo.ndarray;
+//   
+//    function concatenate(a, b: neo.ndarray; axis: integer := -1): neo.ndarray;
+//   
+//    function copy(self: neo.ndarray): neo.ndarray;
+//   
+//    function dot(self_ndarray: neo.ndarray; other_ndarray: neo.ndarray; axis: integer := 0): neo.ndarray;
+//   
+//    procedure map(self: neo.ndarray; func: System.Func<single, single>);
+//    
+//    function max(self: neo.ndarray): single;
     
-    function arange(start, stop: integer): ndarray;
+    function multiply(number_a, number_b: single): single;
     
-    function arange(start, stop, step: integer): ndarray;
-   
-    function concatenate(a,b:ndarray; axis: integer := -1): ndarray;
-   
-    function copy(self: ndarray): ndarray;
-   
-    function dot(self_ndarray: ndarray; other_ndarray: ndarray; axis: integer := 0): ndarray;
-   
-    procedure map(self: ndarray; func: System.Func<single, single>);
+    function multiply(number: single; other_ndarray: neo.ndarray): neo.ndarray;
     
-    function max(self: ndarray): single;
+    function multiply(self_ndarray: neo.ndarray; number: single): neo.ndarray;
     
-    function multiply(a, b: single): single;
-    function multiply(a:single; b:ndarray): ndarray;
-    function multiply(a:ndarray; b:single): ndarray;
-    function multiply(a,b:ndarray): ndarray;
+    function multiply(self_ndarray, other_ndarray: neo.ndarray): neo.ndarray;
     
-    function random_ndarray(shape: array of integer): ndarray;
-         
-    function reshape(self: ndarray; shape: array of integer): ndarray;
-         
-    function sum(self: ndarray; axis: integer := -1): ndarray;
-         
-    function transpose(self: ndarray; axes: array of integer := nil): ndarray;
+//    function random_ndarray(shape: array of integer): neo.ndarray;
+//         
+//    function reshape(self: neo.ndarray; shape: array of integer): neo.ndarray;
+//         
+//    function sum(self: neo.ndarray; axis: integer := -1): neo.ndarray;
+//         
+//    function transpose(self: neo.ndarray; axes: array of integer := nil): neo.ndarray;
          
 implementation
     
@@ -226,7 +229,7 @@ implementation
     end;
 
 
-    static function ndarray.__get_iter_array(shape: array of integer): array of integer;
+    static function ndarray.__get_iter_array(const shape: array of integer): array of integer;
     begin
       var rank := shape.Length;
       var iter_array := new integer[rank];
@@ -238,17 +241,17 @@ implementation
     
         
     {$region Конструкторы}
-    constructor ndarray.Create(value: array of single; shape: array of integer);
+    constructor ndarray.Create(const value: array of single; const shape: array of integer);
     begin
       self.value := value;
       self.shape := shape;
       self.rank := shape.Length;
       self.length := shape.Product;
-      self.iter_array := ndarray.__get_iter_array(shape);
+      self.iter_array := neo.ndarray.__get_iter_array(shape);
     end;
     
     
-    constructor ndarray.Create(array_ptr: pointer; rank: integer);
+    constructor ndarray.Create(array_ptr: pointer; const rank: integer);
     var tmp_ptr : ^^integer;
         shape_ptr : ^integer;
         element_ptr : ^single;
@@ -281,7 +284,7 @@ implementation
     end;
     
     
-    constructor ndarray.Create(shape: array of integer);
+    constructor ndarray.Create(const shape: array of integer);
     begin
       self.shape := shape;
       self.rank := shape.Length;
@@ -320,7 +323,7 @@ implementation
     
         
     {$region Арифметические операции}    
-    class function ndarray.operator+(self_ndarray: ndarray; number: single): ndarray;
+    class function ndarray.operator+(self_ndarray: neo.ndarray; number: single): neo.ndarray;
     begin
       var tmp_result := new single[self_ndarray.length];
       for var i := 0 to self_ndarray.length-1 do
@@ -329,13 +332,13 @@ implementation
     end;
         
         
-    class function ndarray.operator+(number: single; other_ndarray: ndarray): ndarray;
+    class function ndarray.operator+(number: single; other_ndarray: neo.ndarray): neo.ndarray;
     begin
       Result := other_ndarray + number;    
     end;
         
         
-    class function ndarray.operator+(self_ndarray, other_ndarray: ndarray): ndarray;
+    class function ndarray.operator+(self_ndarray, other_ndarray: neo.ndarray): neo.ndarray;
     begin
       if not areEqual(self_ndarray.shape, other_ndarray.shape) and (self_ndarray.rank <> 1) and (other_ndarray.rank <> 1) then
         raise new System.ArithmeticException('Wrong array sizes');
@@ -346,19 +349,19 @@ implementation
     end;
         
         
-    class procedure ndarray.operator+=(var self_ndarray, other_ndarray: ndarray);
+    class procedure ndarray.operator+=(var self_ndarray, other_ndarray: neo.ndarray);
     begin
       self_ndarray := self_ndarray + other_ndarray;
     end;
     
     
-    class procedure ndarray.operator+=(var self_ndarray:ndarray; number: single);
+    class procedure ndarray.operator+=(var self_ndarray: neo.ndarray; number: single);
     begin
       self_ndarray := self_ndarray + number;
     end;
     
     
-    class function ndarray.operator-(self_ndarray: ndarray): ndarray;
+    class function ndarray.operator-(self_ndarray: neo.ndarray): neo.ndarray;
     begin
       var tmp_result := new single[self_ndarray.length];
       for var i := 0 to self_ndarray.length-1 do
@@ -367,7 +370,7 @@ implementation
     end;
     
     
-    class function ndarray.operator-(self_ndarray: ndarray; number: single): ndarray;
+    class function ndarray.operator-(self_ndarray: neo.ndarray; number: single): neo.ndarray;
     begin
       var tmp_result := new single[self_ndarray.length];
       for var i := 0 to self_ndarray.length-1 do
@@ -376,7 +379,7 @@ implementation
     end;
         
             
-    class function ndarray.operator-(number: single; self_ndarray: ndarray): ndarray;
+    class function ndarray.operator-(number: single; self_ndarray: neo.ndarray): neo.ndarray;
     begin
       var tmp_result := new single[self_ndarray.length];
       for var i := 0 to self_ndarray.length-1 do
@@ -385,7 +388,7 @@ implementation
     end;    
 
 
-    class function ndarray.operator-(self_ndarray, other_ndarray: ndarray): ndarray;
+    class function ndarray.operator-(self_ndarray, other_ndarray: neo.ndarray): neo.ndarray;
     begin
       if not areEqual(self_ndarray.shape, other_ndarray.shape) and (self_ndarray.rank <> 1) and (other_ndarray.rank <> 1) then
         raise new System.ArithmeticException('Wrong array sizes');
@@ -396,57 +399,49 @@ implementation
     end;       
 
     
-    class procedure ndarray.operator-=(var self_ndarray:ndarray; other_ndarray: ndarray);
+    class procedure ndarray.operator-=(var self_ndarray: neo.ndarray; other_ndarray: neo.ndarray);
     begin
       self_ndarray := self_ndarray - other_ndarray;
     end;
 
     
-    class procedure ndarray.operator-=(var self_ndarray: ndarray; number: single);
+    class procedure ndarray.operator-=(var self_ndarray: neo.ndarray; number: single);
     begin
       self_ndarray := self_ndarray - number;
     end;
 
         
-    class function ndarray.operator*(self_ndarray: ndarray; number: single): ndarray;
+    class function ndarray.operator*(self_ndarray: neo.ndarray; number: single): neo.ndarray;
     begin
-      var tmp_result := new single[self_ndarray.length];
-      for var i := 0 to self_ndarray.length-1 do
-        tmp_result[i] := self_ndarray.value[i] * number; 
-      Result := new ndarray(tmp_result, self_ndarray.shape);
+      Result := neo.multiply(self_ndarray, number)
     end;
 
 
-    class function ndarray.operator*(number: single; other_ndarray: ndarray): ndarray;
+    class function ndarray.operator*(number: single; other_ndarray: neo.ndarray): neo.ndarray;
     begin
-      Result := other_ndarray * number;
+      Result := neo.multiply(other_ndarray, number);
     end;
                   
                   
-    class function ndarray.operator*(self_ndarray, other_ndarray:ndarray): ndarray;
+    class function ndarray.operator*(self_ndarray, other_ndarray: neo.ndarray): neo.ndarray;
     begin
-      if not areEqual(self_ndarray.shape, other_ndarray.shape) and (self_ndarray.rank <> 1) and (other_ndarray.rank <> 1) then
-        raise new System.ArithmeticException('Wrong array sizes');
-      var tmp_result := new single[self_ndarray.length];
-      for var i := 0 to self_ndarray.length-1 do
-        tmp_result[i] := self_ndarray.value[i] * other_ndarray.value[i]; 
-      Result := new ndarray(tmp_result, self_ndarray.shape);
+      Result := neo.multiply(self_ndarray, other_ndarray);
     end;
             
             
-    class procedure ndarray.operator*=(var self_ndarray: ndarray; number: single);
+    class procedure ndarray.operator*=(var self_ndarray: neo.ndarray; number: single);
     begin
-      self_ndarray := self_ndarray * number;
+      self_ndarray := neo.multiply(self_ndarray, number);
     end;
           
       
-    class procedure ndarray.operator*=(var self_ndarray: ndarray; other_ndarray: ndarray);
+    class procedure ndarray.operator*=(var self_ndarray: neo.ndarray; other_ndarray: neo.ndarray);
     begin
-      self_ndarray := self_ndarray * other_ndarray;
+      self_ndarray := neo.multiply(self_ndarray, other_ndarray);
     end;
 
 
-    class function ndarray.operator/(self_ndarray: ndarray; number: single): ndarray;
+    class function ndarray.operator/(self_ndarray: neo.ndarray; number: single): neo.ndarray;
     begin
       if number = 0 then
         raise new System.ArithmeticException('ZeroDivisionError');
@@ -457,7 +452,7 @@ implementation
     end;
 
     
-    class function ndarray.operator/(number: single; self_ndarray: ndarray): ndarray;
+    class function ndarray.operator/(number: single; self_ndarray: neo.ndarray): neo.ndarray;
     begin
       var tmp_result := new single[self_ndarray.length];
       for var i := 0 to self_ndarray.length-1 do
@@ -466,7 +461,7 @@ implementation
     end;
 
 
-    class function ndarray.operator/(self_ndarray: ndarray; other_ndarray: ndarray): ndarray;
+    class function ndarray.operator/(self_ndarray: neo.ndarray; other_ndarray: neo.ndarray): neo.ndarray;
     begin
       if not areEqual(self_ndarray.shape, other_ndarray.shape) and (self_ndarray.rank <> 1) and (other_ndarray.rank <> 1) then
         raise new System.ArithmeticException('Wrong array sizes');
@@ -517,7 +512,7 @@ implementation
         tmp_result[i] := self_ndarray.value[i] ** real(other_ndarray.value[i]); 
       Result := new ndarray(tmp_result, self_ndarray.shape);   
     end;
-    {$endregion}
+   {$endregion}
         
 
     function ndarray.sum(axis: integer): ndarray;
@@ -580,381 +575,381 @@ implementation
     end;
  
      
-    function random_ndarray(shape: array of integer): ndarray;
-    begin
-      var tmp_result := new single[shape.Product];
-      for var index := 0 to shape.Product-1 do
-        tmp_result[index] := random;
-      Result := new ndarray(tmp_result, shape);   
-    end;
- 
- 
-    function arange(stop: integer): ndarray;
-    begin
-      var tmp_result := new single[stop];
-      var tmp_shape: array of integer := (stop);
-      for var i := 0 to stop-1 do
-        tmp_result[i] := i;
-      result := new ndarray(tmp_result, tmp_shape);
-    end;
-    
-    
-    function arange(start, stop: integer): ndarray;
-    begin
-      var tmp_result := new single[stop-start];
-      var tmp_shape: array of integer := (stop-start);
-      for var i := start to stop-1 do
-        tmp_result[i-start] := i;
-      result := new ndarray(tmp_result, tmp_shape);  
-    end;
-    
-    
-    function arange(start, stop, step: integer): ndarray;
-    begin
-      var tmp_result := new single[(stop-start) div step];
-      var tmp_shape: array of integer := ((stop-start) div step);
-      var i := start-1; var cnt := 0; 
-      if step < 0 then
-        while i > stop do
-          begin
-          tmp_result[cnt] := i;
-          cnt += 1;
-          i += step;
-          end
-      else
-        while i < stop do
-          begin
-          tmp_result[cnt] := i;
-          cnt += 1;
-          i += step;
-          end;
-      result := new ndarray(tmp_result, tmp_shape);  
-    end;
+//    function random_ndarray(shape: array of integer): ndarray;
+//    begin
+//      var tmp_result := new single[shape.Product];
+//      for var index := 0 to shape.Product-1 do
+//        tmp_result[index] := random;
+//      Result := new ndarray(tmp_result, shape);   
+//    end;
+// 
+// 
+//    function arange(stop: integer): ndarray;
+//    begin
+//      var tmp_result := new single[stop];
+//      var tmp_shape: array of integer := (stop);
+//      for var i := 0 to stop-1 do
+//        tmp_result[i] := i;
+//      result := new ndarray(tmp_result, tmp_shape);
+//    end;
+//    
+//    
+//    function arange(start, stop: integer): ndarray;
+//    begin
+//      var tmp_result := new single[stop-start];
+//      var tmp_shape: array of integer := (stop-start);
+//      for var i := start to stop-1 do
+//        tmp_result[i-start] := i;
+//      result := new ndarray(tmp_result, tmp_shape);  
+//    end;
+//    
+//    
+//    function arange(start, stop, step: integer): ndarray;
+//    begin
+//      var tmp_result := new single[(stop-start) div step];
+//      var tmp_shape: array of integer := ((stop-start) div step);
+//      var i := start-1; var cnt := 0; 
+//      if step < 0 then
+//        while i > stop do
+//          begin
+//          tmp_result[cnt] := i;
+//          cnt += 1;
+//          i += step;
+//          end
+//      else
+//        while i < stop do
+//          begin
+//          tmp_result[cnt] := i;
+//          cnt += 1;
+//          i += step;
+//          end;
+//      result := new ndarray(tmp_result, tmp_shape);  
+//    end;
+//
+//
+//    function concatenate(a, b: ndarray; axis: integer): ndarray;
+//    begin
+//      if axis = -1 then
+//      begin
+//        var tmp_shape: array of integer := (a.length+b.length-1); 
+//        var tmp_ndarray := new single[a.length+b.length-1];
+//        var item_gen_a := a.__get_item_generator();
+//        var item_gen_b := b.__get_item_generator();
+//        
+//        for var index := 0 to a.length-1 do
+//          tmp_ndarray[index] := item_gen_a();
+//        for var index := a.length to a.length+b.length-1 do
+//          tmp_ndarray[index] := item_gen_b();
+//        
+//        Result := new ndarray(tmp_ndarray, tmp_shape);
+//        end
+//      else
+//        begin
+//        if a.shape[axis] <> b.shape[axis] then
+//          raise new Exception('Fields couldn not be broadcast together');
+//        
+//        var tmp_shape := new integer[a.rank];
+//        for var index := 0 to a.rank-1 do
+//          begin
+//          tmp_shape[index] := a.shape[index];
+//          if index = axis then
+//            tmp_shape[index] += b.shape[axis];
+//          end;
+//          
+//        var tmp_ndarray := new ndarray(tmp_shape);
+//        var item_gen_a := a.__get_item_generator();
+//        var item_gen_b := b.__get_item_generator();
+//        var index_gen_c := tmp_ndarray.__get_index_generator();
+//        
+//        for var index := 0 to a.length+b.length-2 do
+//          begin
+//          var arr := index_gen_c();
+//          
+//          while arr[axis] > a.shape[axis]-1 do
+//            begin
+//            tmp_ndarray.assign(item_gen_b(), arr);  
+//            arr := index_gen_c();
+//            end;
+//          
+//          tmp_ndarray.assign(item_gen_a(), arr);
+//          end;
+//        Result := tmp_ndarray;
+//        end;
+//    end;
+//        
+//        
+//    function copy(self: ndarray): ndarray;
+//    begin
+//      Result := new ndarray(self.value, self.shape);
+//    end;    
+//        
+//        
+//    function dot(self_ndarray: ndarray; other_ndarray: ndarray; axis: integer): ndarray;
+//    begin
+//      if (self_ndarray.rank = 1) and (other_ndarray.rank = 1) then
+//        begin
+//        var sum: array of single := (0);
+//        for var index := 0 to self_ndarray.length-1 do
+//          sum[0] += self_ndarray.get(index) * other_ndarray.get(index);
+//        result := new ndarray(sum, ArrFill(1, 1));
+//        end
+//      else if (self_ndarray.rank = 1) or (other_ndarray.rank = 1) then
+//      begin
+//        if self_ndarray.shape[0] <> other_ndarray.shape[0] then
+//          raise new Exception('Fields couldn not be broadcast together');
+//        
+//        var max_ndarray: ndarray;
+//        var min_ndarray: ndarray;
+//        if self_ndarray.rank > other_ndarray.rank then
+//          begin
+//          max_ndarray := self_ndarray;
+//          min_ndarray := other_ndarray;
+//          end
+//        else
+//          begin
+//          max_ndarray := other_ndarray;
+//          min_ndarray := self_ndarray;
+//          end;
+//        
+//        var tmp_shape := new integer[max_ndarray.rank-1];
+//        for var i := 1 to max_ndarray.rank-1 do
+//          tmp_shape[i-1] := max_ndarray.shape[i]; 
+//        
+//        var tmp_arr := new single[tmp_shape.Product];
+//
+//        var max_index_gen := max_ndarray.__get_index_generator();
+//        var max_item_gen := max_ndarray.__get_item_generator();
+//        
+//        var cnt_limit := max_ndarray.length div max_ndarray.shape[0]; var cnt := 0;
+//        for var i := 0 to max_ndarray.length-1 do
+//        begin
+//          tmp_arr[cnt] += max_item_gen() * min_ndarray.value[max_index_gen()[0]];
+//          cnt += 1;
+//          if cnt = cnt_limit then
+//            cnt := 0;
+//        end;
+//        result := new ndarray(tmp_arr, tmp_shape);
+//        end
+//      else if (self_ndarray.rank = 2) and (other_ndarray.rank = 2) then
+//        begin
+//          var other_ndarray_T := other_ndarray.transpose();
+//          var tmp_result := new single[self_ndarray.shape[0]*other_ndarray.shape[1]];
+//          var new_shape: array of integer := (self_ndarray.shape[0], other_ndarray.shape[1]);
+//          for var i:=0 to self_ndarray.shape[0]-1 do
+//            for var j:=0 to other_ndarray.shape[1]-1 do
+//            begin  
+//              var cc := 0.0;
+//              for var l:=0 to self_ndarray.shape[1]-1 do
+//                 cc += self_ndarray.get(i, l)*other_ndarray_T.get(j, l);
+//              tmp_result[i*self_ndarray.shape[0]+j] := cc;   
+//            end;
+//          result := new ndarray(tmp_result, new_shape);
+//        end
+//      else
+//        begin
+//        var tmp_shape := new integer[self_ndarray.rank+other_ndarray.rank-2];
+//        for var i := 0 to self_ndarray.rank-2 do
+//          tmp_shape[i] := self_ndarray.shape[i];
+//        for var i := 0 to other_ndarray.rank-3 do
+//          tmp_shape[self_ndarray.rank+i-1] := other_ndarray.shape[i];
+//        tmp_shape[self_ndarray.rank+other_ndarray.rank-3] := other_ndarray.shape[other_ndarray.rank-1];
+//        
+//        var tmp_ndarray := new ndarray(tmp_shape);
+//        var index_gen := tmp_ndarray.__get_index_generator();
+//        
+//        for var i := 0 to tmp_shape.Product-1 do
+//          begin
+//            var arr := index_gen();
+//            var arr_a := new integer[self_ndarray.rank-1];
+//            for var j := 0 to self_ndarray.rank-2 do
+//              arr_a[j] := arr[j];
+//            
+//            var a_matrix := new single[self_ndarray.shape[self_ndarray.rank-1]];
+//            var cnt_a := 0;
+//            for var j := 0 to self_ndarray.shape[self_ndarray.rank-1]-1 do
+//            begin
+//              var tmp_arr := new integer[arr_a.length+1];
+//              for var k := 0 to arr_a.Length-1 do
+//                tmp_arr[k] := arr_a[k];
+//              tmp_arr[arr_a.length] := j;
+//              a_matrix[j] := self_ndarray.get(tmp_arr);
+//              end;
+//              
+//            var arr_b := new integer[other_ndarray.rank-1];
+//            for var j := 0 to other_ndarray.rank-2 do
+//              arr_b[j] := arr[self_ndarray.rank+j-1];
+//                        
+//            var b_matrix := new single[other_ndarray.shape[other_ndarray.rank-2]];
+//            var cnt_b := 0;
+//            for var j := 0 to other_ndarray.shape[other_ndarray.rank-2]-1 do
+//            begin
+//              var tmp_arr := new integer[arr_b.length+1];
+//              for var k := 0 to arr_b.Length-2 do
+//                tmp_arr[k] := arr_b[k];
+//              tmp_arr[arr_b.length-1] := j;
+//              tmp_arr[arr_b.length] := arr_b[arr_b.Length-1];
+//              b_matrix[j] := other_ndarray.get(tmp_arr);
+//              end;
+//              
+//            var acc := 0.0;
+//            for var j := 0 to a_matrix.Length-1 do
+//              acc += a_matrix[j] * b_matrix[j];
+//            tmp_ndarray.assign(acc, arr);
+//          end;
+//        result := tmp_ndarray; 
+//        end;
+//    end;    
+//        
+//        
+//    procedure map(self: ndarray; func: System.Func<single, single>);
+//    begin
+//      var item_gen := self.__get_item_generator();
+//      for var i := 0 to self.length-1 do
+//        self.value[i] := func(item_gen()); 
+//    end;
+//    
+//    
+//    // TODO: Нахождение максимальных элементов по осям
+//    function max(self: ndarray): single;
+//    begin
+//      var item_gen := self.__get_item_generator();
+//      var tmp_result := item_gen();
+//      for var i := 0 to self.length-2 do
+//        tmp_result := System.Math.Max(item_gen(), tmp_result);  
+//      result := tmp_result;
+//    end;
+        
 
-
-    function concatenate(a, b: ndarray; axis: integer): ndarray;
+    function multiply(number_a, number_b: single): single;
     begin
-      if axis = -1 then
-      begin
-        var tmp_shape: array of integer := (a.length+b.length-1); 
-        var tmp_ndarray := new single[a.length+b.length-1];
-        var item_gen_a := a.__get_item_generator();
-        var item_gen_b := b.__get_item_generator();
-        
-        for var index := 0 to a.length-1 do
-          tmp_ndarray[index] := item_gen_a();
-        for var index := a.length to a.length+b.length-1 do
-          tmp_ndarray[index] := item_gen_b();
-        
-        Result := new ndarray(tmp_ndarray, tmp_shape);
-        end
-      else
-        begin
-        if a.shape[axis] <> b.shape[axis] then
-          raise new Exception('Fields couldn not be broadcast together');
-        
-        var tmp_shape := new integer[a.rank];
-        for var index := 0 to a.rank-1 do
-          begin
-          tmp_shape[index] := a.shape[index];
-          if index = axis then
-            tmp_shape[index] += b.shape[axis];
-          end;
-          
-        var tmp_ndarray := new ndarray(tmp_shape);
-        var item_gen_a := a.__get_item_generator();
-        var item_gen_b := b.__get_item_generator();
-        var index_gen_c := tmp_ndarray.__get_index_generator();
-        
-        for var index := 0 to a.length+b.length-2 do
-          begin
-          var arr := index_gen_c();
-          
-          while arr[axis] > a.shape[axis]-1 do
-            begin
-            tmp_ndarray.assign(item_gen_b(), arr);  
-            arr := index_gen_c();
-            end;
-          
-          tmp_ndarray.assign(item_gen_a(), arr);
-          end;
-        Result := tmp_ndarray;
-        end;
-    end;
-        
-        
-    function copy(self: ndarray): ndarray;
-    begin
-      Result := new ndarray(self.value, self.shape);
-    end;    
-        
-        
-    function dot(self_ndarray: ndarray; other_ndarray: ndarray; axis: integer): ndarray;
-    begin
-      if (self_ndarray.rank = 1) and (other_ndarray.rank = 1) then
-        begin
-        var sum: array of single := (0);
-        for var index := 0 to self_ndarray.length-1 do
-          sum[0] += self_ndarray.get(index) * other_ndarray.get(index);
-        result := new ndarray(sum, ArrFill(1, 1));
-        end
-      else if (self_ndarray.rank = 1) or (other_ndarray.rank = 1) then
-      begin
-        if self_ndarray.shape[0] <> other_ndarray.shape[0] then
-          raise new Exception('Fields couldn not be broadcast together');
-        
-        var max_ndarray: ndarray;
-        var min_ndarray: ndarray;
-        if self_ndarray.rank > other_ndarray.rank then
-          begin
-          max_ndarray := self_ndarray;
-          min_ndarray := other_ndarray;
-          end
-        else
-          begin
-          max_ndarray := other_ndarray;
-          min_ndarray := self_ndarray;
-          end;
-        
-        var tmp_shape := new integer[max_ndarray.rank-1];
-        for var i := 1 to max_ndarray.rank-1 do
-          tmp_shape[i-1] := max_ndarray.shape[i]; 
-        
-        var tmp_arr := new single[tmp_shape.Product];
-
-        var max_index_gen := max_ndarray.__get_index_generator();
-        var max_item_gen := max_ndarray.__get_item_generator();
-        
-        var cnt_limit := max_ndarray.length div max_ndarray.shape[0]; var cnt := 0;
-        for var i := 0 to max_ndarray.length-1 do
-        begin
-          tmp_arr[cnt] += max_item_gen() * min_ndarray.value[max_index_gen()[0]];
-          cnt += 1;
-          if cnt = cnt_limit then
-            cnt := 0;
-        end;
-        result := new ndarray(tmp_arr, tmp_shape);
-        end
-      else if (self_ndarray.rank = 2) and (other_ndarray.rank = 2) then
-        begin
-          var other_ndarray_T := other_ndarray.transpose();
-          var tmp_result := new single[self_ndarray.shape[0]*other_ndarray.shape[1]];
-          var new_shape: array of integer := (self_ndarray.shape[0], other_ndarray.shape[1]);
-          for var i:=0 to self_ndarray.shape[0]-1 do
-            for var j:=0 to other_ndarray.shape[1]-1 do
-            begin  
-              var cc := 0.0;
-              for var l:=0 to self_ndarray.shape[1]-1 do
-                 cc += self_ndarray.get(i, l)*other_ndarray_T.get(j, l);
-              tmp_result[i*self_ndarray.shape[0]+j] := cc;   
-            end;
-          result := new ndarray(tmp_result, new_shape);
-        end
-      else
-        begin
-        var tmp_shape := new integer[self_ndarray.rank+other_ndarray.rank-2];
-        for var i := 0 to self_ndarray.rank-2 do
-          tmp_shape[i] := self_ndarray.shape[i];
-        for var i := 0 to other_ndarray.rank-3 do
-          tmp_shape[self_ndarray.rank+i-1] := other_ndarray.shape[i];
-        tmp_shape[self_ndarray.rank+other_ndarray.rank-3] := other_ndarray.shape[other_ndarray.rank-1];
-        
-        var tmp_ndarray := new ndarray(tmp_shape);
-        var index_gen := tmp_ndarray.__get_index_generator();
-        
-        for var i := 0 to tmp_shape.Product-1 do
-          begin
-            var arr := index_gen();
-            var arr_a := new integer[self_ndarray.rank-1];
-            for var j := 0 to self_ndarray.rank-2 do
-              arr_a[j] := arr[j];
-            
-            var a_matrix := new single[self_ndarray.shape[self_ndarray.rank-1]];
-            var cnt_a := 0;
-            for var j := 0 to self_ndarray.shape[self_ndarray.rank-1]-1 do
-            begin
-              var tmp_arr := new integer[arr_a.length+1];
-              for var k := 0 to arr_a.Length-1 do
-                tmp_arr[k] := arr_a[k];
-              tmp_arr[arr_a.length] := j;
-              a_matrix[j] := self_ndarray.get(tmp_arr);
-              end;
-              
-            var arr_b := new integer[other_ndarray.rank-1];
-            for var j := 0 to other_ndarray.rank-2 do
-              arr_b[j] := arr[self_ndarray.rank+j-1];
-                        
-            var b_matrix := new single[other_ndarray.shape[other_ndarray.rank-2]];
-            var cnt_b := 0;
-            for var j := 0 to other_ndarray.shape[other_ndarray.rank-2]-1 do
-            begin
-              var tmp_arr := new integer[arr_b.length+1];
-              for var k := 0 to arr_b.Length-2 do
-                tmp_arr[k] := arr_b[k];
-              tmp_arr[arr_b.length-1] := j;
-              tmp_arr[arr_b.length] := arr_b[arr_b.Length-1];
-              b_matrix[j] := other_ndarray.get(tmp_arr);
-              end;
-              
-            var acc := 0.0;
-            for var j := 0 to a_matrix.Length-1 do
-              acc += a_matrix[j] * b_matrix[j];
-            tmp_ndarray.assign(acc, arr);
-          end;
-        result := tmp_ndarray; 
-        end;
-    end;    
-        
-        
-    procedure map(self: ndarray; func: System.Func<single, single>);
-    begin
-      var item_gen := self.__get_item_generator();
-      for var i := 0 to self.length-1 do
-        self.value[i] := func(item_gen()); 
-    end;
-    
-    
-    // TODO: Нахождение максимальных элементов по осям
-    function max(self: ndarray): single;
-    begin
-      var item_gen := self.__get_item_generator();
-      var tmp_result := item_gen();
-      for var i := 0 to self.length-2 do
-        tmp_result := System.Math.Max(item_gen(), tmp_result);  
-      result := tmp_result;
-    end;
-        
-        
-    function multiply(a, b: single): single;
-    begin
-      Result := a * b;
-    end;
-    
-
-    function multiply(a: single; b: ndarray): ndarray;
-    begin
-      Result := b * a;
+      Result :=  number_a * number_b;
     end;
         
 
-    function multiply(a: ndarray; b: single): ndarray;
+    function multiply(self_ndarray: neo.ndarray; number: single): neo.ndarray;
     begin
-      Result := a * b;
+      var tmp_result := new single[self_ndarray.length];
+      for var i := 0 to self_ndarray.length-1 do
+        tmp_result[i] := self_ndarray.value[i] * number; 
+      Result := new ndarray(tmp_result, self_ndarray.shape);
+    end;
+    
+
+    function multiply(number: single; other_ndarray: neo.ndarray): neo.ndarray;
+    begin
+      Result := neo.multiply(other_ndarray, number);
     end;
 
 
-    function multiply(a, b: ndarray): ndarray; 
+    function multiply(self_ndarray, other_ndarray: neo.ndarray): neo.ndarray; 
     var 
-      max_len: integer;
-      max_shape: array of integer;
+      max_ndarray: neo.ndarray;
+      min_ndarray: neo.ndarray;
     begin
       if a.length > b.length then
         begin
-        max_len := a.length;
-        max_shape := a.shape;
+        max_ndarray := a;
+        min_ndarray := b;
         end
       else
         begin
-        max_len := b.length;
-        max_shape := b.shape;  
+        max_ndarray := b;
+        min_ndarray := a;
         end;
       
-      var item_gen_a := a.__get_item_generator();
-      var item_gen_b := b.__get_item_generator();
-        
-      var tmp_result := new single[max_len];  
-      for var index := 0 to max_len-1 do
-        tmp_result[index] := item_gen_a() * item_gen_b();
-      result := new ndarray(tmp_result, max_shape);
+      var tmp_result := new single[max_ndarray.length];  
+      for var i := 0 to max_ndarray.length-1 do
+        tmp_result[i] := max_ndarray.value[i] * min_ndarray.value[i mod min_ndarray.length];
+      result := new ndarray(tmp_result, max_ndarray.shape);
     end;
 
 
-    function reshape(self: ndarray; shape: array of integer): ndarray;
-    begin
-      Result := new ndarray(self.value, shape);
-    end;
-
-
-    function sum(self: ndarray; axis: integer): ndarray;
-    begin
-      if (self.rank = 1) or (axis = -1) then
-        begin
-        var tmp_result: array of single := (self.value.Sum);
-        var tmp_result_shape: array of integer := (1);
-        result := new ndarray(tmp_result, tmp_result_shape);
-        end
-      else
-      begin
-        var sum_array_shape := new integer[self.rank-1]; var cnt := 0;
-        for var index := 0 to self.rank-1 do
-          if index <> axis then
-            begin
-            sum_array_shape[cnt] := self.shape[index];
-            cnt += 1;
-            end
-          else  
-            continue;
-            
-        var sum_arr := new single[sum_array_shape.Product];
-        var sum_iter_array := ndarray.__get_iter_array(sum_array_shape);
-
-        var index_gen := self.__get_index_generator();
-        var item_gen := self.__get_item_generator();
-        for var i := 0 to self.length-1 do
-          begin 
-          var arr := index_gen();
-           
-          var new_arr := new integer[self.rank-1]; var sum_cnt := 0;
-          for var j := 0 to self.rank-1 do
-            if j = axis then
-              continue
-            else
-             begin
-              new_arr[sum_cnt] := arr[j];
-              sum_cnt += 1;
-              end;
-              
-          var sum_acc := 0;
-          for var j := 0 to self.rank-2 do
-            sum_acc += sum_iter_array[j] * new_arr[j];
-          sum_arr[sum_acc] += item_gen();
-          end;
-      result := new ndarray(sum_arr, sum_array_shape);
-      end;
-    end;
-
-
-    function transpose(self: ndarray; axes: array of integer): ndarray;
-    begin
-      if axes = nil then
-        begin
-        axes := new integer[self.rank];
-        for var index := 0 to self.rank-1 do
-          axes[index] := self.rank-index-1;
-        end;
-      
-      var tmp_value := new single[self.length];
-      var tmp_shape := new integer[self.rank];
-      for var index := 0 to self.rank-1 do
-        tmp_shape[index] := self.shape[axes[index]];
-      
-      var tmp_iter_array := ndarray.__get_iter_array(tmp_shape);
-      var index_gen := self.__get_index_generator();
-      var item_gen := self.__get_item_generator();
-      
-      for var i := 0 to self.length-1 do
-        begin
-        var arr := index_gen();
-        
-        var new_arr := new integer[self.rank];
-        for var j := 0 to self.rank-1 do
-          new_arr[j] := arr[axes[j]];
-        
-        var acc := 0;
-        for var j := 0 to self.rank-1 do
-          acc += tmp_iter_array[j] * new_arr[j];
-        tmp_value[acc] := item_gen();
-        end;
-      result := new ndarray(tmp_value, tmp_shape);
-    end;
+//    function reshape(self: ndarray; shape: array of integer): ndarray;
+//    begin
+//      Result := new ndarray(self.value, shape);
+//    end;
+//
+//
+//    function sum(self: ndarray; axis: integer): ndarray;
+//    begin
+//      if (self.rank = 1) or (axis = -1) then
+//        begin
+//        var tmp_result: array of single := (self.value.Sum);
+//        var tmp_result_shape: array of integer := (1);
+//        result := new ndarray(tmp_result, tmp_result_shape);
+//        end
+//      else
+//      begin
+//        var sum_array_shape := new integer[self.rank-1]; var cnt := 0;
+//        for var index := 0 to self.rank-1 do
+//          if index <> axis then
+//            begin
+//            sum_array_shape[cnt] := self.shape[index];
+//            cnt += 1;
+//            end
+//          else  
+//            continue;
+//            
+//        var sum_arr := new single[sum_array_shape.Product];
+//        var sum_iter_array := ndarray.__get_iter_array(sum_array_shape);
+//
+//        var index_gen := self.__get_index_generator();
+//        var item_gen := self.__get_item_generator();
+//        for var i := 0 to self.length-1 do
+//          begin 
+//          var arr := index_gen();
+//           
+//          var new_arr := new integer[self.rank-1]; var sum_cnt := 0;
+//          for var j := 0 to self.rank-1 do
+//            if j = axis then
+//              continue
+//            else
+//             begin
+//              new_arr[sum_cnt] := arr[j];
+//              sum_cnt += 1;
+//              end;
+//              
+//          var sum_acc := 0;
+//          for var j := 0 to self.rank-2 do
+//            sum_acc += sum_iter_array[j] * new_arr[j];
+//          sum_arr[sum_acc] += item_gen();
+//          end;
+//      result := new ndarray(sum_arr, sum_array_shape);
+//      end;
+//    end;
+//
+//
+//    function transpose(self: ndarray; axes: array of integer): ndarray;
+//    begin
+//      if axes = nil then
+//        begin
+//        axes := new integer[self.rank];
+//        for var index := 0 to self.rank-1 do
+//          axes[index] := self.rank-index-1;
+//        end;
+//      
+//      var tmp_value := new single[self.length];
+//      var tmp_shape := new integer[self.rank];
+//      for var index := 0 to self.rank-1 do
+//        tmp_shape[index] := self.shape[axes[index]];
+//      
+//      var tmp_iter_array := ndarray.__get_iter_array(tmp_shape);
+//      var index_gen := self.__get_index_generator();
+//      var item_gen := self.__get_item_generator();
+//      
+//      for var i := 0 to self.length-1 do
+//        begin
+//        var arr := index_gen();
+//        
+//        var new_arr := new integer[self.rank];
+//        for var j := 0 to self.rank-1 do
+//          new_arr[j] := arr[axes[j]];
+//        
+//        var acc := 0;
+//        for var j := 0 to self.rank-1 do
+//          acc += tmp_iter_array[j] * new_arr[j];
+//        tmp_value[acc] := item_gen();
+//        end;
+//      result := new ndarray(tmp_value, tmp_shape);
+//    end;
 end.
