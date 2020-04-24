@@ -111,9 +111,9 @@ interface
 //    function copy(self: neo.ndarray): neo.ndarray;
 //   
 //    function dot(self_ndarray: neo.ndarray; other_ndarray: neo.ndarray; axis: integer := 0): neo.ndarray;
-//   
-//    procedure map(self: neo.ndarray; func: System.Func<single, single>);
-//    
+   
+    procedure map(self: neo.ndarray; func: System.Func<single, single>);
+    
 //    function max(self: neo.ndarray): single;
     
     function multiply(number_a, number_b: single): single;
@@ -542,7 +542,7 @@ implementation
     
     procedure ndarray.map(func: System.Func<single, single>);
     begin
-//      neo.map(self, func);
+      neo.map(self, func);
     end;
     
     
@@ -800,16 +800,17 @@ implementation
 //        result := tmp_ndarray; 
 //        end;
 //    end;    
-//        
-//        
-//    procedure map(self: ndarray; func: System.Func<single, single>);
-//    begin
-//      var item_gen := self.__get_item_generator();
-//      for var i := 0 to self.length-1 do
-//        self.value[i] := func(item_gen()); 
-//    end;
-//    
-//    
+        
+        
+    procedure map(self: neo.ndarray; func: System.Func<single, single>);
+    begin
+      var item_gen := self.__get_item_generator();
+      {$omp parallel for}
+      for var i := 0 to self.length-1 do
+        self.value[i] := func(item_gen()); 
+    end;
+    
+    
 //    // TODO: Нахождение максимальных элементов по осям
 //    function max(self: ndarray): single;
 //    begin
