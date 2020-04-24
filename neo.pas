@@ -79,25 +79,25 @@ interface
                 
             class function operator**(self_ndarray: neo.ndarray; other_ndarray: neo.ndarray): neo.ndarray;
                 
-//            function get(params index: array of integer): single;
-//   
-//            procedure assign(val: single; params index: array of integer);
-//            
-//            function get_shape(): array of integer;
-//            
-//            function copy(): neo.ndarray;
-//            
-//            function dot(other_ndarray: neo.ndarray; axis: integer := 0): neo.ndarray;
-//            
-//            procedure map(func: System.Func<single, single>);
-//            
-//            function max(): single;
-//            
-//            function reshape(shape: array of integer): neo.ndarray;
-//            
-//            function sum(axis: integer := -1): neo.ndarray;
-//
-//            function transpose(axes: array of integer := nil): neo.ndarray;
+            function get(params index: array of integer): single;
+   
+            procedure assign(val: single; params index: array of integer);
+            
+            function get_shape(): array of integer;
+            
+            function copy(): neo.ndarray;
+            
+            function dot(other_ndarray: neo.ndarray; axis: integer := 0): neo.ndarray;
+            
+            procedure map(func: System.Func<single, single>);
+            
+            function max(): single;
+            
+            function reshape(shape: array of integer): neo.ndarray;
+            
+            function sum(axis: integer := -1): neo.ndarray;
+
+            function transpose(axes: array of integer := nil): neo.ndarray;
     end;
    
 //    function arange(stop: integer): neo.ndarray;
@@ -125,11 +125,11 @@ interface
     function multiply(self_ndarray, other_ndarray: neo.ndarray): neo.ndarray;
     
 //    function random_ndarray(shape: array of integer): neo.ndarray;
-//         
-//    function reshape(self: neo.ndarray; shape: array of integer): neo.ndarray;
-//         
-//    function sum(self: neo.ndarray; axis: integer := -1): neo.ndarray;
-//         
+         
+    function reshape(self: neo.ndarray; shape: array of integer): neo.ndarray;
+         
+    function sum(self_ndarray: neo.ndarray; axis: integer := -1): neo.ndarray;
+         
 //    function transpose(self: neo.ndarray; axes: array of integer := nil): neo.ndarray;
          
 implementation
@@ -535,25 +535,26 @@ implementation
     
     function ndarray.get_shape(): array of integer;
     begin
-      result := self.shape;  
+      result := new integer[self.rank];
+      self.shape.CopyTo(result, 0);
     end;
     
     
     procedure ndarray.map(func: System.Func<single, single>);
     begin
-      neo.map(self, func);
+//      neo.map(self, func);
     end;
     
     
     function ndarray.max(): single;
     begin
-      result := neo.max(self);
+//      result := neo.max(self);
     end;
 
     
     function ndarray.copy(): ndarray;
     begin
-      result := neo.copy(self);
+//      result := neo.copy(self);
     end;
 
 
@@ -565,13 +566,13 @@ implementation
    
     function ndarray.transpose(axes: array of integer): ndarray;
     begin
-      result := neo.transpose(self, axes);
+//      result := neo.transpose(self, axes);
     end;  
    
    
     function ndarray.dot(other_ndarray: ndarray; axis: integer): ndarray;
     begin
-      result := neo.dot(self, other_ndarray, axis);
+//      result := neo.dot(self, other_ndarray, axis);
     end;
  
      
@@ -846,15 +847,15 @@ implementation
       max_ndarray: neo.ndarray;
       min_ndarray: neo.ndarray;
     begin
-      if a.length > b.length then
+      if self_ndarray.length > other_ndarray.length then
         begin
-        max_ndarray := a;
-        min_ndarray := b;
+        max_ndarray := self_ndarray;
+        min_ndarray := other_ndarray;
         end
       else
         begin
-        max_ndarray := b;
-        min_ndarray := a;
+        max_ndarray := other_ndarray;
+        min_ndarray := self_ndarray;
         end;
       
       var tmp_result := new single[max_ndarray.length];  
@@ -864,61 +865,67 @@ implementation
     end;
 
 
-//    function reshape(self: ndarray; shape: array of integer): ndarray;
-//    begin
-//      Result := new ndarray(self.value, shape);
-//    end;
-//
-//
-//    function sum(self: ndarray; axis: integer): ndarray;
-//    begin
-//      if (self.rank = 1) or (axis = -1) then
-//        begin
-//        var tmp_result: array of single := (self.value.Sum);
-//        var tmp_result_shape: array of integer := (1);
-//        result := new ndarray(tmp_result, tmp_result_shape);
-//        end
-//      else
-//      begin
-//        var sum_array_shape := new integer[self.rank-1]; var cnt := 0;
-//        for var index := 0 to self.rank-1 do
-//          if index <> axis then
-//            begin
-//            sum_array_shape[cnt] := self.shape[index];
-//            cnt += 1;
-//            end
-//          else  
-//            continue;
-//            
-//        var sum_arr := new single[sum_array_shape.Product];
-//        var sum_iter_array := ndarray.__get_iter_array(sum_array_shape);
-//
-//        var index_gen := self.__get_index_generator();
-//        var item_gen := self.__get_item_generator();
-//        for var i := 0 to self.length-1 do
-//          begin 
-//          var arr := index_gen();
-//           
-//          var new_arr := new integer[self.rank-1]; var sum_cnt := 0;
-//          for var j := 0 to self.rank-1 do
-//            if j = axis then
-//              continue
-//            else
-//             begin
-//              new_arr[sum_cnt] := arr[j];
-//              sum_cnt += 1;
-//              end;
-//              
-//          var sum_acc := 0;
-//          for var j := 0 to self.rank-2 do
-//            sum_acc += sum_iter_array[j] * new_arr[j];
-//          sum_arr[sum_acc] += item_gen();
-//          end;
-//      result := new ndarray(sum_arr, sum_array_shape);
-//      end;
-//    end;
-//
-//
+    function reshape(self: ndarray; shape: array of integer): ndarray;
+    begin
+      Result := new ndarray(self.value, shape);
+    end;
+
+
+    function sum(self_ndarray: ndarray; axis: integer): ndarray;
+    begin
+      if (self_ndarray.rank = 1) or (axis = -1) then
+        begin
+        var tmp_result: array of single := (self_ndarray.value.Sum);
+        var tmp_result_shape: array of integer := (1);
+        result := new ndarray(tmp_result, tmp_result_shape);
+        end
+      else
+        begin
+        var sum_array_shape := new integer[self_ndarray.rank-1]; var cnt := 0;
+        for var index := 0 to self_ndarray.rank-1 do
+          if index = axis then
+            continue
+          else  
+            begin
+            sum_array_shape[cnt] := self_ndarray.shape[index];
+            cnt += 1;
+            end;
+
+        var sum_arr := new single[sum_array_shape.Product];
+        var sum_iter_array := ndarray.__get_iter_array(sum_array_shape);
+
+        var arr := new integer[self_ndarray.rank];
+        for var i := 0 to self_ndarray.length-1 do
+          begin 
+          for var j := self_ndarray.rank-1 downto 0 do
+            if arr[j] = self_ndarray.shape[j] then
+              begin
+              arr[j-1] += 1;
+              arr[j] := 0;
+              end;
+          
+          var new_arr := new integer[self_ndarray.rank-1]; var sum_cnt := 0;
+          for var j := 0 to self_ndarray.rank-1 do
+            if j = axis then
+              continue
+            else
+             begin
+              new_arr[sum_cnt] := arr[j];
+              sum_cnt += 1;
+              end;
+
+          var sum_acc := 0;
+          for var j := 0 to self_ndarray.rank-2 do
+            sum_acc += sum_iter_array[j] * new_arr[j];
+          sum_arr[sum_acc] += self_ndarray.value[i];
+          arr[self_ndarray.rank-1] += 1;
+          
+          end;
+      result := new ndarray(sum_arr, sum_array_shape);
+      end;
+    end;
+
+
 //    function transpose(self: ndarray; axes: array of integer): ndarray;
 //    begin
 //      if axes = nil then
