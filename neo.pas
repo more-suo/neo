@@ -1,8 +1,9 @@
-﻿library neo;
+﻿unit neo;
 
 interface
         
     type
+        [System.Serializable] 
         ndarray = class
       
         private
@@ -96,6 +97,8 @@ interface
             function reshape(shape: array of integer): neo.ndarray;
             
             function sum(axis: integer := -1): neo.ndarray;
+            
+            procedure serialize(filename: string);
 
             function transpose(axes: array of integer := nil): neo.ndarray;
     end;
@@ -107,14 +110,14 @@ interface
 //    function arange(start, stop, step: integer): neo.ndarray;
 //   
 //    function concatenate(a, b: neo.ndarray; axis: integer := -1): neo.ndarray;
-//   
-//    function copy(self: neo.ndarray): neo.ndarray;
-//   
-//    function dot(self_ndarray: neo.ndarray; other_ndarray: neo.ndarray; axis: integer := 0): neo.ndarray;
    
-    procedure map(self: neo.ndarray; func: System.Func<single, single>);
+    function copy(self_ndarray: neo.ndarray): neo.ndarray;
+   
+    function dot(self_ndarray: neo.ndarray; other_ndarray: neo.ndarray; axis: integer := 0): neo.ndarray;
+   
+    procedure map(self_ndarray: neo.ndarray; func: System.Func<single, single>);
     
-//    function max(self: neo.ndarray): single;
+//    function max(self_ndarray: neo.ndarray): single;
     
     function multiply(number_a, number_b: single): single;
     
@@ -126,11 +129,11 @@ interface
     
 //    function random_ndarray(shape: array of integer): neo.ndarray;
          
-    function reshape(self: neo.ndarray; shape: array of integer): neo.ndarray;
+    function reshape(self_ndarray: neo.ndarray; shape: array of integer): neo.ndarray;
          
     function sum(self_ndarray: neo.ndarray; axis: integer := -1): neo.ndarray;
          
-//    function transpose(self: neo.ndarray; axes: array of integer := nil): neo.ndarray;
+    function transpose(self_ndarray: neo.ndarray; axes: array of integer := nil): neo.ndarray;
          
 implementation
     
@@ -554,7 +557,7 @@ implementation
     
     function ndarray.copy(): ndarray;
     begin
-//      result := neo.copy(self);
+      result := neo.copy(self);
     end;
 
 
@@ -562,17 +565,25 @@ implementation
     begin
       result := neo.reshape(self, shape);
     end;
+
+
+    procedure ndarray.serialize(filename: string);
+    begin
+      var formatter := new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();      
+      var f := new System.IO.FileStream(filename+'.neo', System.IO.FileMode.OpenOrCreate);
+      formatter.Serialize(f, self);
+    end;
    
    
     function ndarray.transpose(axes: array of integer): ndarray;
     begin
-//      result := neo.transpose(self, axes);
+      result := neo.transpose(self, axes);
     end;  
    
    
     function ndarray.dot(other_ndarray: ndarray; axis: integer): ndarray;
     begin
-//      result := neo.dot(self, other_ndarray, axis);
+      result := neo.dot(self, other_ndarray, axis);
     end;
  
      
@@ -677,137 +688,136 @@ implementation
 //        Result := tmp_ndarray;
 //        end;
 //    end;
-//        
-//        
-//    function copy(self: ndarray): ndarray;
-//    begin
-//      Result := new ndarray(self.value, self.shape);
-//    end;    
-//        
-//        
-//    function dot(self_ndarray: ndarray; other_ndarray: ndarray; axis: integer): ndarray;
-//    begin
-//      if (self_ndarray.rank = 1) and (other_ndarray.rank = 1) then
-//        begin
-//        var sum: array of single := (0);
-//        for var index := 0 to self_ndarray.length-1 do
-//          sum[0] += self_ndarray.get(index) * other_ndarray.get(index);
-//        result := new ndarray(sum, ArrFill(1, 1));
-//        end
-//      else if (self_ndarray.rank = 1) or (other_ndarray.rank = 1) then
-//      begin
-//        if self_ndarray.shape[0] <> other_ndarray.shape[0] then
-//          raise new Exception('Fields couldn not be broadcast together');
-//        
-//        var max_ndarray: ndarray;
-//        var min_ndarray: ndarray;
-//        if self_ndarray.rank > other_ndarray.rank then
-//          begin
-//          max_ndarray := self_ndarray;
-//          min_ndarray := other_ndarray;
-//          end
-//        else
-//          begin
-//          max_ndarray := other_ndarray;
-//          min_ndarray := self_ndarray;
-//          end;
-//        
-//        var tmp_shape := new integer[max_ndarray.rank-1];
-//        for var i := 1 to max_ndarray.rank-1 do
-//          tmp_shape[i-1] := max_ndarray.shape[i]; 
-//        
-//        var tmp_arr := new single[tmp_shape.Product];
-//
-//        var max_index_gen := max_ndarray.__get_index_generator();
-//        var max_item_gen := max_ndarray.__get_item_generator();
-//        
-//        var cnt_limit := max_ndarray.length div max_ndarray.shape[0]; var cnt := 0;
-//        for var i := 0 to max_ndarray.length-1 do
-//        begin
-//          tmp_arr[cnt] += max_item_gen() * min_ndarray.value[max_index_gen()[0]];
-//          cnt += 1;
-//          if cnt = cnt_limit then
-//            cnt := 0;
-//        end;
-//        result := new ndarray(tmp_arr, tmp_shape);
-//        end
-//      else if (self_ndarray.rank = 2) and (other_ndarray.rank = 2) then
-//        begin
-//          var other_ndarray_T := other_ndarray.transpose();
-//          var tmp_result := new single[self_ndarray.shape[0]*other_ndarray.shape[1]];
-//          var new_shape: array of integer := (self_ndarray.shape[0], other_ndarray.shape[1]);
-//          for var i:=0 to self_ndarray.shape[0]-1 do
-//            for var j:=0 to other_ndarray.shape[1]-1 do
-//            begin  
-//              var cc := 0.0;
-//              for var l:=0 to self_ndarray.shape[1]-1 do
-//                 cc += self_ndarray.get(i, l)*other_ndarray_T.get(j, l);
-//              tmp_result[i*self_ndarray.shape[0]+j] := cc;   
-//            end;
-//          result := new ndarray(tmp_result, new_shape);
-//        end
-//      else
-//        begin
-//        var tmp_shape := new integer[self_ndarray.rank+other_ndarray.rank-2];
-//        for var i := 0 to self_ndarray.rank-2 do
-//          tmp_shape[i] := self_ndarray.shape[i];
-//        for var i := 0 to other_ndarray.rank-3 do
-//          tmp_shape[self_ndarray.rank+i-1] := other_ndarray.shape[i];
-//        tmp_shape[self_ndarray.rank+other_ndarray.rank-3] := other_ndarray.shape[other_ndarray.rank-1];
-//        
-//        var tmp_ndarray := new ndarray(tmp_shape);
-//        var index_gen := tmp_ndarray.__get_index_generator();
-//        
-//        for var i := 0 to tmp_shape.Product-1 do
-//          begin
-//            var arr := index_gen();
-//            var arr_a := new integer[self_ndarray.rank-1];
-//            for var j := 0 to self_ndarray.rank-2 do
-//              arr_a[j] := arr[j];
-//            
-//            var a_matrix := new single[self_ndarray.shape[self_ndarray.rank-1]];
-//            var cnt_a := 0;
-//            for var j := 0 to self_ndarray.shape[self_ndarray.rank-1]-1 do
-//            begin
-//              var tmp_arr := new integer[arr_a.length+1];
-//              for var k := 0 to arr_a.Length-1 do
-//                tmp_arr[k] := arr_a[k];
-//              tmp_arr[arr_a.length] := j;
-//              a_matrix[j] := self_ndarray.get(tmp_arr);
-//              end;
-//              
-//            var arr_b := new integer[other_ndarray.rank-1];
-//            for var j := 0 to other_ndarray.rank-2 do
-//              arr_b[j] := arr[self_ndarray.rank+j-1];
-//                        
-//            var b_matrix := new single[other_ndarray.shape[other_ndarray.rank-2]];
-//            var cnt_b := 0;
-//            for var j := 0 to other_ndarray.shape[other_ndarray.rank-2]-1 do
-//            begin
-//              var tmp_arr := new integer[arr_b.length+1];
-//              for var k := 0 to arr_b.Length-2 do
-//                tmp_arr[k] := arr_b[k];
-//              tmp_arr[arr_b.length-1] := j;
-//              tmp_arr[arr_b.length] := arr_b[arr_b.Length-1];
-//              b_matrix[j] := other_ndarray.get(tmp_arr);
-//              end;
-//              
-//            var acc := 0.0;
-//            for var j := 0 to a_matrix.Length-1 do
-//              acc += a_matrix[j] * b_matrix[j];
-//            tmp_ndarray.assign(acc, arr);
-//          end;
-//        result := tmp_ndarray; 
-//        end;
-//    end;    
         
         
-    procedure map(self: neo.ndarray; func: System.Func<single, single>);
+    function copy(self_ndarray: ndarray): ndarray;
     begin
-      var item_gen := self.__get_item_generator();
-      {$omp parallel for}
-      for var i := 0 to self.length-1 do
-        self.value[i] := func(item_gen()); 
+      Result := new ndarray(self_ndarray.value, self_ndarray.shape);
+    end;    
+        
+        
+    function dot(self_ndarray: ndarray; other_ndarray: ndarray; axis: integer): ndarray;
+    begin
+      if (self_ndarray.rank = 1) and (other_ndarray.rank = 1) then
+        begin
+        var sum: array of single := (0);
+        for var i := 0 to self_ndarray.length-1 do
+          sum[0] += self_ndarray.value[i] * other_ndarray.value[i];
+        result := new ndarray(sum, ArrFill(1, 1));
+        end
+      else if (self_ndarray.rank = 1) or (other_ndarray.rank = 1) then
+      begin
+        if self_ndarray.shape[0] <> other_ndarray.shape[0] then
+          raise new Exception('Fields couldn not be broadcast together');
+        
+        var max_ndarray: ndarray;
+        var min_ndarray: ndarray;
+        if self_ndarray.rank > other_ndarray.rank then
+          begin
+          max_ndarray := self_ndarray;
+          min_ndarray := other_ndarray;
+          end
+        else
+          begin
+          max_ndarray := other_ndarray;
+          min_ndarray := self_ndarray;
+          end;
+        
+        var tmp_shape := new integer[max_ndarray.rank-1];
+        for var i := 1 to max_ndarray.rank-1 do
+          tmp_shape[i-1] := max_ndarray.shape[i]; 
+        
+        var tmp_arr := new single[tmp_shape.Product];
+
+        var max_index_gen := max_ndarray.__get_index_generator();
+        var max_item_gen := max_ndarray.__get_item_generator();
+        
+        var cnt_limit := max_ndarray.length div max_ndarray.shape[0]; var cnt := 0;
+        for var i := max_ndarray.length-min_ndarray.length to max_ndarray.length-1 do
+        begin
+          println(i, i mod min_ndarray.length);
+          tmp_arr[cnt] += max_ndarray.value[i] * min_ndarray.value[i mod min_ndarray.length];
+          cnt += 1;
+          if cnt = cnt_limit then
+            cnt := 0;
+        end;
+        result := new ndarray(tmp_arr, tmp_shape);
+        end
+      else if (self_ndarray.rank = 2) and (other_ndarray.rank = 2) then
+        begin
+          var other_ndarray_T := other_ndarray.transpose();
+          var tmp_result := new single[self_ndarray.shape[0]*other_ndarray.shape[1]];
+          var new_shape: array of integer := (self_ndarray.shape[0], other_ndarray.shape[1]);
+          for var i:=0 to self_ndarray.shape[0]-1 do
+            for var j:=0 to other_ndarray.shape[1]-1 do
+            begin  
+              var cc := 0.0;
+              for var l:=0 to self_ndarray.shape[1]-1 do
+                 cc += self_ndarray.get(i, l)*other_ndarray_T.get(j, l);
+              tmp_result[i*self_ndarray.shape[0]+j] := cc;   
+            end;
+          result := new ndarray(tmp_result, new_shape);
+        end
+      else
+        begin
+        var tmp_shape := new integer[self_ndarray.rank+other_ndarray.rank-2];
+        for var i := 0 to self_ndarray.rank-2 do
+          tmp_shape[i] := self_ndarray.shape[i];
+        for var i := 0 to other_ndarray.rank-3 do
+          tmp_shape[self_ndarray.rank+i-1] := other_ndarray.shape[i];
+        tmp_shape[self_ndarray.rank+other_ndarray.rank-3] := other_ndarray.shape[other_ndarray.rank-1];
+        
+        var tmp_ndarray := new ndarray(tmp_shape);
+        var index_gen := tmp_ndarray.__get_index_generator();
+        
+        for var i := 0 to tmp_shape.Product-1 do
+          begin
+            var arr := index_gen();
+            var arr_a := new integer[self_ndarray.rank-1];
+            for var j := 0 to self_ndarray.rank-2 do
+              arr_a[j] := arr[j];
+            
+            var a_matrix := new single[self_ndarray.shape[self_ndarray.rank-1]];
+            var cnt_a := 0;
+            for var j := 0 to self_ndarray.shape[self_ndarray.rank-1]-1 do
+            begin
+              var tmp_arr := new integer[arr_a.length+1];
+              for var k := 0 to arr_a.Length-1 do
+                tmp_arr[k] := arr_a[k];
+              tmp_arr[arr_a.length] := j;
+              a_matrix[j] := self_ndarray.get(tmp_arr);
+              end;
+              
+            var arr_b := new integer[other_ndarray.rank-1];
+            for var j := 0 to other_ndarray.rank-2 do
+              arr_b[j] := arr[self_ndarray.rank+j-1];
+                        
+            var b_matrix := new single[other_ndarray.shape[other_ndarray.rank-2]];
+            var cnt_b := 0;
+            for var j := 0 to other_ndarray.shape[other_ndarray.rank-2]-1 do
+            begin
+              var tmp_arr := new integer[arr_b.length+1];
+              for var k := 0 to arr_b.Length-2 do
+                tmp_arr[k] := arr_b[k];
+              tmp_arr[arr_b.length-1] := j;
+              tmp_arr[arr_b.length] := arr_b[arr_b.Length-1];
+              b_matrix[j] := other_ndarray.get(tmp_arr);
+              end;
+              
+            var acc := 0.0;
+            for var j := 0 to a_matrix.Length-1 do
+              acc += a_matrix[j] * b_matrix[j];
+            tmp_ndarray.assign(acc, arr);
+          end;
+        result := tmp_ndarray; 
+        end;
+    end;    
+        
+        
+    procedure map(self_ndarray: neo.ndarray; func: System.Func<single, single>);
+    begin
+      for var i := 0 to self_ndarray.length-1 do
+        self_ndarray.value[i] := func(self_ndarray.value[i]); 
     end;
     
     
@@ -866,9 +876,9 @@ implementation
     end;
 
 
-    function reshape(self: ndarray; shape: array of integer): ndarray;
+    function reshape(self_ndarray: ndarray; shape: array of integer): ndarray;
     begin
-      Result := new ndarray(self.value, shape);
+      Result := new ndarray(self_ndarray.value, shape);
     end;
 
 
@@ -927,37 +937,45 @@ implementation
     end;
 
 
-//    function transpose(self: ndarray; axes: array of integer): ndarray;
-//    begin
-//      if axes = nil then
-//        begin
-//        axes := new integer[self.rank];
-//        for var index := 0 to self.rank-1 do
-//          axes[index] := self.rank-index-1;
-//        end;
-//      
-//      var tmp_value := new single[self.length];
-//      var tmp_shape := new integer[self.rank];
-//      for var index := 0 to self.rank-1 do
-//        tmp_shape[index] := self.shape[axes[index]];
-//      
-//      var tmp_iter_array := ndarray.__get_iter_array(tmp_shape);
-//      var index_gen := self.__get_index_generator();
-//      var item_gen := self.__get_item_generator();
-//      
-//      for var i := 0 to self.length-1 do
-//        begin
-//        var arr := index_gen();
-//        
-//        var new_arr := new integer[self.rank];
-//        for var j := 0 to self.rank-1 do
-//          new_arr[j] := arr[axes[j]];
-//        
-//        var acc := 0;
-//        for var j := 0 to self.rank-1 do
-//          acc += tmp_iter_array[j] * new_arr[j];
-//        tmp_value[acc] := item_gen();
-//        end;
-//      result := new ndarray(tmp_value, tmp_shape);
-//    end;
+    function transpose(self_ndarray: ndarray; axes: array of integer): ndarray;
+    begin
+      if axes = nil then
+        begin
+        axes := new integer[self_ndarray.rank];
+        for var index := 0 to self_ndarray.rank-1 do
+          axes[index] := self_ndarray.rank-index-1;
+        end;
+      
+      var tmp_value := new single[self_ndarray.length];
+      var tmp_shape := new integer[self_ndarray.rank];
+      for var index := 0 to self_ndarray.rank-1 do
+        tmp_shape[index] := self_ndarray.shape[axes[index]];
+      
+      var tmp_iter_array := ndarray.__get_iter_array(tmp_shape);
+      var index_gen := self_ndarray.__get_index_generator();
+      
+      var arr := new integer[self_ndarray.rank];
+      for var i := 0 to self_ndarray.length-1 do
+        begin
+        for var j := self_ndarray.rank-1 downto 0 do
+          if arr[j] = self_ndarray.shape[j] then
+            begin
+            arr[j-1] += 1;
+            arr[j] := 0;
+            end;
+        
+        var new_arr := new integer[self_ndarray.rank];
+        for var j := 0 to self_ndarray.rank-1 do
+          new_arr[j] := arr[axes[j]];
+        
+        var acc := 0;
+        for var j := 0 to self_ndarray.rank-1 do
+          acc += tmp_iter_array[j] * new_arr[j];
+        tmp_value[acc] := self_ndarray.value[i];
+        
+        arr[self_ndarray.rank-1] += 1;
+        end;
+      result := new ndarray(tmp_value, tmp_shape);
+    end;
+    
 end.
