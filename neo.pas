@@ -3,7 +3,6 @@
 interface
         
     type
-        [System.Serializable] 
         ndarray = class
       
         private
@@ -98,16 +97,18 @@ interface
             
             function sum(axis: integer := -1): neo.ndarray;
             
-            procedure serialize(filename: string);
+            procedure save(bw: System.IO.BinaryWriter);
+    
+            static function load(br: System.IO.BinaryReader): neo.ndarray;
 
             function transpose(axes: array of integer := nil): neo.ndarray;
     end;
    
-//    function arange(stop: integer): neo.ndarray;
-//    
-//    function arange(start, stop: integer): neo.ndarray;
-//    
-//    function arange(start, stop, step: integer): neo.ndarray;
+    function arange(stop: integer): neo.ndarray;
+    
+    function arange(start, stop: integer): neo.ndarray;
+    
+    function arange(start, stop, step: integer): neo.ndarray;
 //   
 //    function concatenate(a, b: neo.ndarray; axis: integer := -1): neo.ndarray;
    
@@ -567,13 +568,35 @@ implementation
     end;
 
 
-    procedure ndarray.serialize(filename: string);
+    procedure ndarray.save(bw: System.IO.BinaryWriter);
     begin
-      var formatter := new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();      
-      var f := new System.IO.FileStream(filename+'.neo', System.IO.FileMode.OpenOrCreate);
-      formatter.Serialize(f, self);
+      bw.Write(self.rank);
+      foreach var dim in self.shape do
+        bw.Write(dim);
+      foreach var dim in self.iter_array do
+        bw.Write(dim);
+      bw.Write(self.length);
+      foreach var elem in self.value do
+        bw.Write(elem);
     end;
    
+
+    static function ndarray.load(br: System.IO.BinaryReader): neo.ndarray;
+    begin
+      result := new neo.ndarray;
+      result.rank := br.ReadInt32();
+      result.shape := new integer[result.rank];
+      for var i := 0 to result.rank-1 do
+        result.shape[i] := br.ReadInt32();
+      result.iter_array := new integer[result.rank];
+      for var i := 0 to result.rank-1 do
+        result.iter_array[i] := br.ReadInt32();
+      result.length := br.ReadInt32();
+      result.value := new single[result.length];
+      for var i := 0 to result.length-1 do
+        result.value[i] := br.ReadSingle();
+    end;
+
    
     function ndarray.transpose(axes: array of integer): ndarray;
     begin
@@ -594,51 +617,51 @@ implementation
 //        tmp_result[index] := random;
 //      Result := new ndarray(tmp_result, shape);   
 //    end;
-// 
-// 
-//    function arange(stop: integer): ndarray;
-//    begin
-//      var tmp_result := new single[stop];
-//      var tmp_shape: array of integer := (stop);
-//      for var i := 0 to stop-1 do
-//        tmp_result[i] := i;
-//      result := new ndarray(tmp_result, tmp_shape);
-//    end;
-//    
-//    
-//    function arange(start, stop: integer): ndarray;
-//    begin
-//      var tmp_result := new single[stop-start];
-//      var tmp_shape: array of integer := (stop-start);
-//      for var i := start to stop-1 do
-//        tmp_result[i-start] := i;
-//      result := new ndarray(tmp_result, tmp_shape);  
-//    end;
-//    
-//    
-//    function arange(start, stop, step: integer): ndarray;
-//    begin
-//      var tmp_result := new single[(stop-start) div step];
-//      var tmp_shape: array of integer := ((stop-start) div step);
-//      var i := start-1; var cnt := 0; 
-//      if step < 0 then
-//        while i > stop do
-//          begin
-//          tmp_result[cnt] := i;
-//          cnt += 1;
-//          i += step;
-//          end
-//      else
-//        while i < stop do
-//          begin
-//          tmp_result[cnt] := i;
-//          cnt += 1;
-//          i += step;
-//          end;
-//      result := new ndarray(tmp_result, tmp_shape);  
-//    end;
-//
-//
+ 
+ 
+    function arange(stop: integer): ndarray;
+    begin
+      var tmp_result := new single[stop];
+      var tmp_shape: array of integer := (stop);
+      for var i := 0 to stop-1 do
+        tmp_result[i] := i;
+      result := new ndarray(tmp_result, tmp_shape);
+    end;
+    
+    
+    function arange(start, stop: integer): ndarray;
+    begin
+      var tmp_result := new single[stop-start];
+      var tmp_shape: array of integer := (stop-start);
+      for var i := start to stop-1 do
+        tmp_result[i-start] := i;
+      result := new ndarray(tmp_result, tmp_shape);  
+    end;
+    
+    
+    function arange(start, stop, step: integer): ndarray;
+    begin
+      var tmp_result := new single[(stop-start) div step];
+      var tmp_shape: array of integer := ((stop-start) div step);
+      var i := start-1; var cnt := 0; 
+      if step < 0 then
+        while i > stop do
+          begin
+          tmp_result[cnt] := i;
+          cnt += 1;
+          i += step;
+          end
+      else
+        while i < stop do
+          begin
+          tmp_result[cnt] := i;
+          cnt += 1;
+          i += step;
+          end;
+      result := new ndarray(tmp_result, tmp_shape);  
+    end;
+
+
 //    function concatenate(a, b: ndarray; axis: integer): ndarray;
 //    begin
 //      if axis = -1 then
