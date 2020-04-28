@@ -3,7 +3,7 @@
 interface
         
     type
-        ndarray = class
+        ndarray = class(System.IEquatable<ndarray>)
       
         private
             value: array of single;      
@@ -78,6 +78,12 @@ interface
             class function operator**(number: single; self_ndarray: neo.ndarray): neo.ndarray;
                 
             class function operator**(self_ndarray: neo.ndarray; other_ndarray: neo.ndarray): neo.ndarray;
+            
+//            class function operator=(self_ndarray: neo.ndarray; other_ndarray: neo.ndarray): boolean;
+                
+            function Equals(other_ndarray: neo.ndarray): boolean;
+            
+            function Equals(obj: object): boolean; override;
                 
             function get(params index: array of integer): single;
    
@@ -518,6 +524,37 @@ implementation
     end;
    {$endregion}
         
+         
+//    class function ndarray.operator=(self_ndarray: neo.ndarray; other_ndarray: neo.ndarray): boolean;
+//    begin
+//      result := True;
+//    end;
+        
+    
+    function ndarray.Equals(other_ndarray: neo.ndarray): boolean;
+    begin
+      result := True;      
+      if self.length <> other_ndarray.length then
+        result := False;
+      for var i := 0 to self.length-1 do
+        if self.value[i] <> other_ndarray.value[i] then
+          begin
+          result := False;
+          break;
+          end;
+    end;    
+
+    function ndarray.Equals(obj: object): boolean;
+    begin
+      if obj = nil then
+        result := False;
+
+      var ndarray_obj := obj as neo.ndarray;
+      if ndarray_obj = nil then
+         result := False
+      else
+         result := self.Equals(ndarray_obj);
+    end;    
 
     function ndarray.sum(axis: integer): ndarray;
     begin
