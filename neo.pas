@@ -95,7 +95,7 @@ interface
             
             function dot(other_ndarray: neo.ndarray; axis: integer := 0): neo.ndarray;
             
-            procedure map(func: System.Func<single, single>);
+            function map(func: System.Func<single, single>): neo.ndarray;
             
             function max(): single;
             
@@ -122,7 +122,7 @@ interface
    
     function dot(self_ndarray: neo.ndarray; other_ndarray: neo.ndarray; axis: integer := 0): neo.ndarray;
    
-    procedure map(self_ndarray: neo.ndarray; func: System.Func<single, single>);
+    function map(func: System.Func<single, single>; self_ndarray: neo.ndarray): neo.ndarray;
     
 //    function max(self_ndarray: neo.ndarray): single;
     
@@ -581,9 +581,9 @@ implementation
     end;
     
     
-    procedure ndarray.map(func: System.Func<single, single>);
+    function ndarray.map(func: System.Func<single, single>): neo.ndarray;
     begin
-      neo.map(self, func);
+      result := neo.map(func, self);
     end;
     
     
@@ -874,10 +874,12 @@ implementation
     end;    
         
         
-    procedure map(self_ndarray: neo.ndarray; func: System.Func<single, single>);
+    function map(func: System.Func<single, single>; self_ndarray: neo.ndarray): neo.ndarray;
     begin
+      var tmp_ndarray := new neo.ndarray(self_ndarray.shape);
       for var i := 0 to self_ndarray.length-1 do
         self_ndarray.value[i] := func(self_ndarray.value[i]); 
+      Result := tmp_ndarray;
     end;
     
     
