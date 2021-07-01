@@ -4,13 +4,18 @@ interface
     type       
         &Type = abstract class
           protected 
+            function neg(other: &Type): &Type; abstract;
             function add(other: &Type): &Type; abstract;
             function sub(other: &Type): &Type; abstract;
             function mul(other: &Type): &Type; abstract;
-//            function &div(other: &Type): &Type; abstract;
-//            function pow(other: &Type): &Type; abstract;
+            function &div(other: &Type): &Type; abstract;
+            function pow(other: &Type): &Type; abstract;
 
-          public 
+          public
+            class function operator-(x1: &Type): &Type;
+            begin
+              result := x1.neg();
+            end;
             class function operator+(x1, x2: &Type): &Type;
             begin
               result := x1.add(x2);
@@ -23,31 +28,35 @@ interface
             begin
               result := x1.mul(x2);
             end;
-//            class function operator/(x1, x2: &Type): &Type;
-//            begin
-//              result := x1.div(x2);
-//            end;
-//            class function operator**(x1, x2: &Type): &Type;
-//            begin
-//              result := x1.pow(x2);
-//            end;
+            class function operator/(x1, x2: &Type): &Type;
+            begin
+              result := x1.div(x2);
+            end;
+            class function operator**(x1, x2: &Type): &Type;
+            begin
+              result := x1.pow(x2);
+            end;
         end;
           
         Int = class(neo.&Type)
           private
             value: integer;
           public
-            function toString: String; override;
-            begin
-              Result := self.value.ToString;
-            end;
             constructor Create (x: integer);
             begin
               self.value := x;
             end;
-            class function operator implicit(x: integer): Int;
+            class function operator explicit(x: Int): integer;
             begin
-              result := new Int(x);
+              Result := x.value;
+            end;
+            class function operator explicit(x: Int): real;
+            begin
+              Result := x.value;
+            end;
+            function neg(): neo.&Type; override;
+            begin
+              Result := new Int(-Int(self).value)
             end;
             function add(other: neo.&Type): neo.&Type; override;
             begin
@@ -61,56 +70,65 @@ interface
             begin
               Result := new Int(Int(self).value * Int(other).value);
             end;
-            // result float or int ?
-//            function &div(other: neo.&Type): Int;
-//            begin
-//              Result := new Int(Int(self).value / Int(other).value);
-//            end;
-            // result float or int ?
-//            function pow(other: neo.&Type): Int;
-//            begin
-//              Result := new Int(Int(self).value ** Int(other).value);
-//            end;
+            function &div(other: neo.&Type): Int;
+            begin
+              Result := new Float(Int(self).value / Int(other).value);
+            end;
+            function pow(other: neo.&Type): Int;
+            begin
+              Result := new Float(Int(self).value ** Int(other).value);
+            end;
+            function toString: String; override;
+            begin
+              Result := self.value.ToString;
+            end;
         end;
  
-//        Float = class(neo.&Type)
-//          private
-//            value: real;
-//          public
-//            constructor Create (v: real);
-//            begin
-//              self.value := v;
-//            end;
-//            class function operator implicit(x: integer): Float;
-//            begin
-//              result := new Float(x);
-//            end;
-//            class function operator-(x1: Float): Float;
-//            begin
-//              Result.value := -x1.value;
-//            end;
-//            function add(other: neo.&Type): neo.&Type; override;
-//            begin
-//              print('Float');
-//              Result := new Float(Float(self).value + Float(other).value);
-//            end;
-//            class function operator-(x1, x2: Float): Float;
-//            begin
-//              Result.value := x1.value - x2.value;
-//            end;
-//            class function operator*(x1, x2: Float): Float;
-//            begin
-//              Result.value := x1.value * x2.value;
-//            end;
-//            class function operator/(x1, x2: Float): Float;
-//            begin
-//              Result.value := x1.value / x2.value;
-//            end;
-//            class function operator**(x1, x2: Float): Float;
-//            begin
-//              Result.value := x1.value**x2.value;
-//            end;
-//        end;
+        Float = class(neo.&Type)
+          private
+            value: real;
+          public
+            constructor Create (x: real);
+            begin
+              self.value := x;
+            end;
+            class function operator implicit(x: integer): Float;
+            begin
+              Result := new Float(x);
+            end;
+            class function operator explicit(x: Float): real;
+            begin
+              Result := x.value;
+            end;
+            class function neg(): neo.&Type; override;
+            begin
+              Result := new Float(-Float(self).value);
+            end;
+            function add(other: neo.&Type): neo.&Type; override;
+            begin
+              Result := new Float(Float(self).value + Float(other).value);
+            end;
+            function sub(other: neo.&Type): neo.&Type; override;
+            begin
+              Result := new Float(Float(self).value - Float(other).value);
+            end;
+            function mul(other: neo.&Type): neo.&Type; override;
+            begin
+              Result := new Float(Float(self).value * Float(other).value);
+            end;
+            function &div(other: neo.&Type): neo.&Type; override;
+            begin
+              Result := new Float(Float(self).value / Float(other).value);
+            end;
+            function pow(other: neo.&Type): neo.&Type; override;
+            begin
+              Result := new Float(Float(self).value ** Float(other).value);
+            end;
+            function toString: String; override;
+            begin
+              Result := self.value.ToString;
+            end;
+        end;
  
         
         ndarray = class //(System.IEquatable<ndarray>)
